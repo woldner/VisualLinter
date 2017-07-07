@@ -27,5 +27,6 @@
 
     <!-- This is the guid used to group the menu commands together. -->
     <GuidSymbol name="GuidVisualLinterPackageCmdSet" value="{709c5aff-bcec-42a8-b426-67253dc0c16d}" />
+    <GuidSymbol name="GuidVisualLinterPackageOutputPane" value="{d3ce5cd3-098d-41e1-a694-61d732cf1bde}" />
   </Symbols>
 </CommandTable>
