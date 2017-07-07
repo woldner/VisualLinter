@@ -1,15 +1,21 @@
-﻿using System;
-using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using System;
 
 namespace jwldnr.VisualLinter.Helpers
 {
     internal static class OutputWindowHelper
     {
-        private static IVsOutputWindowPane _outputWindowPane;
-
         private static IVsOutputWindowPane OutputWindowPane =>
             _outputWindowPane ?? (_outputWindowPane = GetOutputWindowPane());
+
+        private static IVsOutputWindowPane _outputWindowPane;
+
+        internal static void WriteLine(string message)
+        {
+            var outputWindowPane = OutputWindowPane;
+            outputWindowPane?.OutputString($"[{Vsix.Name}]: {message + Environment.NewLine}");
+        }
 
         private static IVsOutputWindowPane GetOutputWindowPane()
         {
@@ -23,12 +29,6 @@ namespace jwldnr.VisualLinter.Helpers
             outputWindow.GetPane(ref outputPaneGuid, out IVsOutputWindowPane windowPane);
 
             return windowPane;
-        }
-
-        internal static void WriteLine(string message)
-        {
-            var outputWindowPane = OutputWindowPane;
-            outputWindowPane?.OutputString($"[{Vsix.Name}]: {message + Environment.NewLine}");
         }
     }
 }
