@@ -57,10 +57,17 @@
     <Compile Include="LinterMessage.cs" />
     <Compile Include="LinterResult.cs" />
     <Compile Include="LinterService.cs" />
+    <Compile Include="LinterSnapshot.cs" />
+    <Compile Include="MessageMarker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SinkManager.cs" />
+    <Compile Include="SnapshotFactory.cs" />
     <Compile Include="source.extension.cs">
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
+    <Compile Include="Tagger.cs" />
+    <Compile Include="TaggerManager.cs" />
+    <Compile Include="TaggerProvider.cs" />
     <Compile Include="TextRange.cs" />
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>
@@ -147,6 +154,9 @@
       <HintPath>..\packages\Microsoft.VisualStudio.Shell.Interop.9.0.9.0.30729\lib\Microsoft.VisualStudio.Shell.Interop.9.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Text.Data, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Text.Logic, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.Text.UI, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\packages\Microsoft.VisualStudio.TextManager.Interop.7.10.6070\lib\Microsoft.VisualStudio.TextManager.Interop.dll</HintPath>
       <Private>True</Private>
