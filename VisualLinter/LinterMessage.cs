@@ -6,33 +6,33 @@ namespace jwldnr.VisualLinter
     internal class LinterMessage
     {
         [JsonProperty("column")]
-        public int Column { get; set; }
+        internal int Column { get; set; }
 
         [JsonProperty("endColumn")]
-        public int? EndColumn { get; set; }
+        internal int? EndColumn { get; set; }
 
         [JsonProperty("endLine")]
-        public int? EndLine { get; set; }
+        internal int? EndLine { get; set; }
 
         [JsonProperty("fatal")]
-        public bool IsFatal { get; set; }
+        internal bool IsFatal { get; set; }
 
         [JsonProperty("line")]
-        public int Line { get; set; }
+        internal int Line { get; set; }
 
         [JsonProperty("message")]
-        public string Message { get; set; }
+        internal string Message { get; set; }
 
         [JsonIgnore]
-        public TextRange Range { get; set; }
+        internal TextRange Range { get; set; }
 
         [JsonProperty("ruleId")]
-        public string RuleId { get; set; }
+        internal string RuleId { get; set; }
 
         [JsonProperty("severity")]
-        public int Severity { get; set; }
+        internal int Severity { get; set; }
 
         [JsonProperty("source")]
-        public string Source { get; set; }
+        internal string Source { get; set; }
     }
 }

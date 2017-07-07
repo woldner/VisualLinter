@@ -7,18 +7,18 @@ namespace jwldnr.VisualLinter
     internal class LinterResult
     {
         [JsonProperty("errorCount")]
-        public int ErrorCount { get; set; }
+        internal int ErrorCount { get; set; }
 
         [JsonProperty("filePath")]
-        public string FilePath { get; set; }
+        internal string FilePath { get; set; }
 
         [JsonProperty("messages")]
-        public IEnumerable<LinterMessage> Messages { get; set; }
+        internal IEnumerable<LinterMessage> Messages { get; set; }
 
         [JsonProperty("source")]
-        public string Source { get; set; }
+        internal string Source { get; set; }
 
         [JsonProperty("warningCount")]
-        public int WarningCount { get; set; }
+        internal int WarningCount { get; set; }
     }
 }
