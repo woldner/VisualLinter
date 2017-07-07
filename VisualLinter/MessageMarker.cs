@@ -4,9 +4,9 @@ namespace jwldnr.VisualLinter
 {
     internal class MessageMarker
     {
-        public LinterMessage Message { get; }
+        internal LinterMessage Message { get; }
 
-        public SnapshotSpan Span { get; }
+        internal SnapshotSpan Span { get; }
 
         internal MessageMarker(LinterMessage message, SnapshotSpan span)
         {
@@ -14,7 +14,7 @@ namespace jwldnr.VisualLinter
             Span = span;
         }
 
-        public MessageMarker CloneAndTranslateTo(ITextSnapshot newSnapshot)
+        internal MessageMarker CloneAndTranslateTo(ITextSnapshot newSnapshot)
         {
             var newSpan = Span.TranslateTo(newSnapshot, SpanTrackingMode.EdgeExclusive);
 
