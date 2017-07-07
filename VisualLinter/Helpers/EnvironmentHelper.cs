@@ -7,19 +7,25 @@ namespace jwldnr.VisualLinter.Helpers
 {
     internal static class EnvironmentHelper
     {
-        internal static string GetVariable(string name) => GetVariableInfo("PATH", EnvironmentVariableTarget.User)
-            .Select(value => new { value, files = GetFiles(value) })
-            .Where(info => null != info.files)
-            .Where(info => info.files.Any(file => file.IndexOf(name, StringComparison.OrdinalIgnoreCase) != -1))
-            .Select(info => GetExecutable(Path.Combine(Environment.ExpandEnvironmentVariables(info.value), name)))
-            .FirstOrDefault();
+        internal static string GetVariable(string name)
+        {
+            return GetVariableInfo("PATH", EnvironmentVariableTarget.User)
+                .Select(value => new { value, files = GetFiles(value) })
+                .Where(info => null != info.files)
+                .Where(info => info.files.Any(file => file.IndexOf(name, StringComparison.OrdinalIgnoreCase) != -1))
+                .Select(info => GetExecutable(Path.Combine(Environment.ExpandEnvironmentVariables(info.value), name)))
+                .FirstOrDefault();
+        }
 
-        private static string GetExecutable(string name) => GetVariableInfo("PATHEXT", EnvironmentVariableTarget.Machine)
-            .Where(value => null != value)
-            .Select(value => new { value, file = name + value })
-            .Where(info => File.Exists(info.file))
-            .Select(info => info.file)
-            .FirstOrDefault();
+        private static string GetExecutable(string name)
+        {
+            return GetVariableInfo("PATHEXT", EnvironmentVariableTarget.Machine)
+                .Where(value => null != value)
+                .Select(value => new { value, file = name + value })
+                .Where(info => File.Exists(info.file))
+                .Select(info => info.file)
+                .FirstOrDefault();
+        }
 
         private static string[] GetFiles(string value)
         {
