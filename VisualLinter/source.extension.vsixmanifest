@@ -1,17 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="VisualLinter.Company.832aee43-88e1-4e51-ac31-d412d356dfdf" Version="1.0" Language="en-US" Publisher="Company" />
+    <Identity Id="832aee43-88e1-4e51-ac31-d412d356dfdf" Version="0.2.0" Language="en-US" Publisher="Jean Alexander Woldner" />
     <DisplayName>VisualLinter</DisplayName>
-    <Description>Empty VSIX Project.</Description>
+    <Description xml:space="preserve">Visual Studio Linter using ESLint (installed globally) with visual feedback in the text buffer.</Description>
+    <Icon>Resources\Package.ico</Icon>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0]" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.15.0" DisplayName="Visual Studio MPF 15.0" d:Source="Installed" Version="[15.0]" />
   </Dependencies>
   <Prerequisites>
     <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
   </Prerequisites>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
 </PackageManifest>
