@@ -88,7 +88,7 @@ namespace jwldnr.VisualLinter
                 }
                 catch (Exception)
                 {
-                    OutputWindowHelper.WriteLine($"could not deserialize // not a json object: {output}");
+                    OutputWindowHelper.WriteLine(output);
                 }
 
                 return Enumerable.Empty<LinterResult>();
