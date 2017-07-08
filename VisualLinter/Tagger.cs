@@ -13,6 +13,7 @@ namespace jwldnr.VisualLinter
         internal SnapshotFactory Factory { get; }
         internal string FilePath { get; private set; }
         internal LinterSnapshot Snapshot { get; set; }
+
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
         private readonly TaggerProvider _provider;
