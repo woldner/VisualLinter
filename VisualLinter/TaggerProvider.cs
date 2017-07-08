@@ -20,25 +20,24 @@ namespace jwldnr.VisualLinter
         public string DisplayName => "VisualLint";
         public string Identifier => "VisualLint";
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
-        internal readonly ITableManager ErrorTableManager;
-        internal readonly ITextDocumentFactoryService TextDocumentFactoryService;
-        private readonly ILinterService _linterService;
 
+        private readonly ILinterService _linterService;
         private readonly List<SinkManager> _managers = new List<SinkManager>();
         private readonly TaggerManager _taggers = new TaggerManager();
+        private readonly ITextDocumentFactoryService _textDocumentFactoryService;
 
         [ImportingConstructor]
         internal TaggerProvider(
+            [Import] ILinterService linterService,
             [Import] ITableManagerProvider tableManagerProvider,
-            [Import] ITextDocumentFactoryService textDocumentFactoryService,
-            [Import] ILinterService linterService)
+            [Import] ITextDocumentFactoryService textDocumentFactoryService)
         {
-            ErrorTableManager = tableManagerProvider
+            _linterService = linterService;
+
+            var errorTableManager = tableManagerProvider
                 .GetTableManager(StandardTables.ErrorsTable);
 
-            TextDocumentFactoryService = textDocumentFactoryService;
-
-            _linterService = linterService;
+            _textDocumentFactoryService = textDocumentFactoryService;
 
             var columns = new[]
             {
@@ -54,7 +53,7 @@ namespace jwldnr.VisualLinter
                 StandardTableColumnDefinitions.Text
             };
 
-            ErrorTableManager.AddSource(this, columns);
+            errorTableManager.AddSource(this, columns);
         }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
@@ -159,7 +158,7 @@ namespace jwldnr.VisualLinter
 
         private bool TryGetTextDocument(ITextBuffer buffer, out ITextDocument document)
         {
-            return TextDocumentFactoryService.TryGetTextDocument(buffer, out document);
+            return _textDocumentFactoryService.TryGetTextDocument(buffer, out document);
         }
 
         private void UpdateMessages(string filePath, IEnumerable<LinterMessage> messages)

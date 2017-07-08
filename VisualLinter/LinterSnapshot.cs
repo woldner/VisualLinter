@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Shell.Interop;
+﻿using jwldnr.VisualLinter.Helpers;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace jwldnr.VisualLinter
         private readonly string _filePath;
         private readonly IList<MessageMarker> _markers;
         private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
+
         private string _projectName;
 
         internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<MessageMarker> markers)
@@ -49,49 +51,54 @@ namespace jwldnr.VisualLinter
             if (index < 0 || _markers.Count <= index)
                 return false;
 
+            var marker = _markers[index];
+
             switch (columnName)
             {
-                case StandardTableKeyNames.DocumentName:
-                    content = _filePath;
-                    return null != content;
-
-                case StandardTableKeyNames.Line:
-                    content = _markers[index].Span.Start.GetContainingLine().LineNumber;
-                    return true;
-
-                case StandardTableKeyNames.Column:
-                    var position = _markers[index].Span.Start;
-                    var line = position.GetContainingLine();
-                    content = position.Position - line.Start.Position;
-                    return true;
-
-                case StandardTableKeyNames.Text:
-                    content = _markers[index].Message.Message;
-                    return null != content;
-
-                case StandardTableKeyNames.ErrorSeverity:
-                    content = GetErrorCategory(_markers[index].Message.IsFatal);
-                    return true;
-
                 case StandardTableKeyNames.BuildTool:
                     // todo get analyzer name
                     content = Vsix.Name;
                     return true;
 
-                case StandardTableKeyNames.ErrorCode:
-                    content = $"({_markers[index].Message.RuleId})";
+                case StandardTableKeyNames.Column:
+                    var position = marker.Span.Start;
+                    var line = position.GetContainingLine();
+                    content = position.Position - line.Start.Position;
                     return true;
+
+                case StandardTableKeyNames.DocumentName:
+                    content = _filePath;
+                    return null != content;
 
                 case StandardTableKeyNames.ErrorCodeToolTip:
                 case StandardTableKeyNames.HelpLink:
-                    content = GetRuleUrl(_markers[index].Message.RuleId);
+                    content = GetRuleUrl(marker.Message.RuleId);
                     return null != content;
+
+                case StandardTableKeyNames.ErrorCode:
+                    content = $"({marker.Message.RuleId})";
+                    return true;
+
+                case StandardTableKeyNames.ErrorSeverity:
+                    content = GetErrorCategory(marker.Message.IsFatal);
+                    return true;
+
+                case StandardTableKeyNames.ErrorSource:
+                    content = marker.Message.Source;
+                    return content != null;
+
+                case StandardTableKeyNames.Line:
+                    content = marker.Span.Start.GetContainingLine().LineNumber;
+                    return true;
 
                 case StandardTableKeyNames.ProjectName:
                     if (string.IsNullOrEmpty(_projectName))
-                        _projectName = GetProjectName();
-
+                        _projectName = ProjectHelper.GetProjectName(_filePath);
                     content = _projectName;
+                    return null != content;
+
+                case StandardTableKeyNames.Text:
+                    content = marker.Message.Message;
                     return null != content;
 
                 default:
@@ -109,15 +116,6 @@ namespace jwldnr.VisualLinter
         private static string GetRuleUrl(string ruleId)
         {
             return $"http://eslint.org/docs/rules/{ruleId}";
-        }
-
-        private string GetProjectName()
-        {
-            var item = VisualLinterPackage.IDE.Solution.FindProjectItem(_filePath);
-            if (null == item?.Properties || null == item.ContainingProject)
-                return null;
-
-            return item.ContainingProject.Name;
         }
     }
 }
