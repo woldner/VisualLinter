@@ -16,12 +16,24 @@ namespace jwldnr.VisualLinter
             _provider.AddSinkManager(this);
         }
 
-        public void Dispose() => _provider.RemoveSinkManager(this);
+        public void Dispose()
+        {
+            _provider.RemoveSinkManager(this);
+        }
 
-        internal void AddFactory(SnapshotFactory factory) => _sink.AddFactory(factory);
+        internal void AddFactory(SnapshotFactory factory)
+        {
+            _sink.AddFactory(factory);
+        }
 
-        internal void RemoveFactory(SnapshotFactory factory) => _sink.RemoveFactory(factory);
+        internal void RemoveFactory(SnapshotFactory factory)
+        {
+            _sink.RemoveFactory(factory);
+        }
 
-        internal void UpdateSink() => _sink.FactorySnapshotChanged(null);
+        internal void UpdateSink()
+        {
+            _sink.FactorySnapshotChanged(null);
+        }
     }
 }

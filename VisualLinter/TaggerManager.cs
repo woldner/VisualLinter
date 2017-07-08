@@ -8,11 +8,20 @@ namespace jwldnr.VisualLinter
 
         private readonly IDictionary<string, Tagger> _taggers = new Dictionary<string, Tagger>();
 
-        internal void Add(Tagger tagger) => _taggers.Add(Key(tagger.FilePath), tagger);
+        internal void Add(Tagger tagger)
+        {
+            _taggers.Add(Key(tagger.FilePath), tagger);
+        }
 
-        internal bool Exists(string filePath) => _taggers.ContainsKey(Key(filePath));
+        internal bool Exists(string filePath)
+        {
+            return _taggers.ContainsKey(Key(filePath));
+        }
 
-        internal void Remove(Tagger tagger) => _taggers.Remove(Key(tagger.FilePath));
+        internal void Remove(Tagger tagger)
+        {
+            _taggers.Remove(Key(tagger.FilePath));
+        }
 
         internal void Rename(string oldPath, string newPath)
         {
@@ -24,8 +33,14 @@ namespace jwldnr.VisualLinter
             _taggers.Remove(oldKey);
         }
 
-        internal bool TryGetValue(string filePath, out Tagger tagger) => _taggers.TryGetValue(Key(filePath), out tagger);
+        internal bool TryGetValue(string filePath, out Tagger tagger)
+        {
+            return _taggers.TryGetValue(Key(filePath), out tagger);
+        }
 
-        private static string Key(string filePath) => filePath.ToLowerInvariant();
+        private static string Key(string filePath)
+        {
+            return filePath.ToLowerInvariant();
+        }
     }
 }

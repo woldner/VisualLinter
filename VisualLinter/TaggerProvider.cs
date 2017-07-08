@@ -20,10 +20,8 @@ namespace jwldnr.VisualLinter
         public string DisplayName => "VisualLint";
         public string Identifier => "VisualLint";
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
-
         internal readonly ITableManager ErrorTableManager;
         internal readonly ITextDocumentFactoryService TextDocumentFactoryService;
-
         private readonly ILinterService _linterService;
 
         private readonly List<SinkManager> _managers = new List<SinkManager>();
@@ -44,17 +42,16 @@ namespace jwldnr.VisualLinter
 
             var columns = new[]
             {
-                StandardTableColumnDefinitions.DetailsExpander,
-                StandardTableColumnDefinitions.ErrorSeverity,
-                StandardTableColumnDefinitions.ErrorCode,
-                StandardTableColumnDefinitions.ErrorSource,
                 StandardTableColumnDefinitions.BuildTool,
-                StandardTableColumnDefinitions.ErrorSource,
-                StandardTableColumnDefinitions.ErrorCategory,
-                StandardTableColumnDefinitions.Text,
+                StandardTableColumnDefinitions.Column,
+                StandardTableColumnDefinitions.DetailsExpander,
                 StandardTableColumnDefinitions.DocumentName,
+                StandardTableColumnDefinitions.ErrorCategory,
+                StandardTableColumnDefinitions.ErrorCode,
+                StandardTableColumnDefinitions.ErrorSeverity,
+                StandardTableColumnDefinitions.ErrorSource,
                 StandardTableColumnDefinitions.Line,
-                StandardTableColumnDefinitions.Column
+                StandardTableColumnDefinitions.Text
             };
 
             ErrorTableManager.AddSource(this, columns);
@@ -86,7 +83,10 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        public IDisposable Subscribe(ITableDataSink sink) => new SinkManager(this, sink);
+        public IDisposable Subscribe(ITableDataSink sink)
+        {
+            return new SinkManager(this, sink);
+        }
 
         internal void AddSinkManager(SinkManager manager)
         {
@@ -116,7 +116,10 @@ namespace jwldnr.VisualLinter
             UpdateMessages(filePath, messages);
         }
 
-        internal async Task<IEnumerable<LinterMessage>> Lint(string filePath) => await _linterService.Lint(filePath);
+        internal async Task<IEnumerable<LinterMessage>> Lint(string filePath)
+        {
+            return await _linterService.Lint(filePath);
+        }
 
         internal void RemoveSinkManager(SinkManager manager)
         {
@@ -155,7 +158,9 @@ namespace jwldnr.VisualLinter
         }
 
         private bool TryGetTextDocument(ITextBuffer buffer, out ITextDocument document)
-            => TextDocumentFactoryService.TryGetTextDocument(buffer, out document);
+        {
+            return TextDocumentFactoryService.TryGetTextDocument(buffer, out document);
+        }
 
         private void UpdateMessages(string filePath, IEnumerable<LinterMessage> messages)
         {

@@ -13,7 +13,10 @@ namespace jwldnr.VisualLinter
             CurrentSnapshot = snapshot;
         }
 
-        public override ITableEntriesSnapshot GetCurrentSnapshot() => CurrentSnapshot;
+        public override ITableEntriesSnapshot GetCurrentSnapshot()
+        {
+            return CurrentSnapshot;
+        }
 
         public override ITableEntriesSnapshot GetSnapshot(int versionNumber)
         {

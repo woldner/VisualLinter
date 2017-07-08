@@ -18,7 +18,9 @@ namespace jwldnr.VisualLinter
     {
         internal static DTE2 IDE;
 
-        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        protected override async Task InitializeAsync(
+            CancellationToken cancellationToken,
+            IProgress<ServiceProgressData> progress)
         {
             IDE = await GetServiceAsync(typeof(DTE)) as DTE2;
             await base.InitializeAsync(cancellationToken, progress);
