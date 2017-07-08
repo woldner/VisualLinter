@@ -38,7 +38,7 @@ Please note that additional ESLint plugins may be required in order to lint file
 
 ## Language Support
 
-| Language | File Extensions | Supported Beautifiers |
+| Language | File Extensions | Supported Linters |
 | --- | --- | ---- |
 | JavaScript | `.js` | [`ESLint`](https://github.com/eslint/eslint) |
 
