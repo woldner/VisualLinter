@@ -5,6 +5,7 @@ namespace jwldnr.VisualLinter
     internal class TaggerManager
     {
         internal IEnumerable<Tagger> Values => _taggers.Values;
+
         private readonly IDictionary<string, Tagger> _taggers = new Dictionary<string, Tagger>();
 
         internal void Add(Tagger tagger) => _taggers.Add(Key(tagger.FilePath), tagger);
