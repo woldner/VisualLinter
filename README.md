@@ -3,7 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/e34sj7pi1v3unlf0?svg=true)](https://ci.appveyor.com/project/jwldnr/visuallinter)
 
 <!-- Update the VS Gallery link after you upload the VSIX-->
-Download this extension from the [VS Gallery](https://visualstudiogallery.msdn.microsoft.com/[GuidFromGallery])
+Download this extension from the [VS Gallery](https://marketplace.visualstudio.com/vsgallery/d0776e1b-e526-4d83-a15f-33aa5312c626)
 or get the [CI build](http://vsixgallery.com/extension/832aee43-88e1-4e51-ac31-d412d356dfdf/).
 
 ---------------------------------------
