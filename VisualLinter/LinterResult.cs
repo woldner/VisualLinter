@@ -4,21 +4,21 @@ using System.Collections.Generic;
 namespace jwldnr.VisualLinter
 {
     [JsonObject]
-    internal class LinterResult
+    public class LinterResult
     {
         [JsonProperty("errorCount")]
-        internal int ErrorCount { get; set; }
+        public int ErrorCount { get; set; }
 
         [JsonProperty("filePath")]
-        internal string FilePath { get; set; }
+        public string FilePath { get; set; }
 
         [JsonProperty("messages")]
-        internal IEnumerable<LinterMessage> Messages { get; set; }
+        public IEnumerable<LinterMessage> Messages { get; set; }
 
         [JsonProperty("source")]
-        internal string Source { get; set; }
+        public string Source { get; set; }
 
         [JsonProperty("warningCount")]
-        internal int WarningCount { get; set; }
+        public int WarningCount { get; set; }
     }
 }

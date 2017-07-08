@@ -1,11 +1,11 @@
 ﻿namespace jwldnr.VisualLinter
 {
-    internal class TextRange
+    public class TextRange
     {
-        internal int EndColumn { get; set; }
+        public int EndColumn { get; set; }
 
-        internal int LineNumber { get; set; }
+        public int LineNumber { get; set; }
 
-        internal int StartColumn { get; set; }
+        public int StartColumn { get; set; }
     }
 }
