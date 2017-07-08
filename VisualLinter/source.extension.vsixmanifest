@@ -4,6 +4,9 @@
     <Identity Id="832aee43-88e1-4e51-ac31-d412d356dfdf" Version="1.0.0" Language="en-US" Publisher="Jean Alexander Woldner" />
     <DisplayName>VisualLinter</DisplayName>
     <Description xml:space="preserve">Visual Studio Linter using ESLint (installed globally) with visual feedback in the text buffer.</Description>
+    <MoreInfo>https://github.com/jwldnr/VisualLinter/</MoreInfo>
+    <GettingStartedGuide>https://github.com/jwldnr/VisualLinter/blob/master/README.md</GettingStartedGuide>
+    <ReleaseNotes>https://github.com/jwldnr/VisualLinter/blob/master/CHANGELOG.md</ReleaseNotes>
     <Icon>Resources\Package.ico</Icon>
   </Metadata>
   <Installation>
