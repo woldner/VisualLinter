@@ -10,6 +10,7 @@ namespace jwldnr.VisualLinter
     {
         public override int Count => _markers.Count;
         public override int VersionNumber { get; }
+
         internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
         internal LinterSnapshot NextSnapshot;
 
