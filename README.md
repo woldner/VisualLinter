@@ -12,16 +12,35 @@ Visual Studio Linter using ESLint (installed globally) with visual feedback in t
 
 See the [change log](CHANGELOG.md) for changes and road map.
 
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Language Support](#language-support)
+- [Troubleshooting](#troubleshooting)
+- [Contribute](#contribute)
+- [Thanks to](#thanks-to)
+
 ## Features
 
-- Lint files using ESLint on file save.
+- Lint files using ESLint on file save. (see [Language Support](#language-support))
 
-## Requirements
+## Getting Started
+
+##### Requirements
 
 - ESLint installed globally e.g. `npm i eslint@latest --global`
-- A valid config (create one using `eslint --init` after installing ESLint)
+- A valid config located in your user's home directory (create one using `eslint --init` after installing ESLint)
+
+##### Notes
 
 Please note that additional ESLint plugins may be required in order to lint files depending on your configuration. The `VisualLinter` output window could help identify these plugins.
+
+## Language Support
+
+| Language | File Extensions | Supported Beautifiers |
+| --- | --- | ---- |
+| JavaScript | `.js` | [`ESLint`](https://github.com/eslint/eslint) |
 
 ## Troubleshooting
 
@@ -29,6 +48,8 @@ Please note that additional ESLint plugins may be required in order to lint file
 - If you receive a message saying that `eslint` could not verify your configuration, refer to the docs on [how to configure ESLint](http://eslint.org/docs/user-guide/configuring)
 
 ## Contribute
+[See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
+
 Check out the [contribution guidelines](CONTRIBUTING.md)
 if you want to contribute to this project.
 
@@ -37,6 +58,11 @@ to install the
 [Extensibility Tools 2015](https://visualstudiogallery.msdn.microsoft.com/ab39a092-1343-46e2-b0f1-6a3f91155aa6)
 extension for Visual Studio which enables some features
 used by this project.
+
+## Thanks to
+
+- [SonarSource/SonarLint](https://github.com/SonarSource/sonarlint-visualstudio) extension for Visual Studio.
+- [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) eslint package for the Atom text editor.
 
 ## License
 [Apache 2.0](LICENSE)
