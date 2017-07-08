@@ -20,6 +20,7 @@ namespace jwldnr.VisualLinter
         public string DisplayName => "VisualLint";
         public string Identifier => "VisualLint";
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
+
         internal readonly ITableManager ErrorTableManager;
         internal readonly ITextDocumentFactoryService TextDocumentFactoryService;
 
