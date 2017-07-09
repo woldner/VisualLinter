@@ -109,7 +109,7 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        internal async void Analyze(string filePath)
+        internal async Task Analyze(string filePath)
         {
             var messages = await Lint(filePath);
             UpdateMessages(filePath, messages);

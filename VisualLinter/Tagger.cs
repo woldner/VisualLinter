@@ -40,7 +40,7 @@ namespace jwldnr.VisualLinter
 
         public void Dispose()
         {
-            _document.FileActionOccurred -= FileActionOccurred;
+            _document.FileActionOccurred -= OnFileActionOccurred;
             _buffer.ChangedLowPriority -= OnBufferChange;
 
             _provider.RemoveTagger(this);
@@ -92,19 +92,6 @@ namespace jwldnr.VisualLinter
             var end = new SnapshotPoint(_currentSnapshot, message.Range.EndColumn);
 
             return new MessageMarker(message, new SnapshotSpan(start, end));
-        }
-
-        private void FileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
-        {
-            if (0 != (e.FileActionType & FileActionTypes.DocumentRenamed))
-            {
-                _provider.Rename(FilePath, e.FilePath);
-                FilePath = e.FilePath;
-            }
-            else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
-            {
-                _provider.Analyze(FilePath);
-            }
         }
 
         private TextRange GetRange(LinterMessage message)
@@ -169,14 +156,14 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        private void Initialize()
+        private async void Initialize()
         {
-            _document.FileActionOccurred += FileActionOccurred;
+            _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
             _provider.AddTagger(this);
 
-            _provider.Analyze(FilePath);
+            await _provider.Analyze(FilePath);
         }
 
         private bool IsValidTextRange(LinterMessage message)
@@ -197,6 +184,19 @@ namespace jwldnr.VisualLinter
             var newMarkers = TranslateMarkerSpans();
 
             SnapToNewSnapshot(newMarkers);
+        }
+
+        private async void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
+        {
+            if (0 != (e.FileActionType & FileActionTypes.DocumentRenamed))
+            {
+                _provider.Rename(FilePath, e.FilePath);
+                FilePath = e.FilePath;
+            }
+            else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
+            {
+                await _provider.Analyze(FilePath);
+            }
         }
 
         private void SnapToNewSnapshot(LinterSnapshot snapshot)
