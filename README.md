@@ -60,6 +60,8 @@ used by this project.
 
 ## Thanks to
 
+Creators of..
+
 - [SonarSource/SonarLint](https://github.com/SonarSource/sonarlint-visualstudio) extension for Visual Studio.
 - [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) eslint package for the Atom text editor.
 
