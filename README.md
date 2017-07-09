@@ -2,12 +2,12 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/e34sj7pi1v3unlf0?svg=true)](https://ci.appveyor.com/project/jwldnr/visuallinter)
 
+Visual Studio JavaScript linter using ESLint.
+
 Download this extension from the [VS Gallery](https://marketplace.visualstudio.com/vsgallery/a71a5b0d-9f75-4cd2-b1f1-c4afb79a0638)
 or get the [CI build](http://vsixgallery.com/extension/21d9f99b-ec42-4df4-8b16-2a62db5392a5/).
 
 ---------------------------------------
-
-Visual Studio Linter using ESLint (installed globally) with visual feedback in the text buffer.
 
 See the [change log](CHANGELOG.md) for changes and road map.
 
