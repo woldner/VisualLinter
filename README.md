@@ -45,6 +45,9 @@ Please note that additional ESLint plugins may be required in order to lint file
 
 - If you receive a error message when starting Visual Studio with the extension installed saying that ESLint could not be found in `PATH`, restarting your computer would reload the environment variables.
 - If you receive a message saying that `eslint` could not verify your configuration, refer to the docs on [how to configure ESLint](http://eslint.org/docs/user-guide/configuring)
+- Visual Studio 2017 is using ESLint by default, however it does not show errors in buffer, if you're seeing duplicate messages in the error list window, you can disable the built in linter by setting `Enable ESLint` to `false` in:
+
+  `Options` > `Text Editor` > `JavaScript/TypeScript` > `ESLint`
 
 ## Contribute
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
@@ -66,4 +69,4 @@ Creators of..
 - [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) eslint package for the Atom text editor.
 
 ## License
-[Apache 2.0](LICENSE)
+[Apache 2.0](LICENSE.txt)
