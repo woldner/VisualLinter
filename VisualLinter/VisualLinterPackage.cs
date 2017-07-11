@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -16,18 +16,22 @@ namespace jwldnr.VisualLinter
         Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     internal sealed class VisualLinterPackage : AsyncPackage
     {
-        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        protected override async Task InitializeAsync(
+            CancellationToken cancellationToken,
+            IProgress<ServiceProgressData> progress)
         {
             await base.InitializeAsync(cancellationToken, progress);
+
             await Prompt();
         }
 
         private static async Task Prompt()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            var result = new LinterInstallPrompt().ShowDialog();
+            var result = new ESLintInstallDialog().ShowDialog();
+
             if (true == result)
-                return;
+                new ESLintInstaller().Show();
         }
     }
 }
