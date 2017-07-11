@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter
 {
@@ -61,7 +62,7 @@ namespace jwldnr.VisualLinter
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
-            var newMarkers = GetRanges(messages).Where(IsValidTextRange).Select(AddMarker);
+            var newMarkers = GetRanges(messages).Where(IsValidRange).Select(AddMarker);
             var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newMarkers);
 
             SnapToNewSnapshot(newSnapshot);
@@ -94,7 +95,7 @@ namespace jwldnr.VisualLinter
             return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
-        private TextRange GetRange(LinterMessage message)
+        private MessageRange GetRange(LinterMessage message)
         {
             try
             {
@@ -132,7 +133,7 @@ namespace jwldnr.VisualLinter
                     throw new ArgumentOutOfRangeException(
                         $"Start column ({startColumn}) greater than end column ({endColumn}) for line {lineNumber}");
 
-                return new TextRange
+                return new MessageRange
                 {
                     LineNumber = lineNumber,
                     StartColumn = startColumn,
@@ -156,17 +157,17 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        private async void Initialize()
+        private Task Initialize()
         {
             _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
             _provider.AddTagger(this);
 
-            await _provider.Analyze(FilePath);
+            return _provider.Analyze(FilePath);
         }
 
-        private bool IsValidTextRange(LinterMessage message)
+        private bool IsValidRange(LinterMessage message)
         {
             var range = message.Range;
 

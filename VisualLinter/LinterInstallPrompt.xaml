@@ -1,0 +1,25 @@
+﻿<Window x:Class="jwldnr.VisualLinter.LinterInstallPrompt"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Enable VisualLinter JavaScript support" Width="400"
+        WindowStartupLocation="CenterScreen" Topmost="True" SizeToContent="Height">
+
+    <StackPanel Margin="10">
+        <TextBlock Margin="0,0,0,5"
+                   Text="VisualLinter requires ESLint to analyze JavaScript files."
+                   TextWrapping="Wrap" />
+
+        <TextBlock Margin="0,0,0,5"
+                   Text="Download and install ESLint now? (requires npm)"
+                   TextWrapping="Wrap" />
+
+        <CheckBox Margin="10" HorizontalAlignment="Center"
+                  x:Name="SkipEnableDialogCheckBox"
+                  Content="Don't show this message again" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Margin="5" Padding="20,5" IsDefault="True" Click="ClickYes">Yes</Button>
+            <Button Margin="5" Padding="20,5" IsCancel="True">No</Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

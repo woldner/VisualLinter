@@ -1,6 +1,6 @@
 ﻿namespace jwldnr.VisualLinter
 {
-    public class TextRange
+    public class MessageRange
     {
         public int EndColumn { get; set; }
 
