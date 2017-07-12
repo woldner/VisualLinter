@@ -9,7 +9,7 @@ namespace jwldnr.VisualLinter.Helpers
         public static T GetMefService<T>(this IServiceProvider serviceProvider) where T : class
         {
             var componentModel = serviceProvider.GetService(typeof(SComponentModel)) as IComponentModel;
-            return componentModel?.GetExtensions<T>().SingleOrDefault();
+            return componentModel?.GetService<T>();
         }
     }
 }
