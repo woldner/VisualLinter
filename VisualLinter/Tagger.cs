@@ -164,7 +164,7 @@ namespace jwldnr.VisualLinter
 
             _provider.AddTagger(this);
 
-            return _provider.Analyze(FilePath);
+            return _provider.AnalyzeAsync(FilePath);
         }
 
         private bool IsValidRange(LinterMessage message)
@@ -196,7 +196,7 @@ namespace jwldnr.VisualLinter
             }
             else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
             {
-                await _provider.Analyze(FilePath);
+                await _provider.AnalyzeAsync(FilePath);
             }
         }
 

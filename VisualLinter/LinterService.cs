@@ -12,7 +12,7 @@ namespace jwldnr.VisualLinter
 {
     internal interface ILinterService
     {
-        Task<IEnumerable<LinterMessage>> RequestLintAsync(string filePath);
+        Task<IEnumerable<LinterMessage>> LintAsync(string filePath);
     }
 
     [Export(typeof(ILinterService))]
@@ -27,11 +27,11 @@ namespace jwldnr.VisualLinter
             Executable = EnvironmentHelper.GetVariable(LinterName);
         }
 
-        public async Task<IEnumerable<LinterMessage>> RequestLintAsync(string filePath)
+        public async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
             try
             {
-                var results = await LintAsync(GetArgs(filePath));
+                var results = await ExecuteProcessAsync(GetLinterArgs(filePath));
                 if (null == results)
                     throw new ArgumentNullException(nameof(results));
 
@@ -45,7 +45,7 @@ namespace jwldnr.VisualLinter
             return Enumerable.Empty<LinterMessage>();
         }
 
-        private static string GetArgs(string filePath) => $"--format json \"{filePath}\"";
+        private static string GetLinterArgs(string filePath) => $"--format json \"{filePath}\"";
 
         private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
         {
@@ -58,7 +58,7 @@ namespace jwldnr.VisualLinter
                 : result.Messages;
         }
 
-        private async Task<IEnumerable<LinterResult>> LintAsync(string args)
+        private async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string args)
         {
             var startInfo = new ProcessStartInfo(Executable, args)
             {

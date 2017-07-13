@@ -109,15 +109,15 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        internal async Task Analyze(string filePath)
+        internal async Task AnalyzeAsync(string filePath)
         {
-            var messages = await Lint(filePath);
+            var messages = await LintAsync(filePath);
             UpdateMessages(filePath, messages);
         }
 
-        internal async Task<IEnumerable<LinterMessage>> Lint(string filePath)
+        internal Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
-            return await _linterService.RequestLintAsync(filePath);
+            return _linterService.LintAsync(filePath);
         }
 
         internal void RemoveSinkManager(SinkManager manager)
