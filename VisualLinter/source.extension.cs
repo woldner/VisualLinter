@@ -11,7 +11,7 @@ namespace jwldnr.VisualLinter
         public const string Name = "VisualLinter";
         public const string Description = @"Visual Studio JavaScript linter using ESLint.";
         public const string Language = "en-US";
-        public const string Version = "1.0.47";
+        public const string Version = "1.0.54";
         public const string Author = "Jean Alexander Woldner";
         public const string Tags = "Visual Studio, visual studio 2017, lint, linter, Linting, ESLint, Javascript";
     }
