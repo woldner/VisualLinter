@@ -12,7 +12,7 @@ namespace jwldnr.VisualLinter
 {
     internal interface ILinterService
     {
-        Task<IEnumerable<LinterMessage>> Lint(string filePath);
+        Task<IEnumerable<LinterMessage>> RequestLintAsync(string filePath);
     }
 
     [Export(typeof(ILinterService))]
@@ -27,11 +27,11 @@ namespace jwldnr.VisualLinter
             Executable = EnvironmentHelper.GetVariable(LinterName);
         }
 
-        public async Task<IEnumerable<LinterMessage>> Lint(string filePath)
+        public async Task<IEnumerable<LinterMessage>> RequestLintAsync(string filePath)
         {
             try
             {
-                var results = await ExecuteProcessAsync($"--format json \"{filePath}\"");
+                var results = await LintAsync(GetArgs(filePath));
                 if (null == results)
                     throw new ArgumentNullException(nameof(results));
 
@@ -45,6 +45,8 @@ namespace jwldnr.VisualLinter
             return Enumerable.Empty<LinterMessage>();
         }
 
+        private static string GetArgs(string filePath) => $"--format json \"{filePath}\"";
+
         private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
         {
             // this extension only support 1-1 linting
@@ -56,7 +58,7 @@ namespace jwldnr.VisualLinter
                 : result.Messages;
         }
 
-        private async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string args)
+        private async Task<IEnumerable<LinterResult>> LintAsync(string args)
         {
             var startInfo = new ProcessStartInfo(Executable, args)
             {
