@@ -16,8 +16,8 @@ namespace jwldnr.VisualLinter
     internal class VisualLinterOptions : DialogPage, IVisualLinterOptions
     {
         [Category("General")]
-        [DisplayName("Environment Variables")]
-        [Description("Use Environment Variables to find ESLint")]
+        [DisplayName("PATH")]
+        [Description("Find ESLint in PATH")]
         [DefaultValue(true)]
         public bool UseEnvironmentVariables => true;
 

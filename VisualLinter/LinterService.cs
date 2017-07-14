@@ -89,7 +89,7 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        private static string GetESLintExecutableFromPath()
+        private static string FindESLintInPath()
         {
             const string name = "eslint";
 
@@ -116,7 +116,7 @@ namespace jwldnr.VisualLinter
         private string GetESLintPath()
         {
             return _options.UseEnvironmentVariables
-                ? GetESLintExecutableFromPath()
+                ? FindESLintInPath()
                 : null; // TODO
         }
     }
