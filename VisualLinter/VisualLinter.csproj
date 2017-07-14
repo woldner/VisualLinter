@@ -76,6 +76,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>VisualLinter.vsct</DependentUpon>
     </Compile>
+    <Compile Include="VisualLinterOptions.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="VisualLinterPackage.cs" />
     <Compile Include="VisualLinterSettings.cs" />
   </ItemGroup>
