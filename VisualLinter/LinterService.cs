@@ -16,6 +16,7 @@ namespace jwldnr.VisualLinter
     }
 
     [Export(typeof(ILinterService))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     internal class LinterService : ILinterService
     {
         private readonly string _eslintPath;
