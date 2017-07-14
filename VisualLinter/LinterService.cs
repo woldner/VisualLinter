@@ -19,13 +19,13 @@ namespace jwldnr.VisualLinter
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class LinterService : ILinterService
     {
-        private readonly IVisualLinterSettings _settings;
         private readonly string _eslintPath;
+        private readonly IVisualLinterOptions _options;
 
         [ImportingConstructor]
-        internal LinterService([Import] IVisualLinterSettings settings)
+        internal LinterService([Import] IVisualLinterOptions options)
         {
-            _settings = settings;
+            _options = options;
             _eslintPath = GetESLintPath();
         }
 

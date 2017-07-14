@@ -80,7 +80,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="VisualLinterPackage.cs" />
-    <Compile Include="VisualLinterSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\LICENSE">
