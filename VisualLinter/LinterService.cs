@@ -33,6 +33,9 @@ namespace jwldnr.VisualLinter
         {
             try
             {
+                if (null == _eslintPath)
+                    throw new ArgumentNullException(nameof(_eslintPath));
+
                 var results = await ExecuteProcessAsync(_eslintPath, GetLinterArguments(filePath));
                 if (null == results)
                     throw new ArgumentNullException(nameof(results));
@@ -86,7 +89,7 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        private static string GetESLintPath()
+        private static string GetESLintExecutableFromPath()
         {
             const string name = "eslint";
 
@@ -108,6 +111,13 @@ namespace jwldnr.VisualLinter
             return null == result
                 ? Enumerable.Empty<LinterMessage>()
                 : result.Messages;
+        }
+
+        private string GetESLintPath()
+        {
+            return _options.UseEnvironmentVariables
+                ? GetESLintExecutableFromPath()
+                : null; // TODO
         }
     }
 }

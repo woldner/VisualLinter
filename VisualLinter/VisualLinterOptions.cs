@@ -6,7 +6,9 @@ namespace jwldnr.VisualLinter
 {
     internal interface IVisualLinterOptions
     {
-        bool UseEnvironmentVariables { get; set; }
+        bool UseEnvironmentVariables { get; }
+
+        //string ESLintPath { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
@@ -17,6 +19,12 @@ namespace jwldnr.VisualLinter
         [DisplayName("Environment Variables")]
         [Description("Use Environment Variables to find ESLint")]
         [DefaultValue(true)]
-        public bool UseEnvironmentVariables { get; set; }
+        public bool UseEnvironmentVariables => true;
+
+        //[Category("General")]
+        //[DisplayName("ESLint Path")]
+        //[Description("Path to ESLint executable (value will be ignored if option 'Environment Variables' is set to true)")]
+        //[DefaultValue("")]
+        //public string ESLintPath { get; set; }
     }
 }
