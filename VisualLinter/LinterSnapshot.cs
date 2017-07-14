@@ -85,7 +85,7 @@ namespace jwldnr.VisualLinter
 
                 case StandardTableKeyNames.ErrorSource:
                     content = marker.Message.Source;
-                    return content != null;
+                    return null != content;
 
                 case StandardTableKeyNames.Line:
                     content = marker.Span.Start.GetContainingLine().LineNumber;

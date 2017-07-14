@@ -7,9 +7,11 @@ namespace jwldnr.VisualLinter.Helpers
 {
     internal static class EnvironmentHelper
     {
-        internal static string GetVariable(string name)
+        internal static string GetVariable(string name, EnvironmentVariableTarget target)
         {
-            return GetVariableInfo("PATH", EnvironmentVariableTarget.User)
+            var variables = GetVariableInfo("PATH", target);
+
+            return variables
                 .Select(value => new { value, files = GetFiles(value) })
                 .Where(info => null != info.files)
                 .Where(info => info.files.Any(file => file.IndexOf(name, StringComparison.OrdinalIgnoreCase) != -1))
@@ -19,7 +21,9 @@ namespace jwldnr.VisualLinter.Helpers
 
         private static string GetExecutable(string name)
         {
-            return GetVariableInfo("PATHEXT", EnvironmentVariableTarget.Machine)
+            var variables = GetVariableInfo("PATHEXT", EnvironmentVariableTarget.Machine);
+
+            return variables
                 .Where(value => null != value)
                 .Select(value => new { value, file = name + value })
                 .Where(info => File.Exists(info.file))

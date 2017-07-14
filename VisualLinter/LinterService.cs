@@ -18,49 +18,34 @@ namespace jwldnr.VisualLinter
     [Export(typeof(ILinterService))]
     internal class LinterService : ILinterService
     {
-        internal string Executable { get; }
-
-        private const string LinterName = "eslint";
+        private readonly string _eslintPath;
 
         internal LinterService()
         {
-            Executable = EnvironmentHelper.GetVariable(LinterName);
+            _eslintPath = GetESLintPath();
         }
 
         public async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
             try
             {
-                var results = await ExecuteProcessAsync(GetLinterArgs(filePath));
+                var results = await ExecuteProcessAsync(_eslintPath, GetLinterArguments(filePath));
                 if (null == results)
                     throw new ArgumentNullException(nameof(results));
 
                 return ProcessResults(results);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine($"error linting file: {filePath}");
+                OutputWindowHelper.WriteLine(e.Message);
             }
 
             return Enumerable.Empty<LinterMessage>();
         }
 
-        private static string GetLinterArgs(string filePath) => $"--format json \"{filePath}\"";
-
-        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
+        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string fileName, string arguments)
         {
-            // this extension only support 1-1 linting
-            // therefor results count will always be 1
-            var result = results.FirstOrDefault();
-
-            return null == result
-                ? Enumerable.Empty<LinterMessage>()
-                : result.Messages;
-        }
-
-        private async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string args)
-        {
-            var startInfo = new ProcessStartInfo(Executable, args)
+            var startInfo = new ProcessStartInfo(fileName, arguments)
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
@@ -95,6 +80,30 @@ namespace jwldnr.VisualLinter
 
                 return Enumerable.Empty<LinterResult>();
             }
+        }
+
+        private static string GetESLintPath()
+        {
+            const string name = "eslint";
+
+            var path = EnvironmentHelper.GetVariable(name, EnvironmentVariableTarget.User);
+            return path ?? EnvironmentHelper.GetVariable(name, EnvironmentVariableTarget.Machine);
+        }
+
+        private static string GetLinterArguments(string filePath)
+        {
+            return $"--format json \"{filePath}\"";
+        }
+
+        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
+        {
+            // this extension only support 1-1 linting
+            // therefor results count will always be 1
+            var result = results.FirstOrDefault();
+
+            return null == result
+                ? Enumerable.Empty<LinterMessage>()
+                : result.Messages;
         }
     }
 }
