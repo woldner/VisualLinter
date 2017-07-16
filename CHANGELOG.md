@@ -2,7 +2,6 @@
 
 - [x] Features
   - [x] Lint using ESLint 
-  - [ ] Attempt to fix errors automatically
 
 Features that have a checkmark are complete and available for
 download in the
