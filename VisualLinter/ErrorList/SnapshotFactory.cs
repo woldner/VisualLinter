@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.Shell.TableManager;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.ErrorList
 {
     internal class SnapshotFactory : TableEntriesSnapshotFactoryBase
     {

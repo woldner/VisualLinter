@@ -1,46 +1,46 @@
-﻿using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Models;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.ErrorList
 {
     internal class LinterSnapshot : WpfTableEntriesSnapshotBase
     {
-        public override int Count => _markers.Count;
+        public override int Count => _warnings.Count;
         public override int VersionNumber { get; }
 
-        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
+        internal IEnumerable<LinterWarning> Warnings => _readonlyWarnings;
         internal LinterSnapshot NextSnapshot;
 
         private readonly string _filePath;
-        private readonly IList<MessageMarker> _markers;
-        private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
-
+        private readonly IReadOnlyCollection<LinterWarning> _readonlyWarnings;
+        private readonly IList<LinterWarning> _warnings;
         private string _projectName;
 
-        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<MessageMarker> markers)
+        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<LinterWarning> warnings)
         {
             _filePath = filePath;
             VersionNumber = versionNumber;
 
-            _markers = new List<MessageMarker>(markers);
-            _readonlyMarkers = new ReadOnlyCollection<MessageMarker>(_markers);
+            _warnings = new List<LinterWarning>(warnings);
+            _readonlyWarnings = new ReadOnlyCollection<LinterWarning>(_warnings);
         }
 
         public override bool CanCreateDetailsContent(int index)
         {
             // todo, when fix is available..
-            // return return null != _markers[index].Message.Fix.Text;
+            // return return null != _warnings[index].Message.Fix.Text;
             return false;
         }
 
         public override bool TryCreateDetailsStringContent(int index, out string content)
         {
             // todo, use the linter fix to provide a more detailed description
-            content = _markers[index].Message.Message;
+            content = _warnings[index].Message.Message;
             return null != content;
         }
 
@@ -48,10 +48,10 @@ namespace jwldnr.VisualLinter
         {
             content = null;
 
-            if (index < 0 || _markers.Count <= index)
+            if (index < 0 || _warnings.Count <= index)
                 return false;
 
-            var marker = _markers[index];
+            var warning = _warnings[index];
 
             switch (columnName)
             {
@@ -61,7 +61,7 @@ namespace jwldnr.VisualLinter
                     return true;
 
                 case StandardTableKeyNames.Column:
-                    var position = marker.Span.Start;
+                    var position = warning.Span.Start;
                     var line = position.GetContainingLine();
                     content = position.Position - line.Start.Position;
                     return true;
@@ -72,33 +72,33 @@ namespace jwldnr.VisualLinter
 
                 case StandardTableKeyNames.ErrorCodeToolTip:
                 case StandardTableKeyNames.HelpLink:
-                    content = GetRuleUrl(marker.Message.RuleId);
+                    content = GetRuleUrl(warning.Message.RuleId);
                     return null != content;
 
                 case StandardTableKeyNames.ErrorCode:
-                    content = $"({marker.Message.RuleId})";
+                    content = $"({warning.Message.RuleId})";
                     return true;
 
                 case StandardTableKeyNames.ErrorSeverity:
-                    content = GetErrorCategory(marker.Message.IsFatal);
+                    content = GetErrorCategory(warning.Message.IsFatal);
                     return true;
 
                 case StandardTableKeyNames.ErrorSource:
-                    content = marker.Message.Source;
+                    content = warning.Message.Source;
                     return null != content;
 
                 case StandardTableKeyNames.Line:
-                    content = marker.Span.Start.GetContainingLine().LineNumber;
+                    content = warning.Span.Start.GetContainingLine().LineNumber;
                     return true;
 
                 case StandardTableKeyNames.ProjectName:
                     if (string.IsNullOrEmpty(_projectName))
-                        _projectName = ProjectHelper.GetProjectName(_filePath);
+                        _projectName = VsixHelper.GetProjectName(_filePath);
                     content = _projectName;
                     return null != content;
 
                 case StandardTableKeyNames.Text:
-                    content = marker.Message.Message;
+                    content = warning.Message.Message;
                     return null != content;
 
                 default:

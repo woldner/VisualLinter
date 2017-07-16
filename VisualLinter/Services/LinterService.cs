@@ -1,4 +1,5 @@
 ﻿using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Services
 {
-    internal interface ILinterService
-    {
-        Task<IEnumerable<LinterMessage>> LintAsync(string filePath);
-    }
-
     [Export(typeof(ILinterService))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class LinterService : ILinterService

@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.Shell.TableControl;
+﻿using jwldnr.VisualLinter.ErrorList;
+using jwldnr.VisualLinter.Models;
+using jwldnr.VisualLinter.Services;
+using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -10,7 +13,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Tagging
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]

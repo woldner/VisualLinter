@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Models
 {
     [JsonObject]
     public class LinterMessage

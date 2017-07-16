@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Models
 {
     [JsonObject]
     public class LinterResult

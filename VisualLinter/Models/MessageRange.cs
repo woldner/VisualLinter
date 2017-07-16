@@ -1,4 +1,4 @@
-﻿namespace jwldnr.VisualLinter
+﻿namespace jwldnr.VisualLinter.Models
 {
     public class MessageRange
     {

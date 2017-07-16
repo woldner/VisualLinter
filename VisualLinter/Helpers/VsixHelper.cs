@@ -4,7 +4,7 @@ using System;
 
 namespace jwldnr.VisualLinter.Helpers
 {
-    internal static class ProjectHelper
+    internal static class VsixHelper
     {
         internal static string GetProjectName(string fileName)
         {
