@@ -9,6 +9,7 @@
     <GettingStartedGuide>https://github.com/jwldnr/VisualLinter/blob/master/README.md</GettingStartedGuide>
     <ReleaseNotes>https://github.com/jwldnr/VisualLinter/blob/master/CHANGELOG.md</ReleaseNotes>
     <Icon>Resources\Package.ico</Icon>
+    <PreviewImage>Resources\Package.ico</PreviewImage>
     <Tags>Visual Studio, visual studio 2017, lint, linter, Linting, ESLint, Javascript</Tags>
   </Metadata>
   <Installation>
