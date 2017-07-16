@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="21d9f99b-ec42-4df4-8b16-2a62db5392a5" Version="1.0.63" Language="en-US" Publisher="Jean Alexander Woldner" />
+    <Identity Id="21d9f99b-ec42-4df4-8b16-2a62db5392a5" Version="1.0.64" Language="en-US" Publisher="Jean Alexander Woldner" />
     <DisplayName>VisualLinter</DisplayName>
     <Description xml:space="preserve">Visual Studio JavaScript linter using ESLint.</Description>
     <MoreInfo>https://github.com/jwldnr/VisualLinter/</MoreInfo>
