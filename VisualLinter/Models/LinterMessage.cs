@@ -24,7 +24,7 @@ namespace jwldnr.VisualLinter.Models
         public string Message { get; set; }
 
         [JsonIgnore]
-        public MessageRange Range { get; set; }
+        public Range Range { get; set; }
 
         [JsonProperty("ruleId")]
         public string RuleId { get; set; }

@@ -96,7 +96,7 @@ namespace jwldnr.VisualLinter.Tagging
             return new LinterWarning(message, new SnapshotSpan(start, end));
         }
 
-        private MessageRange GetRange(LinterMessage message)
+        private Range GetRange(LinterMessage message)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace jwldnr.VisualLinter.Tagging
                     throw new ArgumentOutOfRangeException(
                         $"Start column ({startColumn}) greater than end column ({endColumn}) for line {lineNumber}");
 
-                return new MessageRange
+                return new Range
                 {
                     LineNumber = lineNumber,
                     StartColumn = startColumn,
