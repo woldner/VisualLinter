@@ -2,6 +2,7 @@
 
 - [x] Features
   - [x] Lint using ESLint 
+  - [ ] Attempt to fix errors automatically
 
 Features that have a checkmark are complete and available for
 download in the
@@ -14,7 +15,8 @@ on the official Visual Studio extension gallery.
 
 ## Next
 
-- [ ]
+- [ ] Attempt to fix errors automatically
+- [ ] Provide settings page
 
 ## 1.0 (2017-07-08)
 
