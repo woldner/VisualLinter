@@ -56,6 +56,7 @@
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
+    <Compile Include="Models\Range.cs" />
     <Compile Include="Services\ILinterService.cs" />
     <Compile Include="Models\LinterMessage.cs" />
     <Compile Include="Models\LinterResult.cs" />
@@ -71,7 +72,6 @@
     <Compile Include="Tagging\Tagger.cs" />
     <Compile Include="Tagging\TaggerManager.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
-    <Compile Include="Models\MessageRange.cs" />
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
