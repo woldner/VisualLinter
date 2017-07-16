@@ -14,6 +14,7 @@
     <Icon>Resources\icon_small.png</Icon>
     <PreviewImage>Resources\icon_small.png</PreviewImage>
     <Warnings>Visual Studio, visual studio 2017, lint, linter, Linting, ESLint, Javascript</Warnings>
+    <Tags>Visual Studio, visual studio 2017, lint, linter, Linting, ESLint, Javascript</Tags>
   </Metadata>
   <Installation>
     <InstallationTarget Version="[15.0,16.0)" Id="Microsoft.VisualStudio.Community" />
