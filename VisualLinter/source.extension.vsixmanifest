@@ -3,7 +3,7 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011"
                  xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="21d9f99b-ec42-4df4-8b16-2a62db5392a5" Version="1.0.75" Language="en-US"
+    <Identity Id="21d9f99b-ec42-4df4-8b16-2a62db5392a5" Version="1.0.76" Language="en-US"
               Publisher="Jean Alexander Woldner" />
     <DisplayName>VisualLinter</DisplayName>
     <Description xml:space="preserve">Visual Studio JavaScript linter using ESLint.</Description>
@@ -11,8 +11,8 @@
     <License>Resources\LICENSE</License>
     <GettingStartedGuide>https://github.com/jwldnr/VisualLinter/blob/master/README.md</GettingStartedGuide>
     <ReleaseNotes>https://github.com/jwldnr/VisualLinter/blob/master/CHANGELOG.md</ReleaseNotes>
-    <Icon>Resources\icon_small.png</Icon>
-    <PreviewImage>Resources\icon_small.png</PreviewImage>
+    <Icon>Resources\icon.png</Icon>
+    <PreviewImage>Resources\preview.png</PreviewImage>
     <Warnings>Visual Studio, visual studio 2017, lint, linter, Linting, ESLint, Javascript</Warnings>
     <Tags>Visual Studio, visual studio 2017, lint, linter, Linting, ESLint, Javascript</Tags>
   </Metadata>
