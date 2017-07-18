@@ -70,9 +70,9 @@ namespace jwldnr.VisualLinter.Services
                 {
                     return JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    OutputWindowHelper.WriteLine(output);
+                    OutputWindowHelper.WriteLine(e.Message);
                 }
 
                 return Enumerable.Empty<LinterResult>();

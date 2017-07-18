@@ -54,9 +54,18 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == Snapshot)
                 return Enumerable.Empty<ITagSpan<IErrorTag>>();
 
-            return Snapshot.Warnings
-                .Where(warning => spans.IntersectsWith(warning.Span))
-                .Select(warning => new TagSpan<IErrorTag>(warning.Span, GetErrorTag(warning.Message)));
+            try
+            {
+                return Snapshot.Warnings
+                    .Where(warning => spans.IntersectsWith(warning.Span))
+                    .Select(warning => new TagSpan<IErrorTag>(warning.Span, GetErrorTag(warning.Message)));
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+
+            return Enumerable.Empty<ITagSpan<IErrorTag>>();
         }
 
         internal void UpdateMessages(IEnumerable<LinterMessage> messages)
