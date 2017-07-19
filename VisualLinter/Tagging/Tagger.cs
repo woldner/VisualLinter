@@ -13,10 +13,6 @@ namespace jwldnr.VisualLinter.Tagging
 {
     internal class Tagger : ITagger<IErrorTag>, IDisposable
     {
-        internal SnapshotFactory Factory { get; }
-        internal string FilePath { get; private set; }
-        internal LinterSnapshot Snapshot { get; set; }
-
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
         private readonly TaggerProvider _provider;
@@ -41,6 +37,10 @@ namespace jwldnr.VisualLinter.Tagging
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
+        internal SnapshotFactory Factory { get; }
+        internal string FilePath { get; private set; }
+        internal LinterSnapshot Snapshot { get; set; }
+
         public void Dispose()
         {
             _document.FileActionOccurred -= OnFileActionOccurred;
@@ -57,7 +57,7 @@ namespace jwldnr.VisualLinter.Tagging
             try
             {
                 return Snapshot.Warnings
-                    .Where(warning => spans.IntersectsWith(warning.Span))
+                    .Where(warning => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(warning.Span)))
                     .Select(warning => new TagSpan<IErrorTag>(warning.Span, GetErrorTag(warning.Message)));
             }
             catch (Exception e)
