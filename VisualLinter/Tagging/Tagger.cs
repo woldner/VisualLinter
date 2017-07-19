@@ -51,7 +51,7 @@ namespace jwldnr.VisualLinter.Tagging
 
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            if (null == Snapshot)
+            if (0 == spans.Count || null == Snapshot || !Snapshot.Warnings.Any())
                 return Enumerable.Empty<ITagSpan<IErrorTag>>();
 
             try
@@ -72,17 +72,18 @@ namespace jwldnr.VisualLinter.Tagging
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
-            var newWarnings = GetRanges(messages).Where(IsValidRange).Select(AddWarning);
-            var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newWarnings);
+            var warnings = GetRanges(messages).Where(IsValidRange).Select(CreateWarning);
+            var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, warnings);
 
             SnapToNewSnapshot(newSnapshot);
         }
 
         private static IErrorTag GetErrorTag(LinterMessage message)
         {
-            return new ErrorTag(
-                GetErrorType(message.IsFatal),
-                GetToolTipContent(message.Message, message.RuleId));
+            var errorType = GetErrorType(message.IsFatal);
+            var toolTipContent = GetToolTipContent(message.Message, message.RuleId);
+
+            return new ErrorTag(errorType, toolTipContent);
         }
 
         private static string GetErrorType(bool isFatal)
@@ -97,7 +98,7 @@ namespace jwldnr.VisualLinter.Tagging
             return $"{message} ({ruleId})";
         }
 
-        private LinterWarning AddWarning(LinterMessage message)
+        private LinterWarning CreateWarning(LinterMessage message)
         {
             var start = new SnapshotPoint(_currentSnapshot, message.Range.StartColumn);
             var end = new SnapshotPoint(_currentSnapshot, message.Range.EndColumn);
@@ -192,9 +193,9 @@ namespace jwldnr.VisualLinter.Tagging
         {
             UpdateDirtySpans(e);
 
-            var newWarnings = TranslateWarningSpans();
+            var newSnapshot = TranslateWarningSpans();
 
-            SnapToNewSnapshot(newWarnings);
+            SnapToNewSnapshot(newSnapshot);
         }
 
         private async void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
