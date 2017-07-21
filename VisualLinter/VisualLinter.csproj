@@ -56,11 +56,18 @@
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\ProjectHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
+    <Compile Include="Helpers\ServiceProviderExtensions.cs" />
     <Compile Include="LinterMessage.cs" />
     <Compile Include="LinterResult.cs" />
     <Compile Include="LinterService.cs" />
     <Compile Include="LinterSnapshot.cs" />
     <Compile Include="MessageMarker.cs" />
+    <Compile Include="OptionsDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OptionsDialogPageControl.xaml.cs">
+      <DependentUpon>OptionsDialogPageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SinkManager.cs" />
     <Compile Include="SnapshotFactory.cs" />
@@ -76,9 +83,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>VisualLinter.vsct</DependentUpon>
     </Compile>
-    <Compile Include="VisualLinterOptions.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="VisualLinterOptions.cs" />
     <Compile Include="VisualLinterPackage.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +228,12 @@
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="OptionsDialogPageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

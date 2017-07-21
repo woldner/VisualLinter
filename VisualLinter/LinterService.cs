@@ -24,17 +24,11 @@ namespace jwldnr.VisualLinter
         private const string Name = "eslint";
 
         private readonly IVisualLinterOptions _options;
-        private string _eslintConfigPath;
 
         [ImportingConstructor]
         internal LinterService([Import] IVisualLinterOptions options)
         {
             _options = options;
-
-            //var serviceProvider = ServiceProvider.GlobalProvider;
-            //var componentModel = serviceProvider.GetService(typeof(SComponentModel)) as IComponentModel;
-
-            //_options = componentModel?.GetService<IVisualLinterOptions>();
         }
 
         public async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
@@ -116,9 +110,9 @@ namespace jwldnr.VisualLinter
                 return Directory.GetFiles(path, ".eslintrc.*", SearchOption.AllDirectories)
                     .SingleOrDefault();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine("could not get local ESLint config, using global instead.");
+                OutputWindowHelper.WriteLine(e.Message);
             }
 
             return null;
@@ -140,10 +134,13 @@ namespace jwldnr.VisualLinter
             if (false == _options.UseLocalConfig)
                 return string.Empty;
 
-            var configPath = GetLocalConfigPath();
-            return null != configPath
-                ? $" --config \"{configPath}\""
-                : string.Empty;
+            var localConfigPath = GetLocalConfigPath();
+            if (null != localConfigPath)
+                return $" --config \"{localConfigPath}\"";
+
+            OutputWindowHelper.WriteLine("Could not find local ESLint config.");
+
+            return string.Empty;
         }
 
         private string GetArguments(string filePath)

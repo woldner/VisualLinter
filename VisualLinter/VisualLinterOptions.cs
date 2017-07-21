@@ -1,7 +1,9 @@
-﻿using Microsoft.VisualStudio.Settings;
+﻿using System;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Settings;
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 
 namespace jwldnr.VisualLinter
 {
@@ -25,17 +27,21 @@ namespace jwldnr.VisualLinter
         private readonly WritableSettingsStore _writableSettingsStore;
 
         [ImportingConstructor]
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         internal VisualLinterOptions([Import] SVsServiceProvider serviceProvider)
+            : this(new ShellSettingsManager(serviceProvider))
         {
-            var settingsManager = new ShellSettingsManager(serviceProvider);
+        }
 
-            _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+        internal VisualLinterOptions(SettingsManager settingsManager)
+        {
+            _writableSettingsStore = settingsManager?.GetWritableSettingsStore(SettingsScope.UserSettings)
+                ?? throw new ArgumentNullException(nameof(settingsManager));
 
-            if (_writableSettingsStore != null &&
-                !_writableSettingsStore.CollectionExists(CollectionPath))
-            {
-                _writableSettingsStore.CreateCollection(CollectionPath);
-            }
+            if (_writableSettingsStore == null || _writableSettingsStore.CollectionExists(CollectionPath))
+                return;
+
+            _writableSettingsStore.CreateCollection(CollectionPath);
         }
     }
 }
