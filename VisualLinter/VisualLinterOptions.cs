@@ -1,30 +1,41 @@
-﻿using Microsoft.VisualStudio.Shell;
-using System.ComponentModel;
+﻿using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Settings;
 using System.ComponentModel.Composition;
 
 namespace jwldnr.VisualLinter
 {
     internal interface IVisualLinterOptions
     {
-        bool UseEnvironmentVariables { get; }
-
-        //string ESLintPath { get; set; }
+        bool UseLocalConfig { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
     [PartCreationPolicy(CreationPolicy.Shared)]
-    internal class VisualLinterOptions : DialogPage, IVisualLinterOptions
+    internal class VisualLinterOptions : IVisualLinterOptions
     {
-        [Category("General")]
-        [DisplayName("PATH")]
-        [Description("Find ESLint in PATH")]
-        [DefaultValue(true)]
-        public bool UseEnvironmentVariables => true;
+        public bool UseLocalConfig
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseLocalConfig), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseLocalConfig), value);
+        }
 
-        //[Category("General")]
-        //[DisplayName("ESLint Path")]
-        //[Description("Path to ESLint executable (value will be ignored if option 'Environment Variables' is set to true)")]
-        //[DefaultValue("")]
-        //public string ESLintPath { get; set; }
+        internal const string CollectionPath = "jwldnr.VisualLinter";
+
+        private readonly WritableSettingsStore _writableSettingsStore;
+
+        [ImportingConstructor]
+        internal VisualLinterOptions([Import] SVsServiceProvider serviceProvider)
+        {
+            var settingsManager = new ShellSettingsManager(serviceProvider);
+
+            _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+
+            if (_writableSettingsStore != null &&
+                !_writableSettingsStore.CollectionExists(CollectionPath))
+            {
+                _writableSettingsStore.CreateCollection(CollectionPath);
+            }
+        }
     }
 }

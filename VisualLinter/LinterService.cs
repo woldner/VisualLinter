@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Process = System.Diagnostics.Process;
 
 namespace jwldnr.VisualLinter
 {
@@ -19,24 +21,32 @@ namespace jwldnr.VisualLinter
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class LinterService : ILinterService
     {
-        private readonly string _eslintPath;
+        private const string Name = "eslint";
+
         private readonly IVisualLinterOptions _options;
+        private string _eslintConfigPath;
 
         [ImportingConstructor]
         internal LinterService([Import] IVisualLinterOptions options)
         {
             _options = options;
-            _eslintPath = GetESLintPath();
+
+            //var serviceProvider = ServiceProvider.GlobalProvider;
+            //var componentModel = serviceProvider.GetService(typeof(SComponentModel)) as IComponentModel;
+
+            //_options = componentModel?.GetService<IVisualLinterOptions>();
         }
 
         public async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
+            var eslintPath = GetGlobalPath();
+
             try
             {
-                if (null == _eslintPath)
-                    throw new ArgumentNullException(nameof(_eslintPath));
+                if (null == eslintPath)
+                    throw new ArgumentNullException(nameof(eslintPath));
 
-                var results = await ExecuteProcessAsync(_eslintPath, GetLinterArguments(filePath));
+                var results = await ExecuteProcessAsync(eslintPath, GetArguments(filePath));
                 if (null == results)
                     throw new ArgumentNullException(nameof(results));
 
@@ -89,17 +99,29 @@ namespace jwldnr.VisualLinter
             }
         }
 
-        private static string FindESLintInPath()
+        private static string GetGlobalPath()
         {
-            const string name = "eslint";
-
-            var path = EnvironmentHelper.GetVariable(name, EnvironmentVariableTarget.User);
-            return path ?? EnvironmentHelper.GetVariable(name, EnvironmentVariableTarget.Machine);
+            var path = EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User);
+            return path ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
         }
 
-        private static string GetLinterArguments(string filePath)
+        private static string GetLocalConfigPath()
         {
-            return $"--format json \"{filePath}\"";
+            var path = ProjectHelper.GetSolutionPath();
+            if (null == path)
+                return null;
+
+            try
+            {
+                return Directory.GetFiles(path, ".eslintrc.*", SearchOption.AllDirectories)
+                    .SingleOrDefault();
+            }
+            catch (Exception)
+            {
+                OutputWindowHelper.WriteLine("could not get local ESLint config, using global instead.");
+            }
+
+            return null;
         }
 
         private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
@@ -113,11 +135,24 @@ namespace jwldnr.VisualLinter
                 : result.Messages;
         }
 
-        private string GetESLintPath()
+        private string GetAdditionalArguments()
         {
-            return _options.UseEnvironmentVariables
-                ? FindESLintInPath()
-                : null; // TODO
+            if (false == _options.UseLocalConfig)
+                return string.Empty;
+
+            var configPath = GetLocalConfigPath();
+            return null != configPath
+                ? $" --config \"{configPath}\""
+                : string.Empty;
+        }
+
+        private string GetArguments(string filePath)
+        {
+            var arguments = $"--format json \"{filePath}\"";
+
+            arguments += GetAdditionalArguments();
+
+            return arguments;
         }
     }
 }

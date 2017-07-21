@@ -1,6 +1,7 @@
 ﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using System;
+using System.IO;
 
 namespace jwldnr.VisualLinter.Helpers
 {
@@ -10,9 +11,9 @@ namespace jwldnr.VisualLinter.Helpers
         {
             try
             {
-                var dte = Package.GetGlobalService(typeof(DTE)) as DTE;
+                var solution = GetSolution();
 
-                var item = dte?.Solution.FindProjectItem(fileName);
+                var item = solution?.FindProjectItem(fileName);
 
                 return item?.ContainingProject.Name;
             }
@@ -22,6 +23,20 @@ namespace jwldnr.VisualLinter.Helpers
             }
 
             return null;
+        }
+
+        internal static string GetSolutionPath()
+        {
+            var solution = GetSolution();
+
+            return Path.GetDirectoryName(solution?.FullName);
+        }
+
+        private static Solution GetSolution()
+        {
+            var dte = Package.GetGlobalService(typeof(DTE)) as DTE;
+
+            return dte?.Solution;
         }
     }
 }
