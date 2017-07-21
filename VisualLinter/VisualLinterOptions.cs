@@ -20,7 +20,7 @@ namespace jwldnr.VisualLinter
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseLocalConfig), value);
         }
 
-        internal const string CollectionPath = "jwldnr.VisualLinter";
+        private const string CollectionPath = "jwldnr.VisualLinter";
 
         private readonly WritableSettingsStore _writableSettingsStore;
 
