@@ -14,7 +14,8 @@ on the official Visual Studio extension gallery.
 
 ## Next
 
-- [ ]
+- [ ] Attempt to fix errors automatically
+- [ ] Provide settings page
 
 ## 1.0 (2017-07-08)
 

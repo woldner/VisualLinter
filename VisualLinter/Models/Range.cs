@@ -1,6 +1,6 @@
-﻿namespace jwldnr.VisualLinter
+﻿namespace jwldnr.VisualLinter.Models
 {
-    public class MessageRange
+    public class Range
     {
         public int EndColumn { get; set; }
 

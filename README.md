@@ -69,4 +69,4 @@ Creators of..
 - [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) eslint package for the Atom text editor.
 
 ## License
-[Apache 2.0](LICENSE.txt)
+[MIT](LICENSE)

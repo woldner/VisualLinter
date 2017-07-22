@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Helpers\EnvironmentHelper.cs" />
     <Compile Include="Helpers\OutputWindowHelper.cs" />
-    <Compile Include="Helpers\ProjectHelper.cs" />
+    <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
     <Compile Include="LinterMessage.cs" />
@@ -68,16 +68,22 @@
     <Compile Include="OptionsDialogPageControl.xaml.cs">
       <DependentUpon>OptionsDialogPageControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\Range.cs" />
+    <Compile Include="Services\ILinterService.cs" />
+    <Compile Include="Models\LinterMessage.cs" />
+    <Compile Include="Models\LinterResult.cs" />
+    <Compile Include="Services\LinterService.cs" />
+    <Compile Include="ErrorList\LinterSnapshot.cs" />
+    <Compile Include="Models\LinterWarning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SinkManager.cs" />
-    <Compile Include="SnapshotFactory.cs" />
+    <Compile Include="ErrorList\SinkManager.cs" />
+    <Compile Include="ErrorList\SnapshotFactory.cs" />
     <Compile Include="source.extension.cs">
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
-    <Compile Include="Tagger.cs" />
-    <Compile Include="TaggerManager.cs" />
-    <Compile Include="TaggerProvider.cs" />
-    <Compile Include="MessageRange.cs" />
+    <Compile Include="Tagging\Tagger.cs" />
+    <Compile Include="Tagging\TaggerManager.cs" />
+    <Compile Include="Tagging\TaggerProvider.cs" />
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -207,9 +213,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Package.ico">
+    <Content Include="Resources\icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\preview.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="source.extension.ico">
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
@@ -235,6 +245,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

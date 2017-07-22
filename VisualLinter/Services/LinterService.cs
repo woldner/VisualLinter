@@ -1,4 +1,5 @@
 ﻿using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Process = System.Diagnostics.Process;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Services
 {
-    internal interface ILinterService
-    {
-        Task<IEnumerable<LinterMessage>> LintAsync(string filePath);
-    }
-
     [Export(typeof(ILinterService))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class LinterService : ILinterService
@@ -84,9 +80,9 @@ namespace jwldnr.VisualLinter
                 {
                     return JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    OutputWindowHelper.WriteLine(output);
+                    OutputWindowHelper.WriteLine(e.Message);
                 }
 
                 return Enumerable.Empty<LinterResult>();

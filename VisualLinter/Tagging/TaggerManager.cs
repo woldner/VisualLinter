@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Tagging
 {
     internal class TaggerManager
     {

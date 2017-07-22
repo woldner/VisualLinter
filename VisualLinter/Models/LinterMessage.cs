@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Models
 {
     [JsonObject]
     public class LinterMessage
@@ -24,7 +24,7 @@ namespace jwldnr.VisualLinter
         public string Message { get; set; }
 
         [JsonIgnore]
-        public MessageRange Range { get; set; }
+        public Range Range { get; set; }
 
         [JsonProperty("ruleId")]
         public string RuleId { get; set; }

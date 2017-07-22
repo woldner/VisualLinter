@@ -1,25 +1,25 @@
 ﻿using Microsoft.VisualStudio.Text;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Models
 {
-    internal class MessageMarker
+    internal class LinterWarning
     {
         internal LinterMessage Message { get; }
 
         internal SnapshotSpan Span { get; }
 
-        internal MessageMarker(LinterMessage message, SnapshotSpan span)
+        internal LinterWarning(LinterMessage message, SnapshotSpan span)
         {
             Message = message;
             Span = span;
         }
 
-        internal MessageMarker CloneAndTranslateTo(ITextSnapshot newSnapshot)
+        internal LinterWarning CloneAndTranslateTo(ITextSnapshot newSnapshot)
         {
             var newSpan = Span.TranslateTo(newSnapshot, SpanTrackingMode.EdgeExclusive);
 
             return newSpan.Length == Span.Length
-                ? new MessageMarker(Message, newSpan)
+                ? new LinterWarning(Message, newSpan)
                 : null;
         }
     }

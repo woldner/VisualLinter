@@ -1,7 +1,8 @@
-﻿using Microsoft.VisualStudio.Shell.TableManager;
+﻿using jwldnr.VisualLinter.Tagging;
+using Microsoft.VisualStudio.Shell.TableManager;
 using System;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.ErrorList
 {
     internal class SinkManager : IDisposable
     {
