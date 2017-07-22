@@ -97,7 +97,7 @@ namespace jwldnr.VisualLinter.Services
 
         private static string GetLocalConfigPath()
         {
-            var path = ProjectHelper.GetSolutionPath();
+            var path = VsixHelper.GetSolutionPath();
             if (null == path)
                 return null;
 

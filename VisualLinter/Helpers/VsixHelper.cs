@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Helpers
             {
                 var solution = GetSolution();
 
-                var item = solution?.FindProjectItem(fileName);
+                var item = solution?.FindProjectItem(filePath);
 
                 return item?.ContainingProject.Name;
             }

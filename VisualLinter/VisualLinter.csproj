@@ -57,11 +57,6 @@
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
-    <Compile Include="LinterMessage.cs" />
-    <Compile Include="LinterResult.cs" />
-    <Compile Include="LinterService.cs" />
-    <Compile Include="LinterSnapshot.cs" />
-    <Compile Include="MessageMarker.cs" />
     <Compile Include="OptionsDialogPage.cs">
       <SubType>Component</SubType>
     </Compile>
