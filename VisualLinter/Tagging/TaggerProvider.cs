@@ -150,12 +150,12 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void UpdateAllSinks()
+        internal void UpdateAllSinks(ITableEntriesSnapshotFactory factory)
         {
             lock (_managers)
             {
                 foreach (var manager in _managers)
-                    manager.UpdateSink();
+                    manager.UpdateSink(factory);
             }
         }
 

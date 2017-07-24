@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Services
 {
+    internal interface ILinterService
+    {
+        Task<IEnumerable<LinterMessage>> LintAsync(string filePath);
+    }
+
     [Export(typeof(ILinterService))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class LinterService : ILinterService

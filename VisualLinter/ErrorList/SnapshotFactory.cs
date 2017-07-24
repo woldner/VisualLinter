@@ -21,6 +21,7 @@ namespace jwldnr.VisualLinter.ErrorList
         public override ITableEntriesSnapshot GetSnapshot(int versionNumber)
         {
             var snapshot = CurrentSnapshot;
+
             return versionNumber == snapshot.VersionNumber
                 ? snapshot
                 : null;

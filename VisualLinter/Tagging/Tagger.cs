@@ -13,6 +13,10 @@ namespace jwldnr.VisualLinter.Tagging
 {
     internal class Tagger : ITagger<IErrorTag>, IDisposable
     {
+        internal SnapshotFactory Factory { get; }
+        internal string FilePath { get; private set; }
+        internal LinterSnapshot Snapshot { get; set; }
+
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
         private readonly TaggerProvider _provider;
@@ -36,10 +40,6 @@ namespace jwldnr.VisualLinter.Tagging
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
-
-        internal SnapshotFactory Factory { get; }
-        internal string FilePath { get; private set; }
-        internal LinterSnapshot Snapshot { get; set; }
 
         public void Dispose()
         {
@@ -215,7 +215,7 @@ namespace jwldnr.VisualLinter.Tagging
         {
             Factory.UpdateResults(snapshot);
 
-            _provider.UpdateAllSinks();
+            _provider.UpdateAllSinks(Factory);
 
             UpdateTags(_currentSnapshot, snapshot);
 
