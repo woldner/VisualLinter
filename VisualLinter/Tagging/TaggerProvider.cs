@@ -18,7 +18,8 @@ namespace jwldnr.VisualLinter.Tagging
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
     [ContentType("text")]
-    internal class TaggerProvider : IViewTaggerProvider, ITableDataSource
+    [TextViewRole(PredefinedTextViewRoles.Document)]
+    internal sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
     {
         public string DisplayName => "VisualLinter";
         public string Identifier => "VisualLinter";
@@ -29,6 +30,8 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly TaggerManager _taggers = new TaggerManager();
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
 
+        private ITableManager _tableManager;
+
         [ImportingConstructor]
         internal TaggerProvider(
             [Import] ILinterService linterService,
@@ -37,7 +40,7 @@ namespace jwldnr.VisualLinter.Tagging
         {
             _linterService = linterService;
 
-            var errorTableManager = tableManagerProvider
+            _tableManager = tableManagerProvider
                 .GetTableManager(StandardTables.ErrorsTable);
 
             _textDocumentFactoryService = textDocumentFactoryService;
@@ -56,7 +59,7 @@ namespace jwldnr.VisualLinter.Tagging
                 StandardTableColumnDefinitions.Text
             };
 
-            errorTableManager.AddSource(this, columns);
+            _tableManager.AddSource(this, columns);
         }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
@@ -83,6 +86,12 @@ namespace jwldnr.VisualLinter.Tagging
 
                 return tagger as ITagger<T>;
             }
+        }
+
+        public void Dispose()
+        {
+            _tableManager.RemoveSource(this);
+            _tableManager = null;
         }
 
         public IDisposable Subscribe(ITableDataSink sink)
