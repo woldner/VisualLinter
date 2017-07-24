@@ -213,11 +213,13 @@ namespace jwldnr.VisualLinter.Tagging
 
         private void SnapToNewSnapshot(LinterSnapshot snapshot)
         {
-            Factory.UpdateResults(snapshot);
+            var factory = Factory;
 
-            _provider.UpdateAllSinks(Factory);
+            factory.UpdateResults(snapshot);
 
-            UpdateTags(_currentSnapshot, snapshot);
+            _provider.UpdateAllSinks(factory);
+
+            UpdateWarnings(_currentSnapshot, snapshot);
 
             Snapshot = snapshot;
         }
@@ -225,11 +227,12 @@ namespace jwldnr.VisualLinter.Tagging
         private LinterSnapshot TranslateWarningSpans()
         {
             var oldSnapshot = Factory.CurrentSnapshot;
-            var newTags = oldSnapshot.Warnings
-                .Select(tag => tag.CloneAndTranslateTo(_currentSnapshot))
+
+            var newWarnings = oldSnapshot.Warnings
+                .Select(warning => warning.CloneAndTranslateTo(_currentSnapshot))
                 .Where(clone => null != clone);
 
-            return new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newTags);
+            return new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newWarnings);
         }
 
         private void UpdateDirtySpans(TextContentChangedEventArgs e)
@@ -245,7 +248,7 @@ namespace jwldnr.VisualLinter.Tagging
             _dirtySpans = newDirtySpans;
         }
 
-        private void UpdateTags(ITextSnapshot currentSnapshot, LinterSnapshot snapshot)
+        private void UpdateWarnings(ITextSnapshot currentSnapshot, LinterSnapshot snapshot)
         {
             var oldSnapshot = Snapshot;
 
@@ -256,7 +259,7 @@ namespace jwldnr.VisualLinter.Tagging
             var start = int.MaxValue;
             var end = int.MinValue;
 
-            if (null != oldSnapshot && oldSnapshot.Count > 0)
+            if (null != oldSnapshot && 0 < oldSnapshot.Count)
             {
                 start = oldSnapshot.Warnings.First().Span.Start
                     .TranslateTo(currentSnapshot, PointTrackingMode.Negative);
@@ -264,13 +267,13 @@ namespace jwldnr.VisualLinter.Tagging
                     .TranslateTo(currentSnapshot, PointTrackingMode.Positive);
             }
 
-            if (snapshot.Count > 0)
+            if (0 < snapshot.Count)
             {
                 start = Math.Min(start, snapshot.Warnings.First().Span.Start.Position);
                 end = Math.Max(end, snapshot.Warnings.Last().Span.End.Position);
             }
 
-            if (start < end)
+            if (end > start)
                 handler(this, new SnapshotSpanEventArgs(new SnapshotSpan(
                     currentSnapshot, Span.FromBounds(start, end))));
         }
