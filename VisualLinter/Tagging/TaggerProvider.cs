@@ -20,8 +20,8 @@ namespace jwldnr.VisualLinter.Tagging
     [ContentType("text")]
     internal class TaggerProvider : IViewTaggerProvider, ITableDataSource
     {
-        public string DisplayName => "VisualLint";
-        public string Identifier => "VisualLint";
+        public string DisplayName => "VisualLinter";
+        public string Identifier => "VisualLinter";
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
 
         private readonly ILinterService _linterService;
