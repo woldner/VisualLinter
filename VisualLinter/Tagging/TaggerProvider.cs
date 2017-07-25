@@ -1,5 +1,4 @@
 ﻿using jwldnr.VisualLinter.ErrorList;
-using jwldnr.VisualLinter.Models;
 using jwldnr.VisualLinter.Services;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
@@ -11,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -75,7 +73,10 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 if (!_taggers.Exists(filePath))
                 {
-                    return new Tagger(buffer, document, this) as ITagger<T>;
+                    var linterService = buffer.Properties.GetOrCreateSingletonProperty(
+                        typeof(ILinterService), () => new LinterService());
+
+                    return new Tagger(this, buffer, document, linterService) as ITagger<T>;
                 }
 
                 var result = _taggers.TryGetValue(filePath, out var tagger);

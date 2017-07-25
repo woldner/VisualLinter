@@ -1,6 +1,7 @@
 using jwldnr.VisualLinter.ErrorList;
 using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Models;
+using jwldnr.VisualLinter.Services;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -19,16 +20,22 @@ namespace jwldnr.VisualLinter.Tagging
 
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
+        private readonly ILinterService _linterService;
         private readonly TaggerProvider _provider;
 
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
 
-        internal Tagger(ITextBuffer buffer, ITextDocument document, TaggerProvider provider)
+        internal Tagger(
+            TaggerProvider provider,
+            ITextBuffer buffer,
+            ITextDocument document,
+            ILinterService linterService)
         {
             _provider = provider;
-            _document = document;
             _buffer = buffer;
+            _document = document;
+            _linterService = linterService;
 
             _currentSnapshot = buffer.CurrentSnapshot;
             _dirtySpans = new NormalizedSnapshotSpanCollection();
@@ -44,7 +51,9 @@ namespace jwldnr.VisualLinter.Tagging
         public void Dispose()
         {
             _document.FileActionOccurred -= OnFileActionOccurred;
+
             _buffer.ChangedLowPriority -= OnBufferChange;
+            _buffer.Properties.RemoveProperty(typeof(ILinterService));
 
             _provider.RemoveTagger(this);
         }
@@ -96,6 +105,12 @@ namespace jwldnr.VisualLinter.Tagging
         private static object GetToolTipContent(string message, string ruleId)
         {
             return $"{message} ({ruleId})";
+        }
+
+        private async Task AnalyzeAsync(string filePath)
+        {
+            var messages = await LintAsync(filePath);
+            UpdateMessages(messages);
         }
 
         private LinterWarning CreateWarning(LinterMessage message)
@@ -175,7 +190,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             _provider.AddTagger(this);
 
-            return _provider.AnalyzeAsync(FilePath);
+            return AnalyzeAsync(FilePath);
         }
 
         private bool IsValidRange(LinterMessage message)
@@ -186,7 +201,12 @@ namespace jwldnr.VisualLinter.Tagging
                 return false;
 
             return range.LineNumber >= 0 && range.LineNumber <= _currentSnapshot.LineCount &&
-                   range.EndColumn <= _currentSnapshot.Length;
+                range.EndColumn <= _currentSnapshot.Length;
+        }
+
+        private Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
+        {
+            return _linterService.LintAsync(filePath);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
@@ -207,7 +227,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
             else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
             {
-                await _provider.AnalyzeAsync(FilePath);
+                await AnalyzeAsync(FilePath);
             }
         }
 

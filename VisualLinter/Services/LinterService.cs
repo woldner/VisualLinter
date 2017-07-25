@@ -3,7 +3,6 @@ using jwldnr.VisualLinter.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -16,8 +15,6 @@ namespace jwldnr.VisualLinter.Services
         Task<IEnumerable<LinterMessage>> LintAsync(string filePath);
     }
 
-    [Export(typeof(ILinterService))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
     internal class LinterService : ILinterService
     {
         private readonly string _eslintPath;
