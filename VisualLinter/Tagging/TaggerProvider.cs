@@ -25,7 +25,6 @@ namespace jwldnr.VisualLinter.Tagging
         public string Identifier => "VisualLinter";
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
 
-        private readonly ILinterService _linterService;
         private readonly List<SinkManager> _managers = new List<SinkManager>();
         private readonly TaggerManager _taggers = new TaggerManager();
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
@@ -34,12 +33,9 @@ namespace jwldnr.VisualLinter.Tagging
 
         [ImportingConstructor]
         internal TaggerProvider(
-            [Import] ILinterService linterService,
             [Import] ITableManagerProvider tableManagerProvider,
             [Import] ITextDocumentFactoryService textDocumentFactoryService)
         {
-            _linterService = linterService;
-
             _tableManager = tableManagerProvider
                 .GetTableManager(StandardTables.ErrorsTable);
 
@@ -78,7 +74,9 @@ namespace jwldnr.VisualLinter.Tagging
             lock (_taggers)
             {
                 if (!_taggers.Exists(filePath))
+                {
                     return new Tagger(buffer, document, this) as ITagger<T>;
+                }
 
                 var result = _taggers.TryGetValue(filePath, out var tagger);
                 if (false == result)
@@ -121,17 +119,6 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal async Task AnalyzeAsync(string filePath)
-        {
-            var messages = await LintAsync(filePath);
-            UpdateMessages(filePath, messages);
-        }
-
-        internal Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
-        {
-            return _linterService.LintAsync(filePath);
-        }
-
         internal void RemoveSinkManager(SinkManager manager)
         {
             lock (_managers)
@@ -171,15 +158,6 @@ namespace jwldnr.VisualLinter.Tagging
         private bool TryGetTextDocument(ITextBuffer buffer, out ITextDocument document)
         {
             return _textDocumentFactoryService.TryGetTextDocument(buffer, out document);
-        }
-
-        private void UpdateMessages(string filePath, IEnumerable<LinterMessage> messages)
-        {
-            lock (_taggers)
-            {
-                if (_taggers.TryGetValue(filePath, out Tagger tagger))
-                    tagger.UpdateMessages(messages);
-            }
         }
     }
 }
