@@ -1,7 +1,6 @@
 using jwldnr.VisualLinter.ErrorList;
 using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Models;
-using jwldnr.VisualLinter.Services;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -20,7 +19,7 @@ namespace jwldnr.VisualLinter.Tagging
 
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
-        private readonly ILinterService _linterService;
+        private readonly Linter _linter;
         private readonly TaggerProvider _provider;
 
         private ITextSnapshot _currentSnapshot;
@@ -28,14 +27,14 @@ namespace jwldnr.VisualLinter.Tagging
 
         internal Tagger(
             TaggerProvider provider,
+            Linter linter,
             ITextBuffer buffer,
-            ITextDocument document,
-            ILinterService linterService)
+            ITextDocument document)
         {
             _provider = provider;
+            _linter = linter;
             _buffer = buffer;
             _document = document;
-            _linterService = linterService;
 
             _currentSnapshot = buffer.CurrentSnapshot;
             _dirtySpans = new NormalizedSnapshotSpanCollection();
@@ -51,9 +50,7 @@ namespace jwldnr.VisualLinter.Tagging
         public void Dispose()
         {
             _document.FileActionOccurred -= OnFileActionOccurred;
-
             _buffer.ChangedLowPriority -= OnBufferChange;
-            _buffer.Properties.RemoveProperty(typeof(ILinterService));
 
             _provider.RemoveTagger(this);
         }
@@ -206,7 +203,7 @@ namespace jwldnr.VisualLinter.Tagging
 
         private Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
-            return _linterService.LintAsync(filePath);
+            return _linter.LintAsync(filePath);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)

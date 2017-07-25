@@ -59,7 +59,7 @@
     <Compile Include="Models\Range.cs" />
     <Compile Include="Models\LinterMessage.cs" />
     <Compile Include="Models\LinterResult.cs" />
-    <Compile Include="Services\LinterService.cs" />
+    <Compile Include="Linter.cs" />
     <Compile Include="ErrorList\LinterSnapshot.cs" />
     <Compile Include="Models\LinterWarning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

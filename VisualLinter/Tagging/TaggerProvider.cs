@@ -1,5 +1,4 @@
 ﻿using jwldnr.VisualLinter.ErrorList;
-using jwldnr.VisualLinter.Services;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Microsoft.VisualStudio.Text;
@@ -17,6 +16,7 @@ namespace jwldnr.VisualLinter.Tagging
     [TagType(typeof(IErrorTag))]
     [ContentType("text")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
+    [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     internal sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
     {
         public string DisplayName => "VisualLinter";
@@ -72,12 +72,7 @@ namespace jwldnr.VisualLinter.Tagging
             lock (_taggers)
             {
                 if (!_taggers.Exists(filePath))
-                {
-                    var linterService = buffer.Properties.GetOrCreateSingletonProperty(
-                        typeof(ILinterService), () => new LinterService());
-
-                    return new Tagger(this, buffer, document, linterService) as ITagger<T>;
-                }
+                    return new Tagger(this, new Linter(), buffer, document) as ITagger<T>;
 
                 var result = _taggers.TryGetValue(filePath, out var tagger);
                 if (false == result)
