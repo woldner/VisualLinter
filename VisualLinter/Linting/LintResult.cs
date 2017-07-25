@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace jwldnr.VisualLinter.Models
+namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    public class LinterResult
+    public class LintResult
     {
         [JsonProperty("errorCount")]
         public int ErrorCount { get; set; }
@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Models
         public string FilePath { get; set; }
 
         [JsonProperty("messages")]
-        public IEnumerable<LinterMessage> Messages { get; set; }
+        public IEnumerable<LintMessage> Messages { get; set; }
 
         [JsonProperty("source")]
         public string Source { get; set; }

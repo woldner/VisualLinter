@@ -1,4 +1,4 @@
-﻿using jwldnr.VisualLinter.ErrorList;
+﻿using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Microsoft.VisualStudio.Text;

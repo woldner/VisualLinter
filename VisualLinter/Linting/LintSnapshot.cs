@@ -1,33 +1,33 @@
 using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Models;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace jwldnr.VisualLinter.ErrorList
+namespace jwldnr.VisualLinter.Linting
 {
-    internal class LinterSnapshot : WpfTableEntriesSnapshotBase
+    internal class LintSnapshot : WpfTableEntriesSnapshotBase
     {
         public override int Count => _warnings.Count;
         public override int VersionNumber { get; }
 
-        internal IEnumerable<LinterWarning> Warnings => _readonlyWarnings;
-        internal LinterSnapshot NextSnapshot;
+        internal IEnumerable<LintWarning> Warnings => _readonlyWarnings;
+        internal LintSnapshot NextSnapshot;
 
         private readonly string _filePath;
-        private readonly IReadOnlyCollection<LinterWarning> _readonlyWarnings;
-        private readonly IList<LinterWarning> _warnings;
+        private readonly IReadOnlyCollection<LintWarning> _readonlyWarnings;
+        private readonly IList<LintWarning> _warnings;
+
         private string _projectName;
 
-        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<LinterWarning> warnings)
+        internal LintSnapshot(string filePath, int versionNumber, IEnumerable<LintWarning> warnings)
         {
             _filePath = filePath;
             VersionNumber = versionNumber;
 
-            _warnings = new List<LinterWarning>(warnings);
-            _readonlyWarnings = new ReadOnlyCollection<LinterWarning>(_warnings);
+            _warnings = new List<LintWarning>(warnings);
+            _readonlyWarnings = new ReadOnlyCollection<LintWarning>(_warnings);
         }
 
         public override bool CanCreateDetailsContent(int index)
@@ -39,7 +39,7 @@ namespace jwldnr.VisualLinter.ErrorList
 
         public override bool TryCreateDetailsStringContent(int index, out string content)
         {
-            // todo, use the linter fix to provide a more detailed description
+            // todo, use the lint fix to provide a more detailed description
             content = _warnings[index].Message.Message;
             return null != content;
         }

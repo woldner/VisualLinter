@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.Shell.TableManager;
 using System;
 
-namespace jwldnr.VisualLinter.ErrorList
+namespace jwldnr.VisualLinter.Linting
 {
     internal class SinkManager : IDisposable
     {

@@ -1,5 +1,4 @@
 ﻿using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace jwldnr.VisualLinter
+namespace jwldnr.VisualLinter.Linting
 {
     internal class Linter
     {
@@ -19,7 +18,7 @@ namespace jwldnr.VisualLinter
             _eslintPath = GetESLintPath();
         }
 
-        internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
+        internal async Task<IEnumerable<LintMessage>> LintAsync(string filePath)
         {
             try
             {
@@ -34,10 +33,10 @@ namespace jwldnr.VisualLinter
                 OutputWindowHelper.WriteLine(e.Message);
             }
 
-            return Enumerable.Empty<LinterMessage>();
+            return Enumerable.Empty<LintMessage>();
         }
 
-        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string fileName, string arguments)
+        private static async Task<IEnumerable<LintResult>> ExecuteProcessAsync(string fileName, string arguments)
         {
             var startInfo = new ProcessStartInfo(fileName, arguments)
             {
@@ -65,14 +64,14 @@ namespace jwldnr.VisualLinter
 
                 try
                 {
-                    return JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
+                    return JsonConvert.DeserializeObject<IEnumerable<LintResult>>(output);
                 }
                 catch (Exception e)
                 {
                     OutputWindowHelper.WriteLine(e.Message);
                 }
 
-                return Enumerable.Empty<LinterResult>();
+                return Enumerable.Empty<LintResult>();
             }
         }
 
@@ -89,14 +88,14 @@ namespace jwldnr.VisualLinter
             return $"--format json \"{filePath}\"";
         }
 
-        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
+        private static IEnumerable<LintMessage> ProcessResults(IEnumerable<LintResult> results)
         {
             // this extension only support 1-1 linting
             // therefor results count will always be 1
             var result = results.FirstOrDefault();
 
             return null == result
-                ? Enumerable.Empty<LinterMessage>()
+                ? Enumerable.Empty<LintMessage>()
                 : result.Messages;
         }
     }
