@@ -8,18 +8,23 @@ namespace jwldnr.VisualLinter.Models
 
         internal SnapshotSpan Span { get; }
 
-        internal LinterWarning(LinterMessage message, SnapshotSpan span)
+        internal LinterWarning(SnapshotSpan span, LinterMessage message)
         {
             Message = message;
             Span = span;
         }
 
-        internal LinterWarning CloneAndTranslateTo(ITextSnapshot newSnapshot)
+        internal static LinterWarning Clone(LinterWarning warning)
         {
-            var newSpan = Span.TranslateTo(newSnapshot, SpanTrackingMode.EdgeExclusive);
+            return new LinterWarning(warning.Span, warning.Message);
+        }
 
-            return newSpan.Length == Span.Length
-                ? new LinterWarning(Message, newSpan)
+        internal LinterWarning CloneAndTranslateTo(LinterWarning warning, ITextSnapshot newSnapshot)
+        {
+            var newSpan = warning.Span.TranslateTo(newSnapshot, SpanTrackingMode.EdgeExclusive);
+
+            return newSpan.Length == warning.Span.Length
+                ? new LinterWarning(newSpan, warning.Message)
                 : null;
         }
     }

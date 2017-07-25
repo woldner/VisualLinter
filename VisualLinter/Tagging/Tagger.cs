@@ -103,7 +103,7 @@ namespace jwldnr.VisualLinter.Tagging
             var start = new SnapshotPoint(_currentSnapshot, message.Range.StartColumn);
             var end = new SnapshotPoint(_currentSnapshot, message.Range.EndColumn);
 
-            return new LinterWarning(message, new SnapshotSpan(start, end));
+            return new LinterWarning(new SnapshotSpan(start, end), message);
         }
 
         private Range GetRange(LinterMessage message)
@@ -229,7 +229,7 @@ namespace jwldnr.VisualLinter.Tagging
             var oldSnapshot = Factory.CurrentSnapshot;
 
             var newWarnings = oldSnapshot.Warnings
-                .Select(warning => warning.CloneAndTranslateTo(_currentSnapshot))
+                .Select(warning => warning.CloneAndTranslateTo(warning, _currentSnapshot))
                 .Where(clone => null != clone);
 
             return new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newWarnings);
