@@ -25,7 +25,9 @@ namespace jwldnr.VisualLinter.Tagging
 
         private static object GetToolTipContent(string message, string ruleId)
         {
-            return $"{message} ({ruleId})";
+            return null != ruleId
+                ? $"{message} ({ruleId})"
+                : message;
         }
     }
 }

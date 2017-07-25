@@ -72,11 +72,11 @@ namespace jwldnr.VisualLinter.Linting
 
                 case StandardTableKeyNames.ErrorCodeToolTip:
                 case StandardTableKeyNames.HelpLink:
-                    content = GetRuleUrl(warning.Message.RuleId);
+                    content = GetRuleUrl(warning.Message.IsFatal, warning.Message.RuleId);
                     return null != content;
 
                 case StandardTableKeyNames.ErrorCode:
-                    content = $"({warning.Message.RuleId})";
+                    content = GetErrorCode(warning.Message.IsFatal, warning.Message.RuleId);
                     return true;
 
                 case StandardTableKeyNames.ErrorSeverity:
@@ -113,9 +113,18 @@ namespace jwldnr.VisualLinter.Linting
                 : __VSERRORCATEGORY.EC_WARNING;
         }
 
-        private static string GetRuleUrl(string ruleId)
+        private static string GetErrorCode(bool isFatal, string ruleId)
         {
-            return $"http://eslint.org/docs/rules/{ruleId}";
+            return isFatal
+                ? null
+                : $"({ruleId})";
+        }
+
+        private static string GetRuleUrl(bool isFatal, string ruleId)
+        {
+            return isFatal
+                ? null
+                : $"http://eslint.org/docs/rules/{ruleId}";
         }
     }
 }
