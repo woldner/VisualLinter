@@ -90,8 +90,8 @@ namespace jwldnr.VisualLinter.Tagging
 
         private LinterWarning CreateWarning(LinterMessage message)
         {
-            var start = new SnapshotPoint(_currentSnapshot, message.MessageRange.StartColumn);
-            var end = new SnapshotPoint(_currentSnapshot, message.MessageRange.EndColumn);
+            var start = new SnapshotPoint(_currentSnapshot, message.Range.StartColumn);
+            var end = new SnapshotPoint(_currentSnapshot, message.Range.EndColumn);
 
             return new LinterWarning(new SnapshotSpan(start, end), message);
         }
@@ -153,7 +153,7 @@ namespace jwldnr.VisualLinter.Tagging
         {
             foreach (var message in messages)
             {
-                message.MessageRange = GetMessageRange(message);
+                message.Range = GetMessageRange(message);
                 yield return message;
             }
         }
@@ -170,7 +170,7 @@ namespace jwldnr.VisualLinter.Tagging
 
         private bool IsValidRange(LinterMessage message)
         {
-            var range = message.MessageRange;
+            var range = message.Range;
 
             if (null == range)
                 return false;

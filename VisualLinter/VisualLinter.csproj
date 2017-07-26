@@ -57,18 +57,18 @@
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
     <Compile Include="Linting\MessageRange.cs" />
-    <Compile Include="Linting\LintMessage.cs" />
-    <Compile Include="Linting\LintResult.cs" />
+    <Compile Include="Linting\LinterMessage.cs" />
+    <Compile Include="Linting\LinterResult.cs" />
     <Compile Include="Linting\Linter.cs" />
-    <Compile Include="Linting\LintSnapshot.cs" />
-    <Compile Include="Linting\LintWarning.cs" />
+    <Compile Include="Linting\LinterSnapshot.cs" />
+    <Compile Include="Linting\LinterWarning.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Linting\SinkManager.cs" />
     <Compile Include="Linting\SnapshotFactory.cs" />
     <Compile Include="source.extension.cs">
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
-    <Compile Include="Tagging\LintTag.cs" />
+    <Compile Include="Tagging\LinterTag.cs" />
     <Compile Include="Tagging\Tagger.cs" />
     <Compile Include="Tagging\TaggerManager.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
