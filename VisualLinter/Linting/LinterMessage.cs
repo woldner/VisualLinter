@@ -1,10 +1,9 @@
-﻿using jwldnr.VisualLinter.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    public class LintMessage
+    internal class LinterMessage
     {
         [JsonProperty("column")]
         public int Column { get; set; }

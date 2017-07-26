@@ -1,6 +1,5 @@
 using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Linting;
-using jwldnr.VisualLinter.Models;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using System;
@@ -14,7 +13,7 @@ namespace jwldnr.VisualLinter.Tagging
     {
         internal SnapshotFactory Factory { get; }
         internal string FilePath { get; private set; }
-        internal LintSnapshot Snapshot { get; set; }
+        internal LinterSnapshot Snapshot { get; set; }
 
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
@@ -39,7 +38,7 @@ namespace jwldnr.VisualLinter.Tagging
             _dirtySpans = new NormalizedSnapshotSpanCollection();
 
             FilePath = document.FilePath;
-            Factory = new SnapshotFactory(new LintSnapshot(FilePath, 0, new List<LintWarning>()));
+            Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<LinterWarning>()));
 
             Initialize();
         }
@@ -63,7 +62,7 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 return Snapshot.Warnings
                     .Where(warning => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(warning.Span)))
-                    .Select(warning => new TagSpan<IErrorTag>(warning.Span, new LintTag(warning.Message)));
+                    .Select(warning => new TagSpan<IErrorTag>(warning.Span, new LinterTag(warning.Message)));
             }
             catch (Exception e)
             {
@@ -73,12 +72,12 @@ namespace jwldnr.VisualLinter.Tagging
             return Enumerable.Empty<ITagSpan<IErrorTag>>();
         }
 
-        internal void UpdateMessages(IEnumerable<LintMessage> messages)
+        internal void UpdateMessages(IEnumerable<LinterMessage> messages)
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
             var warnings = GetMessageRanges(messages).Where(IsValidRange).Select(CreateWarning);
-            var newSnapshot = new LintSnapshot(FilePath, oldSnapshot.VersionNumber + 1, warnings);
+            var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, warnings);
 
             SnapToNewSnapshot(newSnapshot);
         }
@@ -89,15 +88,15 @@ namespace jwldnr.VisualLinter.Tagging
             UpdateMessages(messages);
         }
 
-        private LintWarning CreateWarning(LintMessage message)
+        private LinterWarning CreateWarning(LinterMessage message)
         {
-            var start = new SnapshotPoint(_currentSnapshot, message.Range.StartColumn);
-            var end = new SnapshotPoint(_currentSnapshot, message.Range.EndColumn);
+            var start = new SnapshotPoint(_currentSnapshot, message.MessageRange.StartColumn);
+            var end = new SnapshotPoint(_currentSnapshot, message.MessageRange.EndColumn);
 
-            return new LintWarning(new SnapshotSpan(start, end), message);
+            return new LinterWarning(new SnapshotSpan(start, end), message);
         }
 
-        private MessageRange GetMessageRange(LintMessage message)
+        private MessageRange GetMessageRange(LinterMessage message)
         {
             try
             {
@@ -150,11 +149,11 @@ namespace jwldnr.VisualLinter.Tagging
             return null;
         }
 
-        private IEnumerable<LintMessage> GetMessageRanges(IEnumerable<LintMessage> messages)
+        private IEnumerable<LinterMessage> GetMessageRanges(IEnumerable<LinterMessage> messages)
         {
             foreach (var message in messages)
             {
-                message.Range = GetMessageRange(message);
+                message.MessageRange = GetMessageRange(message);
                 yield return message;
             }
         }
@@ -169,9 +168,9 @@ namespace jwldnr.VisualLinter.Tagging
             return AnalyzeAsync(FilePath);
         }
 
-        private bool IsValidRange(LintMessage message)
+        private bool IsValidRange(LinterMessage message)
         {
-            var range = message.Range;
+            var range = message.MessageRange;
 
             if (null == range)
                 return false;
@@ -180,7 +179,7 @@ namespace jwldnr.VisualLinter.Tagging
                 range.EndColumn <= _currentSnapshot.Length;
         }
 
-        private Task<IEnumerable<LintMessage>> LintAsync(string filePath)
+        private Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
             return _linter.LintAsync(filePath);
         }
@@ -207,7 +206,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        private void SnapToNewSnapshot(LintSnapshot snapshot)
+        private void SnapToNewSnapshot(LinterSnapshot snapshot)
         {
             var factory = Factory;
 
@@ -220,7 +219,7 @@ namespace jwldnr.VisualLinter.Tagging
             Snapshot = snapshot;
         }
 
-        private LintSnapshot TranslateWarningSpans()
+        private LinterSnapshot TranslateWarningSpans()
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
@@ -228,7 +227,7 @@ namespace jwldnr.VisualLinter.Tagging
                 .Select(warning => warning.CloneAndTranslateTo(warning, _currentSnapshot))
                 .Where(clone => null != clone);
 
-            return new LintSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newWarnings);
+            return new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newWarnings);
         }
 
         private void UpdateDirtySpans(TextContentChangedEventArgs e)
@@ -244,7 +243,7 @@ namespace jwldnr.VisualLinter.Tagging
             _dirtySpans = newDirtySpans;
         }
 
-        private void UpdateWarnings(ITextSnapshot currentSnapshot, LintSnapshot snapshot)
+        private void UpdateWarnings(ITextSnapshot currentSnapshot, LinterSnapshot snapshot)
         {
             var oldSnapshot = Snapshot;
 

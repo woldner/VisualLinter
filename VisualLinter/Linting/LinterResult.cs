@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    public class LintResult
+    internal class LinterResult
     {
         [JsonProperty("errorCount")]
         public int ErrorCount { get; set; }
@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Linting
         public string FilePath { get; set; }
 
         [JsonProperty("messages")]
-        public IEnumerable<LintMessage> Messages { get; set; }
+        public IEnumerable<LinterMessage> Messages { get; set; }
 
         [JsonProperty("source")]
         public string Source { get; set; }

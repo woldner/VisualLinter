@@ -6,9 +6,9 @@ namespace jwldnr.VisualLinter.Linting
     {
         public override int CurrentVersionNumber => CurrentSnapshot.VersionNumber;
 
-        internal LintSnapshot CurrentSnapshot { get; private set; }
+        internal LinterSnapshot CurrentSnapshot { get; private set; }
 
-        internal SnapshotFactory(LintSnapshot snapshot)
+        internal SnapshotFactory(LinterSnapshot snapshot)
         {
             CurrentSnapshot = snapshot;
         }
@@ -27,7 +27,7 @@ namespace jwldnr.VisualLinter.Linting
                 : null;
         }
 
-        internal void UpdateResults(LintSnapshot snapshot)
+        internal void UpdateResults(LinterSnapshot snapshot)
         {
             CurrentSnapshot.NextSnapshot = snapshot;
             CurrentSnapshot = snapshot;

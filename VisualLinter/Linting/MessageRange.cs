@@ -1,6 +1,6 @@
-﻿namespace jwldnr.VisualLinter.Models
+﻿namespace jwldnr.VisualLinter.Linting
 {
-    public class MessageRange
+    internal class MessageRange
     {
         public int EndColumn { get; set; }
 

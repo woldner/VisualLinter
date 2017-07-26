@@ -18,7 +18,7 @@ namespace jwldnr.VisualLinter.Linting
             _eslintPath = GetESLintPath();
         }
 
-        internal async Task<IEnumerable<LintMessage>> LintAsync(string filePath)
+        internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
             try
             {
@@ -33,10 +33,10 @@ namespace jwldnr.VisualLinter.Linting
                 OutputWindowHelper.WriteLine(e.Message);
             }
 
-            return Enumerable.Empty<LintMessage>();
+            return Enumerable.Empty<LinterMessage>();
         }
 
-        private static async Task<IEnumerable<LintResult>> ExecuteProcessAsync(string fileName, string arguments)
+        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string fileName, string arguments)
         {
             var startInfo = new ProcessStartInfo(fileName, arguments)
             {
@@ -64,14 +64,14 @@ namespace jwldnr.VisualLinter.Linting
 
                 try
                 {
-                    return JsonConvert.DeserializeObject<IEnumerable<LintResult>>(output);
+                    return JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
                 }
                 catch (Exception e)
                 {
                     OutputWindowHelper.WriteLine(e.Message);
                 }
 
-                return Enumerable.Empty<LintResult>();
+                return Enumerable.Empty<LinterResult>();
             }
         }
 
@@ -88,14 +88,14 @@ namespace jwldnr.VisualLinter.Linting
             return $"--format json \"{filePath}\"";
         }
 
-        private static IEnumerable<LintMessage> ProcessResults(IEnumerable<LintResult> results)
+        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
         {
             // this extension only support 1-1 linting
             // therefor results count will always be 1
             var result = results.FirstOrDefault();
 
             return null == result
-                ? Enumerable.Empty<LintMessage>()
+                ? Enumerable.Empty<LinterMessage>()
                 : result.Messages;
         }
     }

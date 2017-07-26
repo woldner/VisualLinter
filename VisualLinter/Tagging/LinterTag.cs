@@ -4,16 +4,16 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    internal class LintTag : IErrorTag
+    internal class LinterTag : IErrorTag
     {
         public string ErrorType { get; }
 
         public object ToolTipContent { get; }
 
-        internal LintTag(LintMessage message)
+        internal LinterTag(LinterMessage message)
         {
             ErrorType = GetErrorType(message.IsFatal);
-            ToolTipContent = GetToolTipContent(message.Message, message.RuleId);
+            ToolTipContent = GetToolTipContent(message.IsFatal, message.Message, message.RuleId);
         }
 
         private static string GetErrorType(bool isFatal)
@@ -23,11 +23,11 @@ namespace jwldnr.VisualLinter.Tagging
                 : PredefinedErrorTypeNames.Warning;
         }
 
-        private static object GetToolTipContent(string message, string ruleId)
+        private static object GetToolTipContent(bool isFatal, string message, string ruleId)
         {
-            return null != ruleId
-                ? $"{message} ({ruleId})"
-                : message;
+            return isFatal
+                ? message
+                : $"{message} ({ruleId})";
         }
     }
 }

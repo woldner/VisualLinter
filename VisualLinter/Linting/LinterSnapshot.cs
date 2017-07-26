@@ -7,27 +7,27 @@ using System.Collections.ObjectModel;
 
 namespace jwldnr.VisualLinter.Linting
 {
-    internal class LintSnapshot : WpfTableEntriesSnapshotBase
+    internal class LinterSnapshot : WpfTableEntriesSnapshotBase
     {
         public override int Count => _warnings.Count;
         public override int VersionNumber { get; }
 
-        internal IEnumerable<LintWarning> Warnings => _readonlyWarnings;
-        internal LintSnapshot NextSnapshot;
+        internal IEnumerable<LinterWarning> Warnings => _readonlyWarnings;
+        internal LinterSnapshot NextSnapshot;
 
         private readonly string _filePath;
-        private readonly IReadOnlyCollection<LintWarning> _readonlyWarnings;
-        private readonly IList<LintWarning> _warnings;
+        private readonly IReadOnlyCollection<LinterWarning> _readonlyWarnings;
+        private readonly IList<LinterWarning> _warnings;
 
         private string _projectName;
 
-        internal LintSnapshot(string filePath, int versionNumber, IEnumerable<LintWarning> warnings)
+        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<LinterWarning> warnings)
         {
             _filePath = filePath;
             VersionNumber = versionNumber;
 
-            _warnings = new List<LintWarning>(warnings);
-            _readonlyWarnings = new ReadOnlyCollection<LintWarning>(_warnings);
+            _warnings = new List<LinterWarning>(warnings);
+            _readonlyWarnings = new ReadOnlyCollection<LinterWarning>(_warnings);
         }
 
         public override bool CanCreateDetailsContent(int index)
