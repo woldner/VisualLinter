@@ -80,7 +80,7 @@ namespace jwldnr.VisualLinter.Linting
                     return true;
 
                 case StandardTableKeyNames.ErrorSeverity:
-                    content = GetErrorCategory(warning.Message.IsFatal);
+                    content = GetErrorCategory(warning.Message);
                     return true;
 
                 case StandardTableKeyNames.ErrorSource:
@@ -106,11 +106,19 @@ namespace jwldnr.VisualLinter.Linting
             }
         }
 
-        private static __VSERRORCATEGORY GetErrorCategory(bool isFatal)
+        private static __VSERRORCATEGORY GetErrorCategory(LinterMessage message)
         {
-            return isFatal
-                ? __VSERRORCATEGORY.EC_ERROR
-                : __VSERRORCATEGORY.EC_WARNING;
+            if (message.IsFatal)
+                return __VSERRORCATEGORY.EC_ERROR;
+
+            switch (message.Severity)
+            {
+                case ESLintRuleLevel.Error:
+                    return __VSERRORCATEGORY.EC_ERROR;
+                case ESLintRuleLevel.Warning:
+                default:
+                    return __VSERRORCATEGORY.EC_WARNING;
+            }
         }
 
         private static string GetErrorCode(bool isFatal, string ruleId)
