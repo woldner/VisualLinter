@@ -16,7 +16,6 @@ namespace jwldnr.VisualLinter.Helpers
             var outputWindowPane = OutputWindowPane;
 
             outputWindowPane?.OutputString($"{message + Environment.NewLine}");
-            outputWindowPane?.Activate();
         }
 
         private static IVsOutputWindowPane GetOutputWindowPane()
