@@ -30,7 +30,7 @@ namespace jwldnr.VisualLinter
 
         private void UseGlobalConfig_OnClick(object sender, RoutedEventArgs e)
         {
-            OutputWindowHelper.WriteLine($"Use global config option set to {UseGlobalConfig}");
+            OutputWindowHelper.WriteLine($"use global config option set to {UseGlobalConfig}");
 
             e.Handled = true;
         }

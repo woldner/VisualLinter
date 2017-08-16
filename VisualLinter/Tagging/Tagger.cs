@@ -269,7 +269,7 @@ namespace jwldnr.VisualLinter.Tagging
                 end = Math.Max(end, snapshot.Warnings.Last().Span.End.Position);
             }
 
-            if (end <= start)
+            if (start >= end)
                 return;
 
             handler(this, new SnapshotSpanEventArgs(new SnapshotSpan(

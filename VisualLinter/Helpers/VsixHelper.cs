@@ -63,8 +63,8 @@ namespace jwldnr.VisualLinter.Helpers
             }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine($"Unable to get project name for file: {Path.GetFileName(filePath)}"
-                    + $"\nError message: {e.Message}");
+                OutputWindowHelper.WriteLine($"unable to get project name for file: {Path.GetFileName(filePath)}"
+                    + $"\nerror message: {e.Message}");
             }
 
             return null;
@@ -75,7 +75,7 @@ namespace jwldnr.VisualLinter.Helpers
             var solution = GetSolution();
 
             return Path.GetDirectoryName(solution?.FullName)
-                ?? throw new Exception("could not get directory info for solution");
+                ?? throw new Exception("fatal: could not get solution directory info");
         }
 
         private static Project GetProject(string filePath)
@@ -90,8 +90,8 @@ namespace jwldnr.VisualLinter.Helpers
             }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine($"Unable to get project for file: {Path.GetFileName(filePath)}"
-                    + $"\nError message: {e.Message}");
+                OutputWindowHelper.WriteLine($"unable to get project for file: {Path.GetFileName(filePath)}"
+                    + $"\nerror message: {e.Message}");
             }
 
             return null;
