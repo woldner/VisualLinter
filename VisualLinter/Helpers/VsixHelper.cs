@@ -20,39 +20,38 @@ namespace jwldnr.VisualLinter.Helpers
         {
             var userDirectoryPath = GetUserDirectoryPath();
 
-            var configs = Directory.EnumerateFiles(userDirectoryPath, ".eslintrc*", SearchOption.TopDirectoryOnly)
+            var foundConfigs = Directory.EnumerateFiles(userDirectoryPath, ".eslintrc*", SearchOption.TopDirectoryOnly)
                 .Where(filePath => -1 != Array.IndexOf(ValidConfigNames, Path.GetFileName(filePath)))
                 .OrderBy(filePath => Array.IndexOf(ValidConfigNames, Path.GetFileName(filePath)));
 
-            return configs.Any()
-                ? configs.First()
+            return foundConfigs.Any()
+                ? foundConfigs.First()
                 : null;
         }
 
         internal static string GetLocalConfigPath(string filePath)
         {
-            // never traverse further than the solution root
-            var end = new DirectoryInfo(GetSolutionPath());
+            // never traverse directory further than the solution root
+            var solutionFolder = new DirectoryInfo(GetSolutionPath());
 
-            var workingDirectory = Path.GetDirectoryName(filePath)
+            var filePathDirectory = Path.GetDirectoryName(filePath)
                 ?? throw new Exception("could not get working directory name");
 
-            var start = new DirectoryInfo(workingDirectory);
+            var currentDirectory = new DirectoryInfo(filePathDirectory);
 
             // todo: instead of comparing length.. ugh
-            while (start != null && start.FullName.Length >= end.FullName.Length)
+            while (currentDirectory != null && currentDirectory.FullName.Length >= solutionFolder.FullName.Length)
             {
-                var configs = start.EnumerateFiles(".eslintrc*")
-                    .Where(file => -1 != Array.IndexOf(ValidConfigNames, file.Name))
-                    .OrderBy(file => Array.IndexOf(ValidConfigNames, file.Name));
+                var foundConfigs = currentDirectory.EnumerateFiles(".eslintrc*")
+                    .Where(fileInfo => -1 != Array.IndexOf(ValidConfigNames, fileInfo.Name))
+                    .OrderBy(fileInfo => Array.IndexOf(ValidConfigNames, fileInfo.Name));
 
-                if (configs.Any())
-                    return configs.First().FullName;
+                if (foundConfigs.Any())
+                    return foundConfigs.First().FullName;
 
-                start = start.Parent;
+                currentDirectory = currentDirectory.Parent;
             }
 
-            // no config found
             return null;
         }
 

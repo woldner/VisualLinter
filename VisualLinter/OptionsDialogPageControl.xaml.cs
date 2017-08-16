@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using jwldnr.VisualLinter.Helpers;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Navigation;
 
 namespace jwldnr.VisualLinter
@@ -22,6 +24,13 @@ namespace jwldnr.VisualLinter
         private void SuggestFeatures_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+
+            e.Handled = true;
+        }
+
+        private void UseGlobalConfig_OnClick(object sender, RoutedEventArgs e)
+        {
+            OutputWindowHelper.WriteLine($"Use global config option set to {UseGlobalConfig}");
 
             e.Handled = true;
         }

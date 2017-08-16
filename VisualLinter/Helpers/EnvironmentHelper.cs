@@ -14,7 +14,7 @@ namespace jwldnr.VisualLinter.Helpers
             return variables
                 .Select(value => new { value, files = GetFiles(value) })
                 .Where(info => null != info.files)
-                .Where(info => info.files.Any(file => file.IndexOf(name, StringComparison.OrdinalIgnoreCase) != -1))
+                .Where(info => info.files.Any(file => -1 != file.IndexOf(name, StringComparison.OrdinalIgnoreCase)))
                 .Select(info => GetExecutable(Path.Combine(Environment.ExpandEnvironmentVariables(info.value), name)))
                 .FirstOrDefault();
         }
@@ -47,8 +47,8 @@ namespace jwldnr.VisualLinter.Helpers
         {
             try
             {
-                return Environment.GetEnvironmentVariable(variable, target)?
-                    .Split(Path.PathSeparator);
+                var values = Environment.GetEnvironmentVariable(variable, target);
+                return values?.Split(Path.PathSeparator);
             }
             catch (Exception)
             {

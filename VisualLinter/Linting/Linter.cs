@@ -26,13 +26,13 @@ namespace jwldnr.VisualLinter.Linting
             try
             {
                 var linterPath = GetGlobalLinterPath()
-                    ?? throw new Exception("fatal: linter path cannot be null");
+                    ?? throw new Exception("fatal: unable to find eslint in PATH");
 
                 var configPath = GetConfigPath(filePath)
-                    ?? throw new Exception("fatal: config path cannot be null");
+                    ?? throw new Exception("fatal: no eslint config found");
 
                 var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath))
-                    ?? throw new Exception("fatal: linter returned null result");
+                    ?? throw new Exception("fatal: eslint returned null result");
 
                 return ProcessResults(results);
             }
@@ -104,8 +104,8 @@ namespace jwldnr.VisualLinter.Linting
 
         private static string GetGlobalLinterPath()
         {
-            var path = EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User);
-            return path ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
+            return EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User)
+                ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
         }
 
         private static string GetLocalConfigPath(string filePath)
