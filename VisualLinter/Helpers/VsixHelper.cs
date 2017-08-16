@@ -1,7 +1,6 @@
 ﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -19,8 +18,15 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetGlobalConfigPath()
         {
-            // todo
-            return null;
+            var userDirectoryPath = GetUserDirectoryPath();
+
+            var configs = Directory.EnumerateFiles(userDirectoryPath, ".eslintrc*", SearchOption.TopDirectoryOnly)
+                .Where(filePath => -1 != Array.IndexOf(ValidConfigNames, Path.GetFileName(filePath)))
+                .OrderBy(filePath => Array.IndexOf(ValidConfigNames, Path.GetFileName(filePath)));
+
+            return configs.Any()
+                ? configs.First()
+                : null;
         }
 
         internal static string GetLocalConfigPath(string filePath)
@@ -38,23 +44,14 @@ namespace jwldnr.VisualLinter.Helpers
             if (null == start)
                 throw new Exception("could not get directory info for working directory");
 
-            while (start != null && start.FullName != end.FullName)
+            while (start != null && start.FullName.Length >= end.FullName.Length)
             {
                 var configs = start.EnumerateFiles(".eslintrc*")
-                    .ToList();
+                    .Where(file => -1 != Array.IndexOf(ValidConfigNames, file.Name))
+                    .OrderBy(file => Array.IndexOf(ValidConfigNames, file.Name));
 
                 if (configs.Any())
-                {
-                    // only gets file name
-                    //var validFiles = ValidConfigNames.Intersect(files.Select(file => file.Name))
-                    //    .OrderBy(file => Array.IndexOf(ValidConfigNames, file));
-
-                    var validConfigs = configs
-                        .Where(file => -1 != Array.IndexOf(ValidConfigNames, file.Name))
-                        .OrderBy(file => Array.IndexOf(ValidConfigNames, file.Name));
-
-                    return validConfigs.First().FullName;
-                }
+                    return configs.First().FullName;
 
                 start = start.Parent;
             }
@@ -111,7 +108,7 @@ namespace jwldnr.VisualLinter.Helpers
             return dte?.Solution;
         }
 
-        private static string GetUserFolderPath()
+        private static string GetUserDirectoryPath()
         {
             return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         }
