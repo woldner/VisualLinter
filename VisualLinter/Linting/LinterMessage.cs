@@ -30,7 +30,7 @@ namespace jwldnr.VisualLinter.Linting
         public string RuleId { get; set; }
 
         [JsonProperty("severity")]
-        public int Severity { get; set; }
+        public RuleSeverity Severity { get; set; }
 
         [JsonProperty("source")]
         public string Source { get; set; }

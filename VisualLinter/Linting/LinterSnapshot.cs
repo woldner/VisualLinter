@@ -80,7 +80,7 @@ namespace jwldnr.VisualLinter.Linting
                     return true;
 
                 case StandardTableKeyNames.ErrorSeverity:
-                    content = GetErrorCategory(warning.Message.IsFatal);
+                    content = GetErrorCategory(warning.Message);
                     return true;
 
                 case StandardTableKeyNames.ErrorSource:
@@ -106,9 +106,12 @@ namespace jwldnr.VisualLinter.Linting
             }
         }
 
-        private static __VSERRORCATEGORY GetErrorCategory(bool isFatal)
+        private static __VSERRORCATEGORY GetErrorCategory(LinterMessage message)
         {
-            return isFatal
+            if (message.IsFatal)
+                return __VSERRORCATEGORY.EC_ERROR;
+
+            return RuleSeverity.Error == message.Severity
                 ? __VSERRORCATEGORY.EC_ERROR
                 : __VSERRORCATEGORY.EC_WARNING;
         }
