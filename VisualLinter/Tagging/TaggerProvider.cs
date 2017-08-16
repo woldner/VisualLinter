@@ -26,9 +26,9 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly List<SinkManager> _managers = new List<SinkManager>();
         private readonly TaggerManager _taggers = new TaggerManager();
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
+        private readonly IVisualLinterOptions _visualLinterOptions;
 
         private ITableManager _tableManager;
-        private IVisualLinterOptions _visualLinterOptions;
 
         [ImportingConstructor]
         internal TaggerProvider(
