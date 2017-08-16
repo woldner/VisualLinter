@@ -56,7 +56,7 @@
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
-    <Compile Include="Linting\ESLintRuleLevel.cs" />
+    <Compile Include="Linting\RuleSeverity.cs" />
     <Compile Include="Linting\MessageRange.cs" />
     <Compile Include="Linting\LinterMessage.cs" />
     <Compile Include="Linting\LinterResult.cs" />

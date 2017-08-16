@@ -111,14 +111,9 @@ namespace jwldnr.VisualLinter.Linting
             if (message.IsFatal)
                 return __VSERRORCATEGORY.EC_ERROR;
 
-            switch (message.Severity)
-            {
-                case ESLintRuleLevel.Error:
-                    return __VSERRORCATEGORY.EC_ERROR;
-                case ESLintRuleLevel.Warning:
-                default:
-                    return __VSERRORCATEGORY.EC_WARNING;
-            }
+            return RuleSeverity.Error == message.Severity
+                ? __VSERRORCATEGORY.EC_ERROR
+                : __VSERRORCATEGORY.EC_WARNING;
         }
 
         private static string GetErrorCode(bool isFatal, string ruleId)
