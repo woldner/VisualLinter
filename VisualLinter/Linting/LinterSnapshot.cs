@@ -1,12 +1,11 @@
 using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Models;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace jwldnr.VisualLinter.ErrorList
+namespace jwldnr.VisualLinter.Linting
 {
     internal class LinterSnapshot : WpfTableEntriesSnapshotBase
     {
@@ -19,6 +18,7 @@ namespace jwldnr.VisualLinter.ErrorList
         private readonly string _filePath;
         private readonly IReadOnlyCollection<LinterWarning> _readonlyWarnings;
         private readonly IList<LinterWarning> _warnings;
+
         private string _projectName;
 
         internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<LinterWarning> warnings)
@@ -39,7 +39,7 @@ namespace jwldnr.VisualLinter.ErrorList
 
         public override bool TryCreateDetailsStringContent(int index, out string content)
         {
-            // todo, use the linter fix to provide a more detailed description
+            // todo, use the lint fix to provide a more detailed description
             content = _warnings[index].Message.Message;
             return null != content;
         }
@@ -72,15 +72,15 @@ namespace jwldnr.VisualLinter.ErrorList
 
                 case StandardTableKeyNames.ErrorCodeToolTip:
                 case StandardTableKeyNames.HelpLink:
-                    content = GetRuleUrl(warning.Message.RuleId);
+                    content = GetRuleUrl(warning.Message.IsFatal, warning.Message.RuleId);
                     return null != content;
 
                 case StandardTableKeyNames.ErrorCode:
-                    content = $"({warning.Message.RuleId})";
+                    content = GetErrorCode(warning.Message.IsFatal, warning.Message.RuleId);
                     return true;
 
                 case StandardTableKeyNames.ErrorSeverity:
-                    content = GetErrorCategory(warning.Message.IsFatal);
+                    content = GetErrorCategory(warning.Message);
                     return true;
 
                 case StandardTableKeyNames.ErrorSource:
@@ -106,16 +106,28 @@ namespace jwldnr.VisualLinter.ErrorList
             }
         }
 
-        private static __VSERRORCATEGORY GetErrorCategory(bool isFatal)
+        private static __VSERRORCATEGORY GetErrorCategory(LinterMessage message)
         {
-            return isFatal
+            if (message.IsFatal)
+                return __VSERRORCATEGORY.EC_ERROR;
+
+            return RuleSeverity.Error == message.Severity
                 ? __VSERRORCATEGORY.EC_ERROR
                 : __VSERRORCATEGORY.EC_WARNING;
         }
 
-        private static string GetRuleUrl(string ruleId)
+        private static string GetErrorCode(bool isFatal, string ruleId)
         {
-            return $"http://eslint.org/docs/rules/{ruleId}";
+            return isFatal
+                ? null
+                : $"({ruleId})";
+        }
+
+        private static string GetRuleUrl(bool isFatal, string ruleId)
+        {
+            return isFatal
+                ? null
+                : $"http://eslint.org/docs/rules/{ruleId}";
         }
     }
 }

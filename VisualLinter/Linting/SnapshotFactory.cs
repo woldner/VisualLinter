@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.Shell.TableManager;
 
-namespace jwldnr.VisualLinter.ErrorList
+namespace jwldnr.VisualLinter.Linting
 {
     internal class SnapshotFactory : TableEntriesSnapshotFactoryBase
     {
@@ -21,6 +21,7 @@ namespace jwldnr.VisualLinter.ErrorList
         public override ITableEntriesSnapshot GetSnapshot(int versionNumber)
         {
             var snapshot = CurrentSnapshot;
+
             return versionNumber == snapshot.VersionNumber
                 ? snapshot
                 : null;

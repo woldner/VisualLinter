@@ -1,6 +1,4 @@
-﻿using jwldnr.VisualLinter.ErrorList;
-using jwldnr.VisualLinter.Models;
-using jwldnr.VisualLinter.Services;
+﻿using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Microsoft.VisualStudio.Text;
@@ -11,36 +9,39 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
     [ContentType("text")]
-    internal class TaggerProvider : IViewTaggerProvider, ITableDataSource
+    [TextViewRole(PredefinedTextViewRoles.Document)]
+    [TextViewRole(PredefinedTextViewRoles.Analyzable)]
+    internal sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
     {
-        public string DisplayName => "VisualLint";
-        public string Identifier => "VisualLint";
+        public string DisplayName => "VisualLinter";
+        public string Identifier => "VisualLinter";
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
 
-        private readonly ILinterService _linterService;
         private readonly List<SinkManager> _managers = new List<SinkManager>();
         private readonly TaggerManager _taggers = new TaggerManager();
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
 
+        private ITableManager _tableManager;
+        private IVisualLinterOptions _visualLinterOptions;
+
         [ImportingConstructor]
         internal TaggerProvider(
-            [Import] ILinterService linterService,
             [Import] ITableManagerProvider tableManagerProvider,
-            [Import] ITextDocumentFactoryService textDocumentFactoryService)
+            [Import] ITextDocumentFactoryService textDocumentFactoryService,
+            [Import] IVisualLinterOptions visualLinterOptions)
         {
-            _linterService = linterService;
-
-            var errorTableManager = tableManagerProvider
+            _tableManager = tableManagerProvider
                 .GetTableManager(StandardTables.ErrorsTable);
 
             _textDocumentFactoryService = textDocumentFactoryService;
+
+            _visualLinterOptions = visualLinterOptions;
 
             var columns = new[]
             {
@@ -56,7 +57,7 @@ namespace jwldnr.VisualLinter.Tagging
                 StandardTableColumnDefinitions.Text
             };
 
-            errorTableManager.AddSource(this, columns);
+            _tableManager.AddSource(this, columns);
         }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
@@ -75,7 +76,7 @@ namespace jwldnr.VisualLinter.Tagging
             lock (_taggers)
             {
                 if (!_taggers.Exists(filePath))
-                    return new Tagger(buffer, document, this) as ITagger<T>;
+                    return new Tagger(this, new Linter(_visualLinterOptions), buffer, document) as ITagger<T>;
 
                 var result = _taggers.TryGetValue(filePath, out var tagger);
                 if (false == result)
@@ -83,6 +84,12 @@ namespace jwldnr.VisualLinter.Tagging
 
                 return tagger as ITagger<T>;
             }
+        }
+
+        public void Dispose()
+        {
+            _tableManager.RemoveSource(this);
+            _tableManager = null;
         }
 
         public IDisposable Subscribe(ITableDataSink sink)
@@ -112,17 +119,6 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal async Task AnalyzeAsync(string filePath)
-        {
-            var messages = await LintAsync(filePath);
-            UpdateMessages(filePath, messages);
-        }
-
-        internal Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
-        {
-            return _linterService.LintAsync(filePath);
-        }
-
         internal void RemoveSinkManager(SinkManager manager)
         {
             lock (_managers)
@@ -150,27 +146,18 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void UpdateAllSinks()
+        internal void UpdateAllSinks(ITableEntriesSnapshotFactory factory)
         {
             lock (_managers)
             {
                 foreach (var manager in _managers)
-                    manager.UpdateSink();
+                    manager.UpdateSink(factory);
             }
         }
 
         private bool TryGetTextDocument(ITextBuffer buffer, out ITextDocument document)
         {
             return _textDocumentFactoryService.TryGetTextDocument(buffer, out document);
-        }
-
-        private void UpdateMessages(string filePath, IEnumerable<LinterMessage> messages)
-        {
-            lock (_taggers)
-            {
-                if (_taggers.TryGetValue(filePath, out Tagger tagger))
-                    tagger.UpdateMessages(messages);
-            }
         }
     }
 }

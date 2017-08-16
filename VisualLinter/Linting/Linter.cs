@@ -1,5 +1,4 @@
 ﻿using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,23 +9,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Process = System.Diagnostics.Process;
 
-namespace jwldnr.VisualLinter.Services
+namespace jwldnr.VisualLinter.Linting
 {
-    [Export(typeof(ILinterService))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
-    internal class LinterService : ILinterService
+    internal class Linter
     {
         private const string Name = "eslint";
 
         private readonly IVisualLinterOptions _options;
 
-        [ImportingConstructor]
-        internal LinterService([Import] IVisualLinterOptions options)
+        internal Linter(IVisualLinterOptions options)
         {
             _options = options;
         }
 
-        public async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
+        internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
             try
             {

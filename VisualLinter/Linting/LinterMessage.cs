@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace jwldnr.VisualLinter.Models
+namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    public class LinterMessage
+    internal class LinterMessage
     {
         [JsonProperty("column")]
         public int Column { get; set; }
@@ -24,13 +24,13 @@ namespace jwldnr.VisualLinter.Models
         public string Message { get; set; }
 
         [JsonIgnore]
-        public Range Range { get; set; }
+        public MessageRange Range { get; set; }
 
         [JsonProperty("ruleId")]
         public string RuleId { get; set; }
 
         [JsonProperty("severity")]
-        public int Severity { get; set; }
+        public RuleSeverity Severity { get; set; }
 
         [JsonProperty("source")]
         public string Source { get; set; }

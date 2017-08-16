@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace jwldnr.VisualLinter.Models
+namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    public class LinterResult
+    internal class LinterResult
     {
         [JsonProperty("errorCount")]
         public int ErrorCount { get; set; }

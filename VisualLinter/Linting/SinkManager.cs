@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.Shell.TableManager;
 using System;
 
-namespace jwldnr.VisualLinter.ErrorList
+namespace jwldnr.VisualLinter.Linting
 {
     internal class SinkManager : IDisposable
     {
@@ -22,19 +22,19 @@ namespace jwldnr.VisualLinter.ErrorList
             _provider.RemoveSinkManager(this);
         }
 
-        internal void AddFactory(SnapshotFactory factory)
+        internal void AddFactory(ITableEntriesSnapshotFactory factory)
         {
             _sink.AddFactory(factory);
         }
 
-        internal void RemoveFactory(SnapshotFactory factory)
+        internal void RemoveFactory(ITableEntriesSnapshotFactory factory)
         {
             _sink.RemoveFactory(factory);
         }
 
-        internal void UpdateSink()
+        internal void UpdateSink(ITableEntriesSnapshotFactory factory)
         {
-            _sink.FactorySnapshotChanged(null);
+            _sink.FactorySnapshotChanged(factory);
         }
     }
 }
