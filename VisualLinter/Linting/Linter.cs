@@ -128,9 +128,9 @@ namespace jwldnr.VisualLinter.Linting
             // therefor results count will always be 1
             var result = results.FirstOrDefault();
 
-            return null == result
-                ? Enumerable.Empty<LinterMessage>()
-                : result.Messages;
+            return null != result
+                ? result.Messages
+                : Enumerable.Empty<LinterMessage>();
         }
 
         private string GetConfigPath(string filePath)
