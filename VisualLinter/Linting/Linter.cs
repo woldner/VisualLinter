@@ -28,7 +28,8 @@ namespace jwldnr.VisualLinter.Linting
                 var linterPath = GetGlobalLinterPath()
                     ?? throw new Exception("fatal: unable to find eslint in PATH");
 
-                var configPath = GetConfigPath(filePath);
+                var configPath = GetConfigPath(filePath)
+                    ?? throw new Exception("fatal: no eslint config found");
 
                 var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath))
                     ?? throw new Exception("fatal: eslint returned null result");
@@ -84,9 +85,7 @@ namespace jwldnr.VisualLinter.Linting
 
         private static string GetArguments(string configPath, string filePath)
         {
-            return null != configPath
-                ? $"--config \"{configPath}\" --format json \"{filePath}\""
-                : $"--format json \"{filePath}\"";
+            return $"--config \"{configPath}\" --format json \"{filePath}\"";
         }
 
         private static string GetGlobalConfigPath()
