@@ -15,7 +15,11 @@ on the official Visual Studio extension gallery.
 ## Next
 
 - [ ] Attempt to fix errors automatically
-- [ ] Provide settings page
+
+## 1.0 (2017-08-16)
+
+- [x] Changed to using a local config (relative to file being linted) instead of a global shared config for all projects
+- [x] Provide settings page
 
 ## 1.0 (2017-07-08)
 

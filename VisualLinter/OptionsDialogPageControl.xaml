@@ -23,8 +23,7 @@
                   Name="UseGlobalConfigCheckBox"
                   Margin="5, 0, 0, 5"
                   Content="Use global ESLint config instead of local"
-                   Click="UseGlobalConfig_OnClick"
-                  />
+                  Click="UseGlobalConfig_OnClick" />
 
         <Label Grid.Row="2"
                Name="SuggesFeaturesLabel"

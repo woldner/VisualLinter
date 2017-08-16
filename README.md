@@ -1,4 +1,4 @@
-# VisualLinter
+﻿# VisualLinter
 
 [![Build status](https://ci.appveyor.com/api/projects/status/e34sj7pi1v3unlf0?svg=true)](https://ci.appveyor.com/project/jwldnr/visuallinter)
 
@@ -29,9 +29,38 @@ See the [change log](CHANGELOG.md) for changes and road map.
 ##### Requirements
 
 - ESLint installed globally e.g. `npm i eslint@latest --global`
-- A valid config located in your user's home directory (create one using `eslint --init` after installing ESLint)
+- A valid ESLint configuration located in the current project folder _or_ your user's home directory
 
 ##### Notes
+
+`VisualLinter` will always use the closest configuration file found relative to the file being linted.
+If no `.eslintrc` configration is found in the same directory as the linted file, `VisualLinter` will try and find a configuration file in the parent directory up to the solution root folder.
+
+For instance, suppose you have the following structure:
+
+```
+your-project
+├── .eslintrc
+├── lib
+│ └── source.js
+└─┬ tests
+  ├── .eslintrc
+  └── test.js
+```
+
+When you open or save `source.js` `VisualLinter` will use the `.eslintrc` file at the root of the project as its configuration.
+
+When you open or save `test.js` `VisualLinter` will use the `.eslintrc` file in the `tests/` directory.
+
+If you have a personal configuration file in your home directory (`~/.eslintrc`), it will only be used if the checkbox `'Use global ESLint config instead of local'` is checked under `Tools > Options >  VisualLinter`.
+
+If there are multiple configuration files in the same directory, `VisualLinter` will only use one. The priority order is:
+
+1. .eslintrc.js
+2. .eslintrc.yaml
+3. .eslintrc.yml
+4. .eslintrc.json
+5. .eslintrc
 
 Please note that additional ESLint plugins may be required in order to lint files depending on your configuration. The `VisualLinter` output window could help identify these plugins.
 
