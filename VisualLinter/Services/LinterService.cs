@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,16 +28,19 @@ namespace jwldnr.VisualLinter.Services
 
         public async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
-            var eslintPath = GetGlobalPath();
-
             try
             {
-                if (null == eslintPath)
-                    throw new ArgumentNullException(nameof(eslintPath));
+                var linterPath = GetGlobalLinterPath();
+                if (null == linterPath)
+                    throw new Exception("linter path cannot be null");
 
-                var results = await ExecuteProcessAsync(eslintPath, GetArguments(filePath));
+                var configPath = GetConfigPath(filePath);
+                if (null == configPath)
+                    throw new Exception("config path cannot be null");
+
+                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath));
                 if (null == results)
-                    throw new ArgumentNullException(nameof(results));
+                    throw new Exception("linter returned null result");
 
                 return ProcessResults(results);
             }
@@ -89,22 +91,36 @@ namespace jwldnr.VisualLinter.Services
             }
         }
 
-        private static string GetGlobalPath()
+        private static string GetArguments(string configPath, string filePath)
+        {
+            return $"--config \"{configPath}\" --format json \"{filePath}\"";
+        }
+
+        private static string GetGlobalConfigPath()
+        {
+            try
+            {
+                return VsixHelper.GetGlobalConfigPath();
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+
+            return null;
+        }
+
+        private static string GetGlobalLinterPath()
         {
             var path = EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User);
             return path ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
         }
 
-        private static string GetLocalConfigPath()
+        private static string GetLocalConfigPath(string filePath)
         {
-            var path = VsixHelper.GetSolutionPath();
-            if (null == path)
-                return null;
-
             try
             {
-                return Directory.GetFiles(path, ".eslintrc.*", SearchOption.AllDirectories)
-                    .SingleOrDefault();
+                return VsixHelper.GetLocalConfigPath(filePath);
             }
             catch (Exception e)
             {
@@ -125,27 +141,11 @@ namespace jwldnr.VisualLinter.Services
                 : result.Messages;
         }
 
-        private string GetAdditionalArguments()
+        private string GetConfigPath(string filePath)
         {
-            if (false == _options.UseLocalConfig)
-                return string.Empty;
-
-            var localConfigPath = GetLocalConfigPath();
-            if (null != localConfigPath)
-                return $" --config \"{localConfigPath}\"";
-
-            OutputWindowHelper.WriteLine("Could not find local ESLint config.");
-
-            return string.Empty;
-        }
-
-        private string GetArguments(string filePath)
-        {
-            var arguments = $"--format json \"{filePath}\"";
-
-            arguments += GetAdditionalArguments();
-
-            return arguments;
+            return _options.UseGlobalConfig
+                ? GetGlobalConfigPath()
+                : GetLocalConfigPath(filePath);
         }
     }
 }
