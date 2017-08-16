@@ -9,6 +9,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -19,8 +20,12 @@
                FontWeight="Bold" />
 
         <CheckBox Grid.Row="1"
-                  Name="UseLocalConfigCheckBox"
+                  Name="UseGlobalConfigCheckBox"
                   Margin="0, 0, 0, 5"
-                  Content="Use local ESLint config" />
+                  Content="Use global ESLint config instead of local" />
+
+        <Label Grid.Row="2" Margin="0, 15, 0, 5">
+            <Hyperlink NavigateUri="https://github.com/jwldnr/VisualLinter">Suggest new features @ GitHub!</Hyperlink>
+        </Label>
     </Grid>
 </UserControl>
