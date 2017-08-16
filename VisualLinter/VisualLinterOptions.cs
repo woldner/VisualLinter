@@ -29,13 +29,10 @@ namespace jwldnr.VisualLinter
         [ImportingConstructor]
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         internal VisualLinterOptions([Import] SVsServiceProvider serviceProvider)
-            : this(new ShellSettingsManager(serviceProvider))
         {
-        }
+            var settingsManager = new ShellSettingsManager(serviceProvider);
 
-        internal VisualLinterOptions(SettingsManager settingsManager)
-        {
-            _writableSettingsStore = settingsManager?.GetWritableSettingsStore(SettingsScope.UserSettings)
+            _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
                 ?? throw new ArgumentNullException(nameof(settingsManager));
 
             if (_writableSettingsStore == null || _writableSettingsStore.CollectionExists(CollectionPath))
