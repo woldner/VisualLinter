@@ -26,18 +26,22 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly List<SinkManager> _managers = new List<SinkManager>();
         private readonly TaggerManager _taggers = new TaggerManager();
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
+        private readonly IVisualLinterOptions _visualLinterOptions;
 
         private ITableManager _tableManager;
 
         [ImportingConstructor]
         internal TaggerProvider(
             [Import] ITableManagerProvider tableManagerProvider,
-            [Import] ITextDocumentFactoryService textDocumentFactoryService)
+            [Import] ITextDocumentFactoryService textDocumentFactoryService,
+            [Import] IVisualLinterOptions visualLinterOptions)
         {
             _tableManager = tableManagerProvider
                 .GetTableManager(StandardTables.ErrorsTable);
 
             _textDocumentFactoryService = textDocumentFactoryService;
+
+            _visualLinterOptions = visualLinterOptions;
 
             var columns = new[]
             {
@@ -72,7 +76,7 @@ namespace jwldnr.VisualLinter.Tagging
             lock (_taggers)
             {
                 if (!_taggers.Exists(filePath))
-                    return new Tagger(this, new Linter(), buffer, document) as ITagger<T>;
+                    return new Tagger(this, new Linter(_visualLinterOptions), buffer, document) as ITagger<T>;
 
                 var result = _taggers.TryGetValue(filePath, out var tagger);
                 if (false == result)

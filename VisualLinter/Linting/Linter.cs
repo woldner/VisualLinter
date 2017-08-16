@@ -6,25 +6,33 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Process = System.Diagnostics.Process;
 
 namespace jwldnr.VisualLinter.Linting
 {
     internal class Linter
     {
-        private readonly string _eslintPath;
+        private const string Name = "eslint";
 
-        internal Linter()
+        private readonly IVisualLinterOptions _options;
+
+        internal Linter(IVisualLinterOptions options)
         {
-            _eslintPath = GetESLintPath();
+            _options = options;
         }
 
         internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
             try
             {
-                var results = await ExecuteProcessAsync(_eslintPath, GetLinterArguments(filePath));
-                if (null == results)
-                    throw new ArgumentNullException(nameof(results));
+                var linterPath = GetGlobalLinterPath()
+                    ?? throw new Exception("fatal: unable to find eslint in PATH");
+
+                var configPath = GetConfigPath(filePath)
+                    ?? throw new Exception("fatal: no eslint config found");
+
+                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath))
+                    ?? throw new Exception("fatal: eslint returned null result");
 
                 return ProcessResults(results);
             }
@@ -75,17 +83,43 @@ namespace jwldnr.VisualLinter.Linting
             }
         }
 
-        private static string GetESLintPath()
+        private static string GetArguments(string configPath, string filePath)
         {
-            const string name = "eslint";
-
-            var path = EnvironmentHelper.GetVariable(name, EnvironmentVariableTarget.User);
-            return path ?? EnvironmentHelper.GetVariable(name, EnvironmentVariableTarget.Machine);
+            return $"--config \"{configPath}\" --format json \"{filePath}\"";
         }
 
-        private static string GetLinterArguments(string filePath)
+        private static string GetGlobalConfigPath()
         {
-            return $"--format json \"{filePath}\"";
+            try
+            {
+                return VsixHelper.GetGlobalConfigPath();
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+
+            return null;
+        }
+
+        private static string GetGlobalLinterPath()
+        {
+            return EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User)
+                ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
+        }
+
+        private static string GetLocalConfigPath(string filePath)
+        {
+            try
+            {
+                return VsixHelper.GetLocalConfigPath(filePath);
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+
+            return null;
         }
 
         private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
@@ -94,9 +128,16 @@ namespace jwldnr.VisualLinter.Linting
             // therefor results count will always be 1
             var result = results.FirstOrDefault();
 
-            return null == result
-                ? Enumerable.Empty<LinterMessage>()
-                : result.Messages;
+            return null != result
+                ? result.Messages
+                : Enumerable.Empty<LinterMessage>();
+        }
+
+        private string GetConfigPath(string filePath)
+        {
+            return _options.UseGlobalConfig
+                ? GetGlobalConfigPath()
+                : GetLocalConfigPath(filePath);
         }
     }
 }

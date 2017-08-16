@@ -56,6 +56,13 @@
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
+    <Compile Include="Helpers\ServiceProviderExtensions.cs" />
+    <Compile Include="OptionsDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OptionsDialogPageControl.xaml.cs">
+      <DependentUpon>OptionsDialogPageControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Linting\RuleSeverity.cs" />
     <Compile Include="Linting\MessageRange.cs" />
     <Compile Include="Linting\LinterMessage.cs" />
@@ -78,6 +85,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>VisualLinter.vsct</DependentUpon>
     </Compile>
+    <Compile Include="VisualLinterOptions.cs" />
     <Compile Include="VisualLinterPackage.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +234,12 @@
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="OptionsDialogPageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

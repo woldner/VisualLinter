@@ -22,8 +22,6 @@ namespace jwldnr.VisualLinter.Tagging
 
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
-        private IEnumerable<LinterMessage> _lastLinterMessages = Enumerable.Empty<LinterMessage>();
-        private int _lastVersionLinted;
 
         internal Tagger(
             TaggerProvider provider,
@@ -86,16 +84,9 @@ namespace jwldnr.VisualLinter.Tagging
 
         private async Task AnalyzeAsync(string filePath)
         {
-            var versionNumber = _currentSnapshot.Version.VersionNumber;
-            if (versionNumber == _lastVersionLinted)
-                return;
-
             var messages = await LintAsync(filePath);
 
-            _lastVersionLinted = versionNumber;
-            _lastLinterMessages = messages;
-
-            UpdateMessages(_lastLinterMessages);
+            UpdateMessages(messages);
         }
 
         private LinterWarning CreateWarning(LinterMessage message)
@@ -278,9 +269,11 @@ namespace jwldnr.VisualLinter.Tagging
                 end = Math.Max(end, snapshot.Warnings.Last().Span.End.Position);
             }
 
-            if (end > start)
-                handler(this, new SnapshotSpanEventArgs(new SnapshotSpan(
-                    currentSnapshot, Span.FromBounds(start, end))));
+            if (start >= end)
+                return;
+
+            handler(this, new SnapshotSpanEventArgs(new SnapshotSpan(
+                currentSnapshot, Span.FromBounds(start, end))));
         }
     }
 }
