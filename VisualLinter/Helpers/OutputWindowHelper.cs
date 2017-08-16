@@ -14,7 +14,7 @@ namespace jwldnr.VisualLinter.Helpers
         internal static void WriteLine(object message)
         {
             var outputWindowPane = OutputWindowPane;
-            outputWindowPane?.OutputString($"[{Vsix.Name}]: {message + Environment.NewLine}");
+            outputWindowPane?.OutputString($"{message + Environment.NewLine}");
         }
 
         private static IVsOutputWindowPane GetOutputWindowPane()
