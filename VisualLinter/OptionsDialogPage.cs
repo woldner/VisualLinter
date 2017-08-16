@@ -31,13 +31,13 @@ namespace jwldnr.VisualLinter
         {
             base.OnActivate(e);
 
-            _optionsDialogControl.UseLocalConfig = _options.UseLocalConfig;
+            _optionsDialogControl.UseGlobalConfig = _options.UseGlobalConfig;
         }
 
         protected override void OnApply(PageApplyEventArgs args)
         {
             if (args.ApplyBehavior == ApplyKind.Apply)
-                _options.UseLocalConfig = _optionsDialogControl.UseLocalConfig;
+                _options.UseGlobalConfig = _optionsDialogControl.UseGlobalConfig;
 
             base.OnApply(args);
         }
