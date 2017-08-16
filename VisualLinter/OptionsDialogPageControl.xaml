@@ -21,11 +21,17 @@
 
         <CheckBox Grid.Row="1"
                   Name="UseGlobalConfigCheckBox"
-                  Margin="0, 0, 0, 5"
+                  Margin="5, 0, 0, 5"
                   Content="Use global ESLint config instead of local" />
 
-        <Label Grid.Row="2" Margin="0, 15, 0, 5">
-            <Hyperlink NavigateUri="https://github.com/jwldnr/VisualLinter">Suggest new features @ GitHub!</Hyperlink>
+        <Label Grid.Row="2"
+               Name="SuggesFeaturesLabel"
+               Margin="0, 5, 0, 5">
+            <Hyperlink Name="SuggestFeaturesHyperlink"
+                       RequestNavigate="SuggestFeatures_OnRequestNavigate"
+                       NavigateUri="https://github.com/jwldnr/VisualLinter">
+                Suggest new features @ GitHub!
+            </Hyperlink>
         </Label>
     </Grid>
 </UserControl>

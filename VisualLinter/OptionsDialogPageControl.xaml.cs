@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Diagnostics;
+using System.Windows.Navigation;
 
 namespace jwldnr.VisualLinter
 {
@@ -16,6 +17,13 @@ namespace jwldnr.VisualLinter
         internal OptionsDialogPageControl()
         {
             InitializeComponent();
+        }
+
+        private void SuggestFeatures_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+
+            e.Handled = true;
         }
     }
 }
