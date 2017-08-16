@@ -7,10 +7,10 @@ namespace jwldnr.VisualLinter
     /// </summary>
     public partial class OptionsDialogPageControl
     {
-        internal bool UseLocalConfig
+        internal bool UseGlobalConfig
         {
-            get => UseLocalConfigCheckBox.IsChecked ?? false;
-            set => UseLocalConfigCheckBox.IsChecked = value;
+            get => UseGlobalConfigCheckBox.IsChecked ?? false;
+            set => UseGlobalConfigCheckBox.IsChecked = value;
         }
 
         internal OptionsDialogPageControl()
