@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -26,17 +25,14 @@ namespace jwldnr.VisualLinter.Linting
         {
             try
             {
-                var linterPath = GetGlobalLinterPath();
-                if (null == linterPath)
-                    throw new Exception("linter path cannot be null");
+                var linterPath = GetGlobalLinterPath()
+                    ?? throw new Exception("fatal: linter path cannot be null");
 
-                var configPath = GetConfigPath(filePath);
-                if (null == configPath)
-                    throw new Exception("config path cannot be null");
+                var configPath = GetConfigPath(filePath)
+                    ?? throw new Exception("fatal: config path cannot be null");
 
-                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath));
-                if (null == results)
-                    throw new Exception("linter returned null result");
+                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath))
+                    ?? throw new Exception("fatal: linter returned null result");
 
                 return ProcessResults(results);
             }

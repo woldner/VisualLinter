@@ -33,17 +33,13 @@ namespace jwldnr.VisualLinter.Helpers
         {
             // never traverse further than the solution root
             var end = new DirectoryInfo(GetSolutionPath());
-            if (null == end)
-                throw new Exception("could not get directory info for solution");
 
-            var workingDirectory = Path.GetDirectoryName(filePath);
-            if (null == workingDirectory)
-                throw new Exception("could not get working directory name");
+            var workingDirectory = Path.GetDirectoryName(filePath)
+                ?? throw new Exception("could not get working directory name");
 
             var start = new DirectoryInfo(workingDirectory);
-            if (null == start)
-                throw new Exception("could not get directory info for working directory");
 
+            // todo: instead of comparing length.. ugh
             while (start != null && start.FullName.Length >= end.FullName.Length)
             {
                 var configs = start.EnumerateFiles(".eslintrc*")
@@ -79,7 +75,8 @@ namespace jwldnr.VisualLinter.Helpers
         {
             var solution = GetSolution();
 
-            return Path.GetDirectoryName(solution?.FullName);
+            return Path.GetDirectoryName(solution?.FullName)
+                ?? throw new Exception("could not get directory info for solution");
         }
 
         private static Project GetProject(string filePath)
@@ -95,7 +92,7 @@ namespace jwldnr.VisualLinter.Helpers
             catch (Exception e)
             {
                 OutputWindowHelper.WriteLine($"Unable to get project for file: {Path.GetFileName(filePath)}"
-                    + $"\n.. with reason: {e.Message}");
+                    + $"\nError message: {e.Message}");
             }
 
             return null;
