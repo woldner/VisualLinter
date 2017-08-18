@@ -9,8 +9,8 @@ before_build:
 
 build_script:
   - nuget restore -Verbosity quiet
-  - msbuild C:\projects\visuallinter\VisualLinter.sln /t:clean /p:configuration=Release
-  - msbuild /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+  - msbuild C:\projects\visuallinter\VisualLinter.sln /t:Rebuild /p:configuration=Release
+  - msbuild /t:Rebuild /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
 
 after_test:
   - ps: Vsix-PushArtifacts | Vsix-PublishToGallery
