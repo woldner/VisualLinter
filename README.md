@@ -1,6 +1,6 @@
 ﻿# VisualLinter
 
-[![Build status](https://ci.appveyor.com/api/projects/status/e34sj7pi1v3unlf0?svg=true)](https://ci.appveyor.com/project/jwldnr/visuallinter)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ihx1afw1cc1e9b4?svg=true)](https://ci.appveyor.com/project/jwldnr/visuallinter)
 
 Visual Studio JavaScript linter using ESLint.
 
