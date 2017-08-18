@@ -77,6 +77,7 @@ namespace jwldnr.VisualLinter.Linting
                 catch (Exception e)
                 {
                     OutputWindowHelper.WriteLine(e.Message);
+                    OutputWindowHelper.WriteLine(output);
                 }
 
                 return Enumerable.Empty<LinterResult>();
