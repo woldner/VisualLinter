@@ -9,7 +9,7 @@ before_build:
 
 build_script:
   - nuget restore -Verbosity quiet
-  - msbuild /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+  - msbuild /p:configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:d
 
 after_test:
   - ps: Vsix-PushArtifacts | Vsix-PublishToGallery
