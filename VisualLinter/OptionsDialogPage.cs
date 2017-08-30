@@ -19,7 +19,7 @@ namespace jwldnr.VisualLinter
         public OptionsDialogPage()
         {
             _options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("fatal: unable to get options");
+                ?? throw new Exception("fatal: unable to retrieve options.");
         }
 
         protected override void OnActivate(CancelEventArgs e)

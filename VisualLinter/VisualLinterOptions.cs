@@ -42,7 +42,7 @@ namespace jwldnr.VisualLinter
             _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
                 ?? throw new ArgumentNullException(nameof(settingsManager));
 
-            if (_writableSettingsStore == null || _writableSettingsStore.CollectionExists(CollectionPath))
+            if (null == _writableSettingsStore || _writableSettingsStore.CollectionExists(CollectionPath))
                 return;
 
             _writableSettingsStore.CreateCollection(CollectionPath);
