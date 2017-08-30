@@ -28,8 +28,8 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ##### Requirements
 
-- ESLint installed globally e.g. `npm i eslint@latest --global`
-- A valid ESLint configuration located in the current project folder _or_ your user's home directory
+- ESLint installed locally _or_ globally
+- A valid ESLint configuration located in the current project folder (local) _or_ your user's home directory (global)
 
 ##### Notes
 
