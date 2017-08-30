@@ -19,7 +19,7 @@ namespace jwldnr.VisualLinter
         public OptionsDialogPage()
         {
             _options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("fatal: unable to get options");
+                ?? throw new Exception("fatal: unable to retrieve options.");
         }
 
         protected override void OnActivate(CancelEventArgs e)
@@ -32,7 +32,10 @@ namespace jwldnr.VisualLinter
         protected override void OnApply(PageApplyEventArgs args)
         {
             if (args.ApplyBehavior == ApplyKind.Apply)
+            {
                 _options.UseGlobalConfig = _optionsDialogControl.UseGlobalConfig;
+                _options.UseGlobalLinter = _optionsDialogControl.UseGlobalLinter;
+            }
 
             base.OnApply(args);
         }

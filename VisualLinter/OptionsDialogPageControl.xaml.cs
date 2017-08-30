@@ -16,6 +16,12 @@ namespace jwldnr.VisualLinter
             set => UseGlobalConfigCheckBox.IsChecked = value;
         }
 
+        internal bool UseGlobalLinter
+        {
+            get => UseGlobalLinterCheckBox.IsChecked ?? false;
+            set => UseGlobalLinterCheckBox.IsChecked = value;
+        }
+
         internal OptionsDialogPageControl()
         {
             InitializeComponent();
@@ -31,6 +37,13 @@ namespace jwldnr.VisualLinter
         private void UseGlobalConfig_OnClick(object sender, RoutedEventArgs e)
         {
             OutputWindowHelper.WriteLine($"use global config option set to {UseGlobalConfig}");
+
+            e.Handled = true;
+        }
+
+        private void UseGlobalLinter_OnClick(object sender, RoutedEventArgs e)
+        {
+            OutputWindowHelper.WriteLine($"use global linter option set to {UseGlobalLinter}");
 
             e.Handled = true;
         }

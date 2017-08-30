@@ -40,7 +40,7 @@ namespace jwldnr.VisualLinter.Helpers
             var currentDirectory = new DirectoryInfo(filePathDirectory);
 
             // todo: instead of comparing length.. ugh
-            while (currentDirectory != null && currentDirectory.FullName.Length >= solutionFolder.FullName.Length)
+            while (null != currentDirectory && currentDirectory.FullName.Length >= solutionFolder.FullName.Length)
             {
                 var foundConfigs = currentDirectory.EnumerateFiles(".eslintrc*")
                     .Where(fileInfo => -1 != Array.IndexOf(ValidConfigNames, fileInfo.Name))
@@ -75,7 +75,7 @@ namespace jwldnr.VisualLinter.Helpers
             var solution = GetSolution();
 
             return Path.GetDirectoryName(solution?.FullName)
-                ?? throw new Exception("fatal: could not get solution directory info");
+                ?? throw new Exception("fatal: could not get solution directory info.");
         }
 
         private static Project GetProject(string filePath)

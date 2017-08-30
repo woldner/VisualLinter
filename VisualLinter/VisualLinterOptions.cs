@@ -10,6 +10,7 @@ namespace jwldnr.VisualLinter
     internal interface IVisualLinterOptions
     {
         bool UseGlobalConfig { get; set; }
+        bool UseGlobalLinter { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
@@ -20,6 +21,12 @@ namespace jwldnr.VisualLinter
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalConfig), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalConfig), value);
+        }
+
+        public bool UseGlobalLinter
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalLinter), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalLinter), value);
         }
 
         private const string CollectionPath = "jwldnr.VisualLinter";
@@ -35,7 +42,7 @@ namespace jwldnr.VisualLinter
             _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
                 ?? throw new ArgumentNullException(nameof(settingsManager));
 
-            if (_writableSettingsStore == null || _writableSettingsStore.CollectionExists(CollectionPath))
+            if (null == _writableSettingsStore || _writableSettingsStore.CollectionExists(CollectionPath))
                 return;
 
             _writableSettingsStore.CreateCollection(CollectionPath);
