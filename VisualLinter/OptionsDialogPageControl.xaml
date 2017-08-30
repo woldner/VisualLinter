@@ -25,7 +25,13 @@
                   Content="Use global ESLint config instead of local"
                   Click="UseGlobalConfig_OnClick" />
 
-        <Label Grid.Row="2"
+        <CheckBox Grid.Row="2"
+                  Name="UseGlobalLinterCheckBox"
+                  Margin="5, 0, 0, 5"
+                  Content="Use global ESLint installation instead of local"
+                  Click="UseGlobalLinter_OnClick" />
+
+        <Label Grid.Row="3"
                Name="SuggesFeaturesLabel"
                Margin="0, 5, 0, 5">
             <Hyperlink Name="SuggestFeaturesHyperlink"

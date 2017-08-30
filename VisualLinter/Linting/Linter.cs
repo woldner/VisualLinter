@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,9 @@ namespace jwldnr.VisualLinter.Linting
 {
     internal class Linter
     {
-        private const string Name = "eslint";
+        private static readonly string Name = "eslint";
+        private static readonly string NameExtension = "cmd";
+        private static readonly string NameExecutable = string.Join(".", Name, NameExtension);
 
         private readonly IVisualLinterOptions _options;
 
@@ -25,7 +28,7 @@ namespace jwldnr.VisualLinter.Linting
         {
             try
             {
-                var linterPath = GetGlobalLinterPath()
+                var linterPath = GetLinterPath()
                     ?? throw new Exception("fatal: unable to find eslint in PATH");
 
                 var configPath = GetConfigPath(filePath)
@@ -105,8 +108,22 @@ namespace jwldnr.VisualLinter.Linting
 
         private static string GetGlobalLinterPath()
         {
-            return EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User)
-                ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
+            return EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User) ?? 
+                EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
+        }
+
+        internal static string GetLocalLinterPath()
+        {
+            var solutionFolder = new DirectoryInfo(VsixHelper.GetSolutionPath());
+            var linterCommandFile = solutionFolder.GetFiles(NameExecutable, SearchOption.AllDirectories).FirstOrDefault();
+
+            if(linterCommandFile.Exists == false)
+            {
+                throw new Exception("fatal: could not find local lint");
+            }
+
+            return linterCommandFile.FullName;
+
         }
 
         private static string GetLocalConfigPath(string filePath)
@@ -139,6 +156,11 @@ namespace jwldnr.VisualLinter.Linting
             return _options.UseGlobalConfig
                 ? GetGlobalConfigPath()
                 : GetLocalConfigPath(filePath);
+        }
+
+        private string GetLinterPath()
+        {
+            return _options.UseGlobalLinter ? GetGlobalLinterPath() : GetLocalLinterPath();
         }
     }
 }

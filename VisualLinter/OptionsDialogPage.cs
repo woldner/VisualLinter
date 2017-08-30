@@ -32,7 +32,10 @@ namespace jwldnr.VisualLinter
         protected override void OnApply(PageApplyEventArgs args)
         {
             if (args.ApplyBehavior == ApplyKind.Apply)
+            {
                 _options.UseGlobalConfig = _optionsDialogControl.UseGlobalConfig;
+                _options.UseGlobalLinter = _optionsDialogControl.UseGlobalLinter;
+            }
 
             base.OnApply(args);
         }
