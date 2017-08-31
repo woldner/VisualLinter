@@ -50,8 +50,7 @@ namespace jwldnr.VisualLinter.Linting
                 var configPath = GetConfigPath(filePath);
                 OutputWindowHelper.WriteLine($"info: using config @ '{configPath}'.");
 
-                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath))
-                    ?? throw new Exception("fatal: eslint returned null result.");
+                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath));
 
                 return ProcessResults(results);
             }
@@ -99,7 +98,7 @@ namespace jwldnr.VisualLinter.Linting
                     OutputWindowHelper.WriteLine(output);
                 }
 
-                return null;
+                throw new Exception("fatal: eslint returned null result.");
             }
         }
 
