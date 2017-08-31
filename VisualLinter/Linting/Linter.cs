@@ -45,7 +45,10 @@ namespace jwldnr.VisualLinter.Linting
             try
             {
                 var linterPath = GetLinterPath();
+                OutputWindowHelper.WriteLine($"info: using linter @ '{linterPath}'.");
+
                 var configPath = GetConfigPath(filePath);
+                OutputWindowHelper.WriteLine($"info: using config @ '{configPath}'.");
 
                 var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath))
                     ?? throw new Exception("fatal: eslint returned null result.");
