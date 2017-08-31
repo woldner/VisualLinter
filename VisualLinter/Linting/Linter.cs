@@ -105,40 +105,12 @@ namespace jwldnr.VisualLinter.Linting
             return $"--config \"{configPath}\" --format json \"{filePath}\"";
         }
 
-        private static string GetGlobalConfigPath()
-        {
-            try
-            {
-                return VsixHelper.GetGlobalConfigPath();
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-
-            return null;
-        }
-
         private static string GetGlobalLinterPath()
         {
             try
             {
                 return EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User)
                     ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-
-            return null;
-        }
-
-        private static string GetLocalConfigPath(string filePath)
-        {
-            try
-            {
-                return VsixHelper.GetLocalConfigPath(filePath);
             }
             catch (Exception e)
             {
@@ -162,10 +134,10 @@ namespace jwldnr.VisualLinter.Linting
         private string GetConfigPath(string filePath)
         {
             if (_options.UseGlobalConfig)
-                return GetGlobalConfigPath()
+                return LinterHelper.GetPersonalConfigPath()
                     ?? throw new Exception("fatal: no global eslint config found.");
 
-            return GetLocalConfigPath(filePath)
+            return LinterHelper.GetLocalConfigPath(filePath)
                 ?? throw new Exception("fatal: no local eslint config found.");
         }
 
