@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
 
 namespace jwldnr.VisualLinter.Linting
 {
@@ -84,7 +85,7 @@ namespace jwldnr.VisualLinter.Linting
                 if (false == string.IsNullOrEmpty(error))
                     OutputWindowHelper.WriteLine(error);
 
-                process.WaitForExit();
+                await process.WaitForExitAsync();
 
                 try
                 {
