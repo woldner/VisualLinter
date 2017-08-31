@@ -27,6 +27,7 @@ namespace jwldnr.VisualLinter
             base.OnActivate(e);
 
             _optionsDialogControl.UseGlobalConfig = _options.UseGlobalConfig;
+            _optionsDialogControl.UseGlobalLinter = _options.UseGlobalLinter;
         }
 
         protected override void OnApply(PageApplyEventArgs args)
