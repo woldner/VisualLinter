@@ -29,12 +29,12 @@ See the [change log](CHANGELOG.md) for changes and road map.
 ##### Requirements
 
 - ESLint installed locally (per project) _or_ globally (added to PATH variable)
-- A valid ESLint configuration located in the current project folder (local) _or_ your user's home directory (global)
+- A valid ESLint config located in the current project directory (local) _or_ your user's home directory (global)
 
 ##### Notes
 
-`VisualLinter` will always use the closest configuration file found relative to the file being linted.
-If no `.eslintrc` file is found in the same directory as the file being linted, VisualLinter will try and find a configuration file in ancestor directories up to, but not including the root directory (e.g. `C:\\` on Windows).
+`VisualLinter` will always use the closest installation/config found relative to the file being linted.
+If no `node_modules` directory or `.eslintrc` file is found in the same directory as the file being linted, `VisualLinter` will try and resolve the paths from ancestor directories up to, but not including the root directory (e.g. `C:\\` on Windows).
 
 For instance, suppose you have the following structure:
 
@@ -48,13 +48,13 @@ your-project
   └── test.js
 ```
 
-When you open or save `source.js` `VisualLinter` will use the `.eslintrc` file at the root of the project as its configuration.
+When you open or save `source.js` `VisualLinter` will use the `.eslintrc` file at the root of the project as its config.
 
 When you open or save `test.js` `VisualLinter` will use the `.eslintrc` file in the `tests/` directory.
 
-If you have a personal configuration file in your home directory (`~/.eslintrc`), it will only be used if the checkbox `'Use personal ESLint config instead of local'` is checked under `Tools > Options >  VisualLinter`.
+If you have a personal config file in your home directory (`~/.eslintrc`), it will only be used if the checkbox `'Use personal ESLint config instead of local'` is checked under `Tools > Options >  VisualLinter`.
 
-If there are multiple configuration files in the same directory, `VisualLinter` will only use one. The priority order is:
+If there are multiple config files in the same directory, `VisualLinter` will only use one. The priority order is:
 
 1. .eslintrc.js
 2. .eslintrc.yaml
@@ -62,7 +62,7 @@ If there are multiple configuration files in the same directory, `VisualLinter` 
 4. .eslintrc.json
 5. .eslintrc
 
-Please note that additional ESLint plugins may be required in order to lint files depending on your configuration. The `VisualLinter` output window could help identify these plugins.
+Please note that additional ESLint plugins may be required in order to lint files depending on your config. The `VisualLinter` output window could help identify these plugins.
 
 ## Language Support
 
@@ -73,7 +73,7 @@ Please note that additional ESLint plugins may be required in order to lint file
 ## Troubleshooting
 
 - If you receive a error message when starting Visual Studio with the extension installed saying that ESLint could not be found in `PATH`, restarting your computer would reload the environment variables.
-- If you receive a message saying that `eslint` could not verify your configuration, refer to the docs on [how to configure ESLint](http://eslint.org/docs/user-guide/configuring)
+- If you receive a message saying that `eslint` could not verify your config, refer to the docs on [how to configure ESLint](http://eslint.org/docs/user-guide/configuring)
 - Visual Studio 2017 is using ESLint by default, however it does not show errors in buffer, if you're seeing duplicate messages in the error list window, you can disable the built in linter by setting `Enable ESLint` to `false` in:
 
   `Options` > `Text Editor` > `JavaScript/TypeScript` > `ESLint`
