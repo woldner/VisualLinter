@@ -35,20 +35,12 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetLocalConfigPath(string filePath)
         {
-            var directoryPath = Path.GetDirectoryName(filePath);
-
-            return null != directoryPath
-                ? FindRecursive(directoryPath, FindConfig)
-                : null;
+            return FindRecursive(filePath, FindConfig);
         }
 
         internal static string GetLocalLinterPath(string filePath)
         {
-            var directoryPath = Path.GetDirectoryName(filePath);
-
-            return null != directoryPath
-                ? FindRecursive(directoryPath, FindExecutable)
-                : null;
+            return FindRecursive(filePath, FindExecutable);
         }
 
         internal static string GetPersonalConfigPath()
@@ -75,9 +67,12 @@ namespace jwldnr.VisualLinter.Helpers
                 .FirstOrDefault();
         }
 
-        private static string FindRecursive(string path, Func<DirectoryInfo, string> findFile)
+        private static string FindRecursive(string filePath, Func<DirectoryInfo, string> findFile)
         {
-            var directory = new DirectoryInfo(path);
+            var directoryPath = Path.GetDirectoryName(filePath)
+                ?? throw new Exception($"error: could not get directory name for file '{filePath}'.");
+
+            var directory = new DirectoryInfo(directoryPath);
 
             while (null != directory && directory.Root.Name != directory.Name)
             {
