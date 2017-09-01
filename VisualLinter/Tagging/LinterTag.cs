@@ -12,13 +12,16 @@ namespace jwldnr.VisualLinter.Tagging
 
         internal LinterTag(LinterMessage message)
         {
-            ErrorType = GetErrorType(message.IsFatal);
+            ErrorType = GetErrorType(message);
             ToolTipContent = GetToolTipContent(message.IsFatal, message.Message, message.RuleId);
         }
 
-        private static string GetErrorType(bool isFatal)
+        private static string GetErrorType(LinterMessage message)
         {
-            return isFatal
+            if (message.IsFatal)
+                return PredefinedErrorTypeNames.SyntaxError;
+
+            return RuleSeverity.Error == message.Severity
                 ? PredefinedErrorTypeNames.SyntaxError
                 : PredefinedErrorTypeNames.Warning;
         }
