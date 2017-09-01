@@ -28,7 +28,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ##### Requirements
 
-- ESLint installed locally _or_ globally
+- ESLint installed locally (per project) _or_ globally (added to PATH variable)
 - A valid ESLint configuration located in the current project folder (local) _or_ your user's home directory (global)
 
 ##### Notes
@@ -52,7 +52,7 @@ When you open or save `source.js` `VisualLinter` will use the `.eslintrc` file a
 
 When you open or save `test.js` `VisualLinter` will use the `.eslintrc` file in the `tests/` directory.
 
-If you have a personal configuration file in your home directory (`~/.eslintrc`), it will only be used if the checkbox `'Use global ESLint config instead of local'` is checked under `Tools > Options >  VisualLinter`.
+If you have a personal configuration file in your home directory (`~/.eslintrc`), it will only be used if the checkbox `'Use personal ESLint config instead of local'` is checked under `Tools > Options >  VisualLinter`.
 
 If there are multiple configuration files in the same directory, `VisualLinter` will only use one. The priority order is:
 

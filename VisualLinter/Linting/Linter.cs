@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +11,6 @@ namespace jwldnr.VisualLinter.Linting
 {
     internal class Linter
     {
-        private const string ExecutableName = "eslint.cmd";
-        private const string Name = "eslint";
-
         private readonly IVisualLinterOptions _options;
 
         internal Linter(IVisualLinterOptions options)
@@ -22,33 +18,17 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        internal static string GetLocalLinterPath()
-        {
-            try
-            {
-                var solutionDirectory = new DirectoryInfo(VsixHelper.GetSolutionPath());
-                var linterFile = solutionDirectory.GetFiles(ExecutableName, SearchOption.AllDirectories)
-                    .FirstOrDefault();
-
-                return linterFile?.FullName;
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-
-            return null;
-        }
-
         internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
         {
             try
             {
-                var linterPath = GetLinterPath();
-                var configPath = GetConfigPath(filePath);
+                var linterPath = GetLinterPath(filePath);
+                //OutputWindowHelper.WriteLine($"info: using linter @ '{linterPath}'.");
 
-                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath))
-                    ?? throw new Exception("fatal: eslint returned null result.");
+                var configPath = GetConfigPath(filePath);
+                //OutputWindowHelper.WriteLine($"info: using config @ '{configPath}'.");
+
+                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath));
 
                 return ProcessResults(results);
             }
@@ -96,56 +76,13 @@ namespace jwldnr.VisualLinter.Linting
                     OutputWindowHelper.WriteLine(output);
                 }
 
-                return null;
+                throw new Exception($"fatal: eslint could not lint file '{fileName}'.");
             }
         }
 
         private static string GetArguments(string configPath, string filePath)
         {
             return $"--config \"{configPath}\" --format json \"{filePath}\"";
-        }
-
-        private static string GetGlobalConfigPath()
-        {
-            try
-            {
-                return VsixHelper.GetGlobalConfigPath();
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-
-            return null;
-        }
-
-        private static string GetGlobalLinterPath()
-        {
-            try
-            {
-                return EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.User)
-                    ?? EnvironmentHelper.GetVariable(Name, EnvironmentVariableTarget.Machine);
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-
-            return null;
-        }
-
-        private static string GetLocalConfigPath(string filePath)
-        {
-            try
-            {
-                return VsixHelper.GetLocalConfigPath(filePath);
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-
-            return null;
         }
 
         private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
@@ -161,21 +98,21 @@ namespace jwldnr.VisualLinter.Linting
 
         private string GetConfigPath(string filePath)
         {
-            if (_options.UseGlobalConfig)
-                return GetGlobalConfigPath()
-                    ?? throw new Exception("fatal: no global eslint config found.");
+            if (_options.UsePersonalConfig)
+                return LinterHelper.GetPersonalConfigPath()
+                    ?? throw new Exception("fatal: no personal eslint config found.");
 
-            return GetLocalConfigPath(filePath)
+            return LinterHelper.GetLocalConfigPath(filePath)
                 ?? throw new Exception("fatal: no local eslint config found.");
         }
 
-        private string GetLinterPath()
+        private string GetLinterPath(string filePath)
         {
             if (_options.UseGlobalLinter)
-                return GetGlobalLinterPath()
+                return LinterHelper.GetGlobalLinterPath()
                     ?? throw new Exception("fatal: no global eslint executable found. is eslint installed globally?");
 
-            return GetLocalLinterPath()
+            return LinterHelper.GetLocalLinterPath(filePath)
                 ?? throw new Exception("fatal: no local eslint executable found. is eslint installed locally?");
         }
     }

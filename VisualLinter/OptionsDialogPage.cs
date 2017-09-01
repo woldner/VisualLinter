@@ -26,7 +26,7 @@ namespace jwldnr.VisualLinter
         {
             base.OnActivate(e);
 
-            _optionsDialogControl.UseGlobalConfig = _options.UseGlobalConfig;
+            _optionsDialogControl.UsePersonalConfig = _options.UsePersonalConfig;
             _optionsDialogControl.UseGlobalLinter = _options.UseGlobalLinter;
         }
 
@@ -34,7 +34,7 @@ namespace jwldnr.VisualLinter
         {
             if (args.ApplyBehavior == ApplyKind.Apply)
             {
-                _options.UseGlobalConfig = _optionsDialogControl.UseGlobalConfig;
+                _options.UsePersonalConfig = _optionsDialogControl.UsePersonalConfig;
                 _options.UseGlobalLinter = _optionsDialogControl.UseGlobalLinter;
             }
 

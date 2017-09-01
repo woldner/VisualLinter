@@ -6,20 +6,20 @@ using System.Windows.Navigation;
 namespace jwldnr.VisualLinter
 {
     /// <summary>
-    ///     Interaction logic for OptionsDialogPageControl.xaml
+    /// Interaction logic for OptionsDialogPageControl.xaml
     /// </summary>
     public partial class OptionsDialogPageControl
     {
-        internal bool UseGlobalConfig
-        {
-            get => UseGlobalConfigCheckBox.IsChecked ?? false;
-            set => UseGlobalConfigCheckBox.IsChecked = value;
-        }
-
         internal bool UseGlobalLinter
         {
             get => UseGlobalLinterCheckBox.IsChecked ?? false;
             set => UseGlobalLinterCheckBox.IsChecked = value;
+        }
+
+        internal bool UsePersonalConfig
+        {
+            get => UsePersonalConfigCheckBox.IsChecked ?? false;
+            set => UsePersonalConfigCheckBox.IsChecked = value;
         }
 
         internal OptionsDialogPageControl()
@@ -27,25 +27,21 @@ namespace jwldnr.VisualLinter
             InitializeComponent();
         }
 
-        private void SuggestFeatures_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        private void SuggestNewFeatures_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-
-            e.Handled = true;
-        }
-
-        private void UseGlobalConfig_OnClick(object sender, RoutedEventArgs e)
-        {
-            OutputWindowHelper.WriteLine($"use global config option set to {UseGlobalConfig}");
-
-            e.Handled = true;
         }
 
         private void UseGlobalLinter_OnClick(object sender, RoutedEventArgs e)
         {
-            OutputWindowHelper.WriteLine($"use global linter option set to {UseGlobalLinter}");
+            var value = UseGlobalLinter.ToString().ToLowerInvariant();
+            OutputWindowHelper.WriteLine($"use global linter option set to '{value}'.");
+        }
 
-            e.Handled = true;
+        private void UsePersonalConfig_OnClick(object sender, RoutedEventArgs e)
+        {
+            var value = UsePersonalConfig.ToString().ToLowerInvariant();
+            OutputWindowHelper.WriteLine($"use personal config option set to '{value}'.");
         }
     }
 }
