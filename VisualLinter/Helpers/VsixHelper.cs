@@ -9,16 +9,7 @@ namespace jwldnr.VisualLinter.Helpers
     {
         internal static string GetProjectName(string filePath)
         {
-            try
-            {
-                return GetProject(filePath).Name;
-            }
-            catch (Exception)
-            {
-                OutputWindowHelper.WriteLine($"warning: unable to get project name for file: {filePath}.");
-            }
-
-            return null;
+            return GetProject(filePath)?.Name;
         }
 
         internal static string GetSolutionPath()
