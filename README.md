@@ -34,7 +34,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 ##### Notes
 
 `VisualLinter` will always use the closest configuration file found relative to the file being linted.
-If no `.eslintrc` file is found in the same directory as the file being linted, VisualLinter will try and find a configuration file in ancestor directories up to and including the solution root directory.
+If no `.eslintrc` file is found in the same directory as the file being linted, VisualLinter will try and find a configuration file in ancestor directories up to, but not including the root directory (e.g. `C:\\` on Windows).
 
 For instance, suppose you have the following structure:
 
