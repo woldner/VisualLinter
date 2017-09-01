@@ -28,7 +28,7 @@
         <CheckBox Grid.Row="2"
                   Name="UseGlobalLinterCheckBox"
                   Margin="5, 0, 0, 5"
-                  Content="Always use global ESLint installation instead of local"
+                  Content="Use global ESLint installation instead of local"
                   Click="UseGlobalLinter_OnClick" />
 
         <Label Grid.Row="3"

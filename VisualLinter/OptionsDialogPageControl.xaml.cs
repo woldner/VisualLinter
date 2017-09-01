@@ -35,7 +35,7 @@ namespace jwldnr.VisualLinter
         private void UseGlobalLinter_OnClick(object sender, RoutedEventArgs e)
         {
             var value = UseGlobalLinter.ToString().ToLowerInvariant();
-            OutputWindowHelper.WriteLine($"always use global linter option set to '{value}'.");
+            OutputWindowHelper.WriteLine($"use global linter option set to '{value}'.");
         }
 
         private void UsePersonalConfig_OnClick(object sender, RoutedEventArgs e)
