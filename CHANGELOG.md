@@ -12,14 +12,20 @@ download in the
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
-## Next
+## 1.0 (2017-08-31)
 
-- [ ] Attempt to fix errors automatically
+- [x] Widen search for ESLint instance/config when set to local
+
+## 1.0 (2017-08-30)
+
+- [x] Changed the default behavior to use a local ESLint installation instead of global
+- [x] Provided option to use global ESLint installation
 
 ## 1.0 (2017-08-16)
 
-- [x] Changed to using a local config (relative to file being linted) instead of a global shared config for all projects
-- [x] Provide settings page
+- [x] Provided options page
+- [x] Changed the default behavior to use a local ESLint config (relative to file being linted) instead of a single personal config for all projects
+- [x] Provided option to use personal ESLint config
 
 ## 1.0 (2017-07-08)
 

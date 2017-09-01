@@ -10,16 +10,16 @@ namespace jwldnr.VisualLinter
     /// </summary>
     public partial class OptionsDialogPageControl
     {
-        internal bool UseGlobalConfig
-        {
-            get => UsePersonalConfigCheckBox.IsChecked ?? false;
-            set => UsePersonalConfigCheckBox.IsChecked = value;
-        }
-
         internal bool UseGlobalLinter
         {
             get => UseGlobalLinterCheckBox.IsChecked ?? false;
             set => UseGlobalLinterCheckBox.IsChecked = value;
+        }
+
+        internal bool UsePersonalConfig
+        {
+            get => UsePersonalConfigCheckBox.IsChecked ?? false;
+            set => UsePersonalConfigCheckBox.IsChecked = value;
         }
 
         internal OptionsDialogPageControl()
@@ -40,7 +40,7 @@ namespace jwldnr.VisualLinter
 
         private void UsePersonalConfig_OnClick(object sender, RoutedEventArgs e)
         {
-            var value = UseGlobalConfig.ToString().ToLowerInvariant();
+            var value = UsePersonalConfig.ToString().ToLowerInvariant();
             OutputWindowHelper.WriteLine($"use personal config option set to: {value}");
         }
     }

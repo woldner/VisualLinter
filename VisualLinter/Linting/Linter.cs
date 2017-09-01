@@ -98,7 +98,7 @@ namespace jwldnr.VisualLinter.Linting
                     OutputWindowHelper.WriteLine(output);
                 }
 
-                throw new Exception("fatal: eslint returned null result.");
+                throw new Exception($"fatal: eslint could not lint file '{fileName}'.");
             }
         }
 
@@ -135,9 +135,9 @@ namespace jwldnr.VisualLinter.Linting
 
         private string GetConfigPath(string filePath)
         {
-            if (_options.UseGlobalConfig)
+            if (_options.UsePersonalConfig)
                 return LinterHelper.GetPersonalConfigPath()
-                    ?? throw new Exception("fatal: no global eslint config found.");
+                    ?? throw new Exception("fatal: no personal eslint config found.");
 
             return LinterHelper.GetLocalConfigPath(filePath)
                 ?? throw new Exception("fatal: no local eslint config found.");

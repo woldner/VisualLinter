@@ -9,24 +9,24 @@ namespace jwldnr.VisualLinter
 {
     internal interface IVisualLinterOptions
     {
-        bool UseGlobalConfig { get; set; }
         bool UseGlobalLinter { get; set; }
+        bool UsePersonalConfig { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class VisualLinterOptions : IVisualLinterOptions
     {
-        public bool UseGlobalConfig
-        {
-            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalConfig), false);
-            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalConfig), value);
-        }
-
         public bool UseGlobalLinter
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalLinter), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalLinter), value);
+        }
+
+        public bool UsePersonalConfig
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UsePersonalConfig), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
         }
 
         private const string CollectionPath = "jwldnr.VisualLinter";
