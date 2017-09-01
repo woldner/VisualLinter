@@ -28,7 +28,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ##### Requirements
 
-- ESLint installed locally (per project) _or_ globally (user home directory)
+- ESLint installed locally (per project) _or_ globally (added to PATH variable)
 - A valid ESLint configuration located in the current project folder (local) _or_ your user's home directory (global)
 
 ##### Notes
