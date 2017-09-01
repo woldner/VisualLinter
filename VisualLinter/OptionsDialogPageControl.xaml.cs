@@ -35,13 +35,13 @@ namespace jwldnr.VisualLinter
         private void UseGlobalLinter_OnClick(object sender, RoutedEventArgs e)
         {
             var value = UseGlobalLinter.ToString().ToLowerInvariant();
-            OutputWindowHelper.WriteLine($"always use global linter option set to: {value}");
+            OutputWindowHelper.WriteLine($"always use global linter option set to '{value}'.");
         }
 
         private void UsePersonalConfig_OnClick(object sender, RoutedEventArgs e)
         {
             var value = UsePersonalConfig.ToString().ToLowerInvariant();
-            OutputWindowHelper.WriteLine($"use personal config option set to: {value}");
+            OutputWindowHelper.WriteLine($"use personal config option set to '{value}'.");
         }
     }
 }

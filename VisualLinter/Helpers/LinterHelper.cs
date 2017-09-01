@@ -6,6 +6,9 @@ namespace jwldnr.VisualLinter.Helpers
 {
     internal static class LinterHelper
     {
+        private const string ExecutableName = "eslint.cmd";
+        private const string VariableName = "eslint";
+
         private static readonly string[] SupportedConfigs =
         {
             ".eslintrc.js",
@@ -15,36 +18,78 @@ namespace jwldnr.VisualLinter.Helpers
             ".eslintrc"
         };
 
-        internal static string GetLocalConfigPath(string directoryPath)
+        internal static string GetGlobalLinterPath()
         {
-            var directory = new DirectoryInfo(directoryPath);
-
-            while (null != directory && directory.Root.Name != directory.Name)
+            try
             {
-                var config = FindConfig(directory.FullName);
-
-                if (null != config)
-                    return config;
-
-                directory = directory.Parent;
+                return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User)
+                    ?? EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
             }
 
             return null;
         }
 
-        internal static string GetPersonalConfigPath()
+        internal static string GetLocalConfigPath(string filePath)
         {
-            var userPath = GetUserDirectoryPath()
-                ?? throw new Exception("error: unable to get user directory.");
+            var directoryPath = Path.GetDirectoryName(filePath);
 
-            return FindConfig(userPath);
+            return null != directoryPath
+                ? FindRecursive(directoryPath, FindConfig)
+                : null;
         }
 
-        private static string FindConfig(string directoryPath)
+        internal static string GetLocalLinterPath(string filePath)
+        {
+            var directoryPath = Path.GetDirectoryName(filePath);
+
+            return null != directoryPath
+                ? FindRecursive(directoryPath, FindExecutable)
+                : null;
+        }
+
+        internal static string GetPersonalConfigPath()
+        {
+            var directory = new DirectoryInfo(GetUserDirectoryPath());
+
+            return FindConfig(directory);
+        }
+
+        private static string FindConfig(FileSystemInfo directory)
         {
             return SupportedConfigs
-                .Select(config => Path.Combine(directoryPath, config))
+                .Select(config => Path.Combine(directory.FullName, config))
                 .FirstOrDefault(File.Exists);
+        }
+
+        private static string FindExecutable(DirectoryInfo directory)
+        {
+            var directories = directory.EnumerateDirectories("node_modules", SearchOption.TopDirectoryOnly);
+
+            return directories
+                .Select(subDirectory => subDirectory.EnumerateFiles(ExecutableName, SearchOption.AllDirectories))
+                .Select(executables => executables.FirstOrDefault()?.FullName)
+                .FirstOrDefault();
+        }
+
+        private static string FindRecursive(string path, Func<DirectoryInfo, string> findFile)
+        {
+            var directory = new DirectoryInfo(path);
+
+            while (null != directory && directory.Root.Name != directory.Name)
+            {
+                var file = findFile(directory);
+
+                if (null != file)
+                    return file;
+
+                directory = directory.Parent;
+            }
+
+            return null;
         }
 
         private static string GetUserDirectoryPath()
