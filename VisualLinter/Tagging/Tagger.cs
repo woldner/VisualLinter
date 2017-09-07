@@ -84,6 +84,9 @@ namespace jwldnr.VisualLinter.Tagging
 
         private async Task AnalyzeAsync(string filePath)
         {
+            if (null == VsixHelper.GetProjectItem(filePath))
+                return;
+
             var messages = await LintAsync(filePath);
 
             UpdateMessages(messages);

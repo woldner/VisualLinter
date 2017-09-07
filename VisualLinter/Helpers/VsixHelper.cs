@@ -7,9 +7,18 @@ namespace jwldnr.VisualLinter.Helpers
 {
     internal static class VsixHelper
     {
+        internal static ProjectItem GetProjectItem(string filePath)
+        {
+            var solution = GetSolution();
+
+            return solution?.FindProjectItem(filePath);
+        }
+
         internal static string GetProjectName(string filePath)
         {
-            return GetProject(filePath)?.Name;
+            var project = GetProject(filePath);
+
+            return project?.Name;
         }
 
         internal static string GetSolutionPath()
@@ -22,9 +31,7 @@ namespace jwldnr.VisualLinter.Helpers
 
         private static Project GetProject(string filePath)
         {
-            var solution = GetSolution();
-
-            var item = solution?.FindProjectItem(filePath);
+            var item = GetProjectItem(filePath);
 
             return item?.ContainingProject;
         }
