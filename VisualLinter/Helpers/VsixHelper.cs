@@ -21,14 +21,6 @@ namespace jwldnr.VisualLinter.Helpers
             return project?.Name;
         }
 
-        internal static string GetSolutionPath()
-        {
-            var solution = GetSolution();
-
-            return Path.GetDirectoryName(solution?.FullName)
-                ?? throw new Exception("fatal: could not get solution directory info.");
-        }
-
         private static Project GetProject(string filePath)
         {
             var item = GetProjectItem(filePath);
