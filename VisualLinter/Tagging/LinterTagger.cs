@@ -236,7 +236,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             _provider.UpdateAllSinks(factory);
 
-            UpdateWarnings(_currentSnapshot, snapshot);
+            UpdateMarkers(_currentSnapshot, snapshot);
 
             Snapshot = snapshot;
         }
@@ -265,7 +265,7 @@ namespace jwldnr.VisualLinter.Tagging
             _dirtySpans = newDirtySpans;
         }
 
-        private void UpdateWarnings(ITextSnapshot currentSnapshot, LinterSnapshot snapshot)
+        private void UpdateMarkers(ITextSnapshot currentSnapshot, LinterSnapshot snapshot)
         {
             var oldSnapshot = Snapshot;
 
