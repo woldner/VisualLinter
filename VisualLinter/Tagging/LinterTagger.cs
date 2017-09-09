@@ -105,8 +105,7 @@ namespace jwldnr.VisualLinter.Tagging
         {
             try
             {
-                var lineNumber = message.Line - 1;
-                var column = message.Column - 1;
+                var lineNumber = message.Line;
 
                 if (lineNumber < 0)
                     lineNumber = 0;
@@ -114,29 +113,28 @@ namespace jwldnr.VisualLinter.Tagging
                 var lineCount = _currentSnapshot.LineCount;
 
                 if (lineNumber > lineCount)
-                    throw new ArgumentOutOfRangeException($"Line number ({lineNumber}) greater than line count ({lineCount})");
+                    throw new ArgumentOutOfRangeException($"line number ({lineNumber}) greater than line count ({lineCount})");
 
                 var line = _currentSnapshot.GetLineFromLineNumber(lineNumber);
                 var lineText = line.GetText();
 
                 int endColumn = line.End;
-                var startColumn = line.Start.Add(column);
+                var startColumn = line.Start.Add(message.Column);
 
                 if (message.EndColumn.HasValue)
                 {
-                    var value = message.EndColumn.Value - 1;
-                    var length = value - column;
+                    var length = message.EndColumn.Value - message.Column;
                     endColumn = startColumn.Add(length);
                 }
                 else
                 {
-                    var match = RegexHelper.GetWord(lineText.Substring(column));
+                    var match = RegexHelper.GetWord(lineText.Substring(message.Column));
                     if (match.Success)
                         endColumn = startColumn.Add(match.Index).Add(match.Length);
                 }
 
                 if (startColumn > endColumn)
-                    throw new ArgumentOutOfRangeException($"Start column ({startColumn.Position}) greater than end column ({endColumn}) for line {lineNumber}");
+                    throw new ArgumentOutOfRangeException($"start column ({startColumn.Position}) greater than end column ({endColumn}) for line {lineNumber}");
 
                 return new MessageRange
                 {
