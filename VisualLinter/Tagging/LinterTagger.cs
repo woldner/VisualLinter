@@ -76,7 +76,7 @@ namespace jwldnr.VisualLinter.Tagging
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
-            var markers = GetMessageRanges(messages).Where(IsValidRange).Select(CreateMarker);
+            var markers = ProcessMessages(messages).Select(CreateMarker);
             var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, markers);
 
             SnapToNewSnapshot(newSnapshot);
@@ -95,8 +95,13 @@ namespace jwldnr.VisualLinter.Tagging
 
         private LinterMarker CreateMarker(LinterMessage message)
         {
-            var start = new SnapshotPoint(_currentSnapshot, message.Range.StartColumn);
-            var end = new SnapshotPoint(_currentSnapshot, message.Range.EndColumn);
+            var line = message.Range.LineStart;
+
+            var columnStart = message.Range.ColumnStart;
+            var start = _currentSnapshot.GetPointInLine(line, columnStart);
+
+            var columnEnd = message.Range.ColumnEnd;
+            var end = _currentSnapshot.GetPointInLine(line, columnEnd);
 
             return new LinterMarker(new SnapshotSpan(start, end), message);
         }
@@ -117,30 +122,33 @@ namespace jwldnr.VisualLinter.Tagging
 
                 var line = _currentSnapshot.GetLineFromLineNumber(lineNumber);
                 var lineText = line.GetText();
+                var columnEnd = lineText.Length;
 
-                int endColumn = line.End;
-                var startColumn = line.Start.Add(message.Column);
+                var columnGiven = message.Column > -1;
+                var columnStart = columnGiven ? message.Column : 0;
 
-                if (message.EndColumn.HasValue)
+                if (columnGiven)
                 {
-                    var length = message.EndColumn.Value - message.Column;
-                    endColumn = startColumn.Add(length);
+                    var match = RegexHelper.GetWord(lineText.Substring(columnStart));
+                    if (match.Success)
+                        columnEnd = columnStart + match.Index + match.Length;
                 }
                 else
                 {
-                    var match = RegexHelper.GetWord(lineText.Substring(message.Column));
-                    if (match.Success)
-                        endColumn = startColumn.Add(match.Index).Add(match.Length);
+                    var indentation = RegexHelper.GetIndentation(lineText);
+                    if (indentation.Success)
+                        columnStart = indentation.Length;
                 }
 
-                if (startColumn > endColumn)
-                    throw new ArgumentOutOfRangeException($"start column ({startColumn.Position}) greater than end column ({endColumn}) for line {lineNumber}");
+                if (columnStart > lineText.Length)
+                    throw new ArgumentOutOfRangeException($"column start ({columnStart}) greater than line length ({lineText.Length}) for line {lineNumber}");
 
                 return new MessageRange
                 {
-                    LineNumber = lineNumber,
-                    StartColumn = startColumn,
-                    EndColumn = endColumn
+                    ColumnEnd = columnEnd,
+                    ColumnStart = columnStart,
+                    LineEnd = lineNumber,
+                    LineStart = lineNumber
                 };
             }
             catch (Exception e)
@@ -151,15 +159,6 @@ namespace jwldnr.VisualLinter.Tagging
             return null;
         }
 
-        private IEnumerable<LinterMessage> GetMessageRanges(IEnumerable<LinterMessage> messages)
-        {
-            foreach (var message in messages)
-            {
-                message.Range = GetMessageRange(message);
-                yield return message;
-            }
-        }
-
         private Task Initialize()
         {
             _document.FileActionOccurred += OnFileActionOccurred;
@@ -168,17 +167,6 @@ namespace jwldnr.VisualLinter.Tagging
             _provider.AddTagger(this);
 
             return AnalyzeAsync(FilePath);
-        }
-
-        private bool IsValidRange(LinterMessage message)
-        {
-            var range = message.Range;
-
-            if (null == range)
-                return false;
-
-            return range.LineNumber >= 0 && range.LineNumber <= _currentSnapshot.LineCount &&
-                range.EndColumn <= _currentSnapshot.Length;
         }
 
         private Task<IEnumerable<LinterMessage>> LintAsync(string filePath, string source)
@@ -205,6 +193,38 @@ namespace jwldnr.VisualLinter.Tagging
             else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
             {
                 await AnalyzeAsync(FilePath);
+            }
+        }
+
+        private IEnumerable<LinterMessage> ProcessMessages(IEnumerable<LinterMessage> messages)
+        {
+            foreach (var message in messages)
+            {
+                var messageColumn = message.Column;
+                var messageLine = message.Line;
+
+                var messageEndLine = message.EndLine;
+                var messageEndColumn = message.EndColumn;
+
+                if (messageEndColumn.HasValue && messageEndLine.HasValue)
+                {
+                    _currentSnapshot.ValidatePoint(messageLine, messageColumn);
+                    _currentSnapshot.ValidatePoint(messageEndLine.Value, messageEndColumn.Value);
+
+                    message.Range = new MessageRange
+                    {
+                        ColumnEnd = messageEndColumn.Value,
+                        ColumnStart = messageColumn,
+                        LineEnd = messageEndLine.Value,
+                        LineStart = messageLine
+                    };
+                }
+                else
+                {
+                    message.Range = GetMessageRange(message);
+                }
+
+                yield return message;
             }
         }
 

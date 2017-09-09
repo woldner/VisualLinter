@@ -2,10 +2,12 @@
 {
     internal class MessageRange
     {
-        public int EndColumn { get; set; }
+        public int ColumnEnd { get; set; }
 
-        public int LineNumber { get; set; }
+        public int ColumnStart { get; set; }
 
-        public int StartColumn { get; set; }
+        public int LineEnd { get; set; }
+
+        public int LineStart { get; set; }
     }
 }
