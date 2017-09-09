@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,17 +19,20 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
+        internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath, string source)
         {
             try
             {
+                if (0 == source.Length)
+                    return Enumerable.Empty<LinterMessage>();
+
                 var linterPath = GetLinterPath(filePath);
                 //OutputWindowHelper.WriteLine($"info: using linter @ '{linterPath}'.");
 
                 var configPath = GetConfigPath(filePath);
                 //OutputWindowHelper.WriteLine($"info: using config @ '{configPath}'.");
 
-                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath, filePath));
+                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath), source);
 
                 return ProcessResults(results);
             }
@@ -40,7 +44,7 @@ namespace jwldnr.VisualLinter.Linting
             return Enumerable.Empty<LinterMessage>();
         }
 
-        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string fileName, string arguments)
+        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string fileName, string arguments, string source)
         {
             var startInfo = new ProcessStartInfo(fileName, arguments)
             {
@@ -57,6 +61,11 @@ namespace jwldnr.VisualLinter.Linting
             {
                 if (null == process)
                     throw new Exception("fatal: unable to start eslint process.");
+
+                using (var stream = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(false)))
+                {
+                    await stream.WriteAsync(source);
+                }
 
                 var output = await process.StandardOutput.ReadToEndAsync();
                 var error = await process.StandardError.ReadToEndAsync();
@@ -80,9 +89,9 @@ namespace jwldnr.VisualLinter.Linting
             }
         }
 
-        private static string GetArguments(string configPath, string filePath)
+        private static string GetArguments(string configPath)
         {
-            return $"--config \"{configPath}\" --format json \"{filePath}\"";
+            return $"--config \"{configPath}\" --format json --stdin";
         }
 
         private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)

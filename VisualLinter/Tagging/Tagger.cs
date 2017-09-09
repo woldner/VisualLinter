@@ -50,6 +50,9 @@ namespace jwldnr.VisualLinter.Tagging
             _document.FileActionOccurred -= OnFileActionOccurred;
             _buffer.ChangedLowPriority -= OnBufferChange;
 
+            // test
+            _document.DirtyStateChanged += OnDirtyStateChanged;
+
             _provider.RemoveTagger(this);
         }
 
@@ -82,12 +85,18 @@ namespace jwldnr.VisualLinter.Tagging
             SnapToNewSnapshot(newSnapshot);
         }
 
+        private static void OnDirtyStateChanged(object sender, EventArgs e)
+        {
+            OutputWindowHelper.WriteLine("OnDirtyStateChanged");
+        }
+
         private async Task AnalyzeAsync(string filePath)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
-            var messages = await LintAsync(filePath);
+            var source = _currentSnapshot.GetText();
+            var messages = await LintAsync(filePath, source);
 
             UpdateMessages(messages);
         }
@@ -111,9 +120,9 @@ namespace jwldnr.VisualLinter.Tagging
                     lineNumber = 0;
 
                 var lineCount = _currentSnapshot.LineCount;
+
                 if (lineNumber > lineCount)
-                    throw new ArgumentOutOfRangeException(
-                        $"Line number ({lineNumber}) greater than line count ({lineCount})");
+                    throw new Exception($"Line number ({lineNumber}) greater than line count ({lineCount})");
 
                 var line = _currentSnapshot.GetLineFromLineNumber(lineNumber);
                 var lineText = line.GetText();
@@ -135,8 +144,7 @@ namespace jwldnr.VisualLinter.Tagging
                 }
 
                 if (startColumn > endColumn)
-                    throw new ArgumentOutOfRangeException(
-                        $"Start column ({startColumn}) greater than end column ({endColumn}) for line {lineNumber}");
+                    throw new Exception($"Start column ({startColumn.Position}) greater than end column ({endColumn}) for line {lineNumber}");
 
                 return new MessageRange
                 {
@@ -183,9 +191,9 @@ namespace jwldnr.VisualLinter.Tagging
                 range.EndColumn <= _currentSnapshot.Length;
         }
 
-        private Task<IEnumerable<LinterMessage>> LintAsync(string filePath)
+        private Task<IEnumerable<LinterMessage>> LintAsync(string filePath, string source)
         {
-            return _linter.LintAsync(filePath);
+            return _linter.LintAsync(filePath, source);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
