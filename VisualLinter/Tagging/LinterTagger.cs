@@ -95,13 +95,13 @@ namespace jwldnr.VisualLinter.Tagging
 
         private LinterMarker CreateMarker(LinterMessage message)
         {
-            var line = message.Range.LineStart;
-
+            var lineStart = message.Range.LineStart;
             var columnStart = message.Range.ColumnStart;
-            var start = _currentSnapshot.GetPointInLine(line, columnStart);
+            var start = _currentSnapshot.GetPointInLine(lineStart, columnStart);
 
+            var lineEnd = message.Range.LineEnd;
             var columnEnd = message.Range.ColumnEnd;
-            var end = _currentSnapshot.GetPointInLine(line, columnEnd);
+            var end = _currentSnapshot.GetPointInLine(lineEnd, columnEnd);
 
             return new LinterMarker(new SnapshotSpan(start, end), message);
         }
