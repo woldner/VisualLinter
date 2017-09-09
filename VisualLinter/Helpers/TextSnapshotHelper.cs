@@ -17,9 +17,8 @@ namespace jwldnr.VisualLinter.Helpers
             {
                 snapshot.GetPointInLine(line, column);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                OutputWindowHelper.WriteLine(e);
                 OutputWindowHelper.WriteLine($"{line}:{column} isn't a valid point!");
             }
         }
