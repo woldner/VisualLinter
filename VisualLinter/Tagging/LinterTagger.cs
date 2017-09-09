@@ -50,15 +50,12 @@ namespace jwldnr.VisualLinter.Tagging
             _document.FileActionOccurred -= OnFileActionOccurred;
             _buffer.ChangedLowPriority -= OnBufferChange;
 
-            // test
-            _document.DirtyStateChanged += OnDirtyStateChanged;
-
             _provider.RemoveTagger(this);
         }
 
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            if (0 == spans.Count || null == Snapshot || !Snapshot.Markers.Any())
+            if (0 == spans.Count || null == Snapshot || false == Snapshot.Markers.Any())
                 return Enumerable.Empty<ITagSpan<IErrorTag>>();
 
             try
@@ -83,11 +80,6 @@ namespace jwldnr.VisualLinter.Tagging
             var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, markers);
 
             SnapToNewSnapshot(newSnapshot);
-        }
-
-        private static void OnDirtyStateChanged(object sender, EventArgs e)
-        {
-            OutputWindowHelper.WriteLine("OnDirtyStateChanged");
         }
 
         private async Task AnalyzeAsync(string filePath)
