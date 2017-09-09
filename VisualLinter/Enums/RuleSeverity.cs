@@ -1,4 +1,4 @@
-﻿namespace jwldnr.VisualLinter.Linting
+﻿namespace jwldnr.VisualLinter.Enums
 {
     internal enum RuleSeverity
     {

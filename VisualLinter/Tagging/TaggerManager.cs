@@ -4,11 +4,11 @@ namespace jwldnr.VisualLinter.Tagging
 {
     internal class TaggerManager
     {
-        internal IEnumerable<Tagger> Values => _taggers.Values;
+        internal IEnumerable<LinterTagger> Values => _taggers.Values;
 
-        private readonly IDictionary<string, Tagger> _taggers = new Dictionary<string, Tagger>();
+        private readonly IDictionary<string, LinterTagger> _taggers = new Dictionary<string, LinterTagger>();
 
-        internal void Add(Tagger tagger)
+        internal void Add(LinterTagger tagger)
         {
             _taggers.Add(Key(tagger.FilePath), tagger);
         }
@@ -18,7 +18,7 @@ namespace jwldnr.VisualLinter.Tagging
             return _taggers.ContainsKey(Key(filePath));
         }
 
-        internal void Remove(Tagger tagger)
+        internal void Remove(LinterTagger tagger)
         {
             _taggers.Remove(Key(tagger.FilePath));
         }
@@ -26,14 +26,14 @@ namespace jwldnr.VisualLinter.Tagging
         internal void Rename(string oldPath, string newPath)
         {
             var oldKey = Key(oldPath);
-            if (!_taggers.TryGetValue(oldKey, out Tagger tagger))
+            if (!_taggers.TryGetValue(oldKey, out LinterTagger tagger))
                 return;
 
             _taggers.Add(Key(newPath), tagger);
             _taggers.Remove(oldKey);
         }
 
-        internal bool TryGetValue(string filePath, out Tagger tagger)
+        internal bool TryGetValue(string filePath, out LinterTagger tagger)
         {
             return _taggers.TryGetValue(Key(filePath), out tagger);
         }

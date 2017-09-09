@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using jwldnr.VisualLinter.Enums;
+using Newtonsoft.Json;
 
 namespace jwldnr.VisualLinter.Linting
 {

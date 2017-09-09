@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    internal class Tagger : ITagger<IErrorTag>, IDisposable
+    internal class LinterTagger : ITagger<IErrorTag>, IDisposable
     {
         internal SnapshotFactory Factory { get; }
         internal string FilePath { get; private set; }
@@ -23,7 +23,7 @@ namespace jwldnr.VisualLinter.Tagging
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
 
-        internal Tagger(
+        internal LinterTagger(
             TaggerProvider provider,
             Linter linter,
             ITextBuffer buffer,
@@ -38,7 +38,7 @@ namespace jwldnr.VisualLinter.Tagging
             _dirtySpans = new NormalizedSnapshotSpanCollection();
 
             FilePath = document.FilePath;
-            Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<LinterWarning>()));
+            Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<LinterMarker>()));
 
             Initialize();
         }
@@ -58,14 +58,14 @@ namespace jwldnr.VisualLinter.Tagging
 
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            if (0 == spans.Count || null == Snapshot || !Snapshot.Warnings.Any())
+            if (0 == spans.Count || null == Snapshot || !Snapshot.Markers.Any())
                 return Enumerable.Empty<ITagSpan<IErrorTag>>();
 
             try
             {
-                return Snapshot.Warnings
-                    .Where(warning => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(warning.Span)))
-                    .Select(warning => new TagSpan<IErrorTag>(warning.Span, new LinterTag(warning.Message)));
+                return Snapshot.Markers
+                    .Where(marker => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(marker.Span)))
+                    .Select(marker => new TagSpan<IErrorTag>(marker.Span, new LinterTag(marker.Message)));
             }
             catch (Exception e)
             {
@@ -79,8 +79,8 @@ namespace jwldnr.VisualLinter.Tagging
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
-            var warnings = GetMessageRanges(messages).Where(IsValidRange).Select(CreateWarning);
-            var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, warnings);
+            var markers = GetMessageRanges(messages).Where(IsValidRange).Select(CreateMarker);
+            var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, markers);
 
             SnapToNewSnapshot(newSnapshot);
         }
@@ -101,12 +101,12 @@ namespace jwldnr.VisualLinter.Tagging
             UpdateMessages(messages);
         }
 
-        private LinterWarning CreateWarning(LinterMessage message)
+        private LinterMarker CreateMarker(LinterMessage message)
         {
             var start = new SnapshotPoint(_currentSnapshot, message.Range.StartColumn);
             var end = new SnapshotPoint(_currentSnapshot, message.Range.EndColumn);
 
-            return new LinterWarning(new SnapshotSpan(start, end), message);
+            return new LinterMarker(new SnapshotSpan(start, end), message);
         }
 
         private MessageRange GetMessageRange(LinterMessage message)
@@ -235,8 +235,8 @@ namespace jwldnr.VisualLinter.Tagging
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
-            var newWarnings = oldSnapshot.Warnings
-                .Select(warning => warning.CloneAndTranslateTo(warning, _currentSnapshot))
+            var newWarnings = oldSnapshot.Markers
+                .Select(marker => marker.CloneAndTranslateTo(marker, _currentSnapshot))
                 .Where(clone => null != clone);
 
             return new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newWarnings);
@@ -268,16 +268,16 @@ namespace jwldnr.VisualLinter.Tagging
 
             if (null != oldSnapshot && 0 < oldSnapshot.Count)
             {
-                start = oldSnapshot.Warnings.First().Span.Start
+                start = oldSnapshot.Markers.First().Span.Start
                     .TranslateTo(currentSnapshot, PointTrackingMode.Negative);
-                end = oldSnapshot.Warnings.Last().Span.End
+                end = oldSnapshot.Markers.Last().Span.End
                     .TranslateTo(currentSnapshot, PointTrackingMode.Positive);
             }
 
             if (0 < snapshot.Count)
             {
-                start = Math.Min(start, snapshot.Warnings.First().Span.Start.Position);
-                end = Math.Max(end, snapshot.Warnings.Last().Span.End.Position);
+                start = Math.Min(start, snapshot.Markers.First().Span.Start.Position);
+                end = Math.Max(end, snapshot.Markers.Last().Span.End.Position);
             }
 
             if (start >= end)

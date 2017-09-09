@@ -61,9 +61,9 @@
     <Compile Include="Linting\LinterMessage.cs" />
     <Compile Include="Linting\LinterResult.cs" />
     <Compile Include="Linting\LinterSnapshot.cs" />
-    <Compile Include="Linting\LinterWarning.cs" />
+    <Compile Include="Linting\LinterMarker.cs" />
     <Compile Include="Linting\MessageRange.cs" />
-    <Compile Include="Linting\RuleSeverity.cs" />
+    <Compile Include="Enums\RuleSeverity.cs" />
     <Compile Include="Linting\SinkManager.cs" />
     <Compile Include="Linting\SnapshotFactory.cs" />
     <Compile Include="OptionsDialogPage.cs">
@@ -77,7 +77,7 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
     <Compile Include="Tagging\LinterTag.cs" />
-    <Compile Include="Tagging\Tagger.cs" />
+    <Compile Include="Tagging\LinterTagger.cs" />
     <Compile Include="Tagging\TaggerManager.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
     <Compile Include="VisualLinter.cs">

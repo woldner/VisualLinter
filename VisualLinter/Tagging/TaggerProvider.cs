@@ -76,7 +76,7 @@ namespace jwldnr.VisualLinter.Tagging
             lock (_taggers)
             {
                 if (!_taggers.Exists(filePath))
-                    return new Tagger(this, new Linter(_visualLinterOptions), buffer, document) as ITagger<T>;
+                    return new LinterTagger(this, new Linter(_visualLinterOptions), buffer, document) as ITagger<T>;
 
                 var result = _taggers.TryGetValue(filePath, out var tagger);
                 if (false == result)
@@ -108,7 +108,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void AddTagger(Tagger tagger)
+        internal void AddTagger(LinterTagger tagger)
         {
             lock (_managers)
             {
@@ -127,7 +127,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void RemoveTagger(Tagger tagger)
+        internal void RemoveTagger(LinterTagger tagger)
         {
             lock (_managers)
             {

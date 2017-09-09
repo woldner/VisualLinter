@@ -1,4 +1,5 @@
-﻿using jwldnr.VisualLinter.Linting;
+﻿using jwldnr.VisualLinter.Enums;
+using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Tagging;
 
