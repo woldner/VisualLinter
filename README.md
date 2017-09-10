@@ -28,8 +28,8 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ##### Requirements
 
-- ESLint installed locally (per project) _or_ globally (added to PATH variable)
-- A valid ESLint config located in the current project directory (local) _or_ your user's home directory (global)
+- ESLint installed locally (per project) _or_ globally (`ESLint` added to `PATH`)
+- A valid ESLint config located in the current project directory (local) _or_ your user home directory (global)
 
 ##### Notes
 
@@ -52,7 +52,7 @@ When you open or save `source.js` `VisualLinter` will use the `.eslintrc` file a
 
 When you open or save `test.js` `VisualLinter` will use the `.eslintrc` file in the `tests/` directory.
 
-If you have a personal config file in your home directory (`~/.eslintrc`), it will only be used if the checkbox `'Use personal ESLint config instead of local'` is checked under `Tools > Options >  VisualLinter`.
+If you prefer using a personal config file located in your user home directory (e.g. `~/.eslintrc`), be sure to tick the checkbox `'Use personal ESLint config instead of local'` under `Tools > Options >  VisualLinter`.
 
 If there are multiple config files in the same directory, `VisualLinter` will only use one. The priority order is:
 
@@ -62,7 +62,10 @@ If there are multiple config files in the same directory, `VisualLinter` will on
 4. .eslintrc.json
 5. .eslintrc
 
-Please note that additional ESLint plugins may be required in order to lint files depending on your config. The `VisualLinter` output window could help identify these plugins.
+Currently, this extension does NOT support the use of `package.json` as its config file.
+
+Please note that additional `ESLint` plugins may be required in order to lint files depending on your config.
+The `VisualLinter` output window could help identify these plugins.
 
 ## Language Support
 
@@ -72,9 +75,9 @@ Please note that additional ESLint plugins may be required in order to lint file
 
 ## Troubleshooting
 
-- If you receive a error message when starting Visual Studio with the extension installed saying that ESLint could not be found in `PATH`, restarting your computer would reload the environment variables.
-- If you receive a message saying that `eslint` could not verify your config, refer to the docs on [how to configure ESLint](http://eslint.org/docs/user-guide/configuring)
-- Visual Studio 2017 is using ESLint by default, however it does not show errors in buffer, if you're seeing duplicate messages in the error list window, you can disable the built in linter by setting `Enable ESLint` to `false` in:
+- If you're using a global installation of `ESLint` and receive an error saying that `ESLint` could not be found in `PATH`, restarting your computer would reload the environment variables.
+- If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure `ESLint`](http://eslint.org/docs/user-guide/configuring)
+- Visual Studio 2017 is using ESLint by default, however it does not visually mark errors in buffer, if you're seeing duplicate messages in the error list window, you can disable the built in linter by setting `Enable ESLint` to `false` in:
 
   `Options` > `Text Editor` > `JavaScript/TypeScript` > `ESLint`
 
@@ -95,7 +98,7 @@ used by this project.
 Creators of..
 
 - [SonarSource/SonarLint](https://github.com/SonarSource/sonarlint-visualstudio) extension for Visual Studio.
-- [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) eslint package for the Atom text editor.
+- [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) ESLint package for the Atom text editor.
 
 ## License
 [MIT](LICENSE)
