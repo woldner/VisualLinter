@@ -84,7 +84,7 @@ The output window could help identify these plugins.
 | Enable ESLint | `false` | Options > Text Editor > JavaScript/TypeScript > ESLint |
 | Enable JavaScript errors | `false` | Options > Text Editor > JavaScript/TypeScript > Code Validation |
 
-Please note that `VisualLinter` cover both these settings.
+Please note that `VisualLinter` is a direct replacement for both settings.
 
 ## Contribute
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
