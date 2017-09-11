@@ -72,7 +72,7 @@ namespace jwldnr.VisualLinter.Linting
 
                 case StandardTableKeyNames.ErrorCodeToolTip:
                 case StandardTableKeyNames.HelpLink:
-                    content = GetRuleUrl(marker.Message.IsFatal, marker.Message.RuleId);
+                    content = GetRuleUrl(marker.Message.IsFatal, marker.Message.RuleId, marker.Message.Message);
                     return null != content;
 
                 case StandardTableKeyNames.ErrorCode:
@@ -80,7 +80,7 @@ namespace jwldnr.VisualLinter.Linting
                     return true;
 
                 case StandardTableKeyNames.ErrorSeverity:
-                    content = GetErrorCategory(marker.Message);
+                    content = GetErrorCategory(marker.Message.IsFatal, marker.Message.Severity);
                     return true;
 
                 case StandardTableKeyNames.ErrorSource:
@@ -106,12 +106,12 @@ namespace jwldnr.VisualLinter.Linting
             }
         }
 
-        private static __VSERRORCATEGORY GetErrorCategory(LinterMessage message)
+        private static __VSERRORCATEGORY GetErrorCategory(bool isFatal, RuleSeverity severity)
         {
-            if (message.IsFatal)
+            if (isFatal)
                 return __VSERRORCATEGORY.EC_ERROR;
 
-            return RuleSeverity.Error == message.Severity
+            return RuleSeverity.Error == severity
                 ? __VSERRORCATEGORY.EC_ERROR
                 : __VSERRORCATEGORY.EC_WARNING;
         }
@@ -119,14 +119,14 @@ namespace jwldnr.VisualLinter.Linting
         private static string GetErrorCode(bool isFatal, string ruleId)
         {
             return isFatal
-                ? null
+                ? "Fatal"
                 : $"({ruleId})";
         }
 
-        private static string GetRuleUrl(bool isFatal, string ruleId)
+        private static string GetRuleUrl(bool isFatal, string ruleId, string message)
         {
             return isFatal
-                ? null
+                ? $"http://google.com/search?q={message}"
                 : $"http://eslint.org/docs/rules/{ruleId}";
         }
     }

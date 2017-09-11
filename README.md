@@ -77,9 +77,14 @@ The `VisualLinter` output window could help identify these plugins.
 
 - If you're using a global installation of `ESLint` and receive an error saying that `ESLint` could not be found in `PATH`, restarting your computer would reload the environment variables.
 - If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure `ESLint`](http://eslint.org/docs/user-guide/configuring)
-- Visual Studio 2017 is using ESLint by default, however it does not visually mark errors in buffer, if you're seeing duplicate messages in the error list window, you can disable the built in linter by setting `Enable ESLint` to `false` in:
+- Visual Studio 2017 is using ESLint by default, however it does not visually mark errors in buffer, if you're seeing duplicate messages in the error list window, you can disable the built in features by changing these settings:
 
-  `Options` > `Text Editor` > `JavaScript/TypeScript` > `ESLint`
+| Option | Value | Location |
+| --- | --- | ---- |
+| Enable ESLint | false | `Options` > `Text Editor` > `JavaScript/TypeScript` > `ESLint` |
+| Enable JavaScript errors | false | `Options` > `Text Editor` > `JavaScript/TypeScript` > `Code Validation` |
+
+Note: `VisualLinter` cover both these settings in one extension. 
 
 ## Contribute
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
