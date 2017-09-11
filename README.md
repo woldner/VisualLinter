@@ -23,6 +23,8 @@ See the [change log](CHANGELOG.md) for changes and road map.
 ## Features
 
 - Lint files using ESLint on file open/save. (see [Language Support](#language-support))
+- Visually mark errors/warnings in document
+- Include tooltip content with info on errors/warnings
 
 ## Getting Started
 
