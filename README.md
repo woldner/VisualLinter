@@ -23,6 +23,14 @@ See the [change log](CHANGELOG.md) for changes and road map.
 ## Features
 
 - Lint files using ESLint on file open/save. (see [Language Support](#language-support))
+- Visually mark errors/warnings in document
+- Include tooltip content with info on errors/warnings
+
+![Visual markers](media/visual-markers.png)
+
+- Fully integrated with Visual Studio error list
+
+![Error list](media/error-list.png)
 
 ## Getting Started
 
