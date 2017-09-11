@@ -22,18 +22,18 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ## Features
 
-- Lint files using ESLint on file save. (see [Language Support](#language-support))
+- Lint files using ESLint on file open/save. (see [Language Support](#language-support))
 
 ## Getting Started
 
 ##### Requirements
 
 - ESLint installed locally (per project) _or_ globally (`ESLint` added to `PATH`)
-- A valid ESLint config located in the current project directory (local) _or_ your user home directory (global)
+- A valid ESLint config located in the current project directory (local) _or_ your user home directory (`~/.eslintrc`, global)
 
 ##### Notes
 
-`VisualLinter` will always use the closest installation/config found relative to the file being linted.
+The closest installation/config found relative to the file being linted will always be used.
 If no `node_modules` directory or `.eslintrc` file is found in the same directory as the file being linted, `VisualLinter` will try and resolve the paths from ancestor directories up to, but not including the root directory (e.g. `C:\\` on Windows).
 
 For instance, suppose you have the following structure:
@@ -48,24 +48,24 @@ your-project
   └── test.js
 ```
 
-When you open or save `source.js` `VisualLinter` will use the `.eslintrc` file at the root of the project as its config.
+When `source.js` is being opened or saved the `.eslintrc` file at the root of the project will be used as its config.
 
-When you open or save `test.js` `VisualLinter` will use the `.eslintrc` file in the `tests/` directory.
+When `test.js` is being opened or saved the `.eslintrc` file in the `tests/` directory will be used as its config.
 
 If you prefer using a personal config file located in your user home directory (e.g. `~/.eslintrc`), be sure to tick the checkbox `'Use personal ESLint config instead of local'` under `Tools > Options >  VisualLinter`.
 
 If there are multiple config files in the same directory, `VisualLinter` will only use one. The priority order is:
 
-1. .eslintrc.js
-2. .eslintrc.yaml
-3. .eslintrc.yml
-4. .eslintrc.json
-5. .eslintrc
+1.  .eslintrc.js
+2.  .eslintrc.yaml
+3.  .eslintrc.yml
+4.  .eslintrc.json
+5.  .eslintrc
 
-Currently, this extension does NOT support the use of `package.json` as its config file.
+Currently, `VisualLinter` does NOT support the use of `package.json` as its config file.
 
 Please note that additional `ESLint` plugins may be required in order to lint files depending on your config.
-The `VisualLinter` output window could help identify these plugins.
+The output window could help identify these plugins.
 
 ## Language Support
 
@@ -76,15 +76,15 @@ The `VisualLinter` output window could help identify these plugins.
 ## Troubleshooting
 
 - If you're using a global installation of `ESLint` and receive an error saying that `ESLint` could not be found in `PATH`, restarting your computer would reload the environment variables.
-- If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure `ESLint`](http://eslint.org/docs/user-guide/configuring)
-- Visual Studio 2017 is using ESLint by default, however it does not visually mark errors in buffer, if you're seeing duplicate messages in the error list window, you can disable the built in features by changing these settings:
+- If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure ESLint](http://eslint.org/docs/user-guide/configuring)
+- Visual Studio 2017 is using `ESLint` by default, however it does not visually mark errors in buffer-- if you're seeing duplicate messages in the error list window, you can disable the built in features by changing the following settings:
 
 | Option | Value | Location |
 | --- | --- | ---- |
-| Enable ESLint | false | `Options` > `Text Editor` > `JavaScript/TypeScript` > `ESLint` |
-| Enable JavaScript errors | false | `Options` > `Text Editor` > `JavaScript/TypeScript` > `Code Validation` |
+| Enable ESLint | `false` | Options > Text Editor > JavaScript/TypeScript > ESLint |
+| Enable JavaScript errors | `false` | Options > Text Editor > JavaScript/TypeScript > Code Validation |
 
-Note: `VisualLinter` cover both these settings in one extension. 
+Please note that `VisualLinter` cover both these settings.
 
 ## Contribute
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
