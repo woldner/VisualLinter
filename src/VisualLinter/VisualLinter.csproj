@@ -90,7 +90,7 @@
     <Compile Include="VisualLinterPackage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\LICENSE">
+    <Content Include="..\..\LICENSE">
       <Link>Resources\LICENSE</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
