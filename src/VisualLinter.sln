@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLinter", "src\VisualLinter\VisualLinter.csproj", "{144FB1D8-565F-4B49-8B01-DCDA8BEDA9E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLinter", "VisualLinter\VisualLinter.csproj", "{144FB1D8-565F-4B49-8B01-DCDA8BEDA9E6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0FC14F28-184A-4C6D-8B55-C5C199A47DF2}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
-		CHANGELOG.md = CHANGELOG.md
-		README.md = README.md
+		..\appveyor.yml = ..\appveyor.yml
+		..\CHANGELOG.md = ..\CHANGELOG.md
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLinter.Tests", "src\VisualLinter.Tests\VisualLinter.Tests.csproj", "{ED7F9F16-9758-4AB8-953D-FBC9AD961C23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLinter.Tests", "VisualLinter.Tests\VisualLinter.Tests.csproj", "{ED7F9F16-9758-4AB8-953D-FBC9AD961C23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
