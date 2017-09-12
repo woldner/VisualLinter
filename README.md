@@ -41,7 +41,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ##### Notes
 
-The default behavior is to use a local `ESLint` installation and config. If you wish to revert back to the old behavior of using global installation and/or config, you can enable each respective option in Visual Studio `Tools > Options > VisualLinter`.
+The default behavior was changed to use a local `ESLint` installation and config instead of global. If you wish to revert back to the old behavior of using global installation and/or config, you can enable each respective option in Visual Studio `Tools > Options > VisualLinter`.
 
 The closest installation/config found relative to the file being linted will always be used.
 If no `node_modules` directory or `.eslintrc` file is found in the same directory as the file being linted, `VisualLinter` will try and resolve the paths from ancestor directories up to, but not including the root directory (e.g. `C:\\` on Windows).
