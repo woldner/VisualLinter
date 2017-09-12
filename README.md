@@ -41,6 +41,8 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ##### Notes
 
+The default behaviour of `VisualLinter` is to use a local installation and config. If you wish to revert back to the old behavior with using either global installation or config, you can enable each respective setting in Visual Studio `Tools > VisualLinter`.
+
 The closest installation/config found relative to the file being linted will always be used.
 If no `node_modules` directory or `.eslintrc` file is found in the same directory as the file being linted, `VisualLinter` will try and resolve the paths from ancestor directories up to, but not including the root directory (e.g. `C:\\` on Windows).
 
@@ -60,19 +62,17 @@ When `source.js` is being opened or saved the `.eslintrc` file at the root of th
 
 When `test.js` is being opened or saved the `.eslintrc` file in the `tests/` directory will be used as its config.
 
-If you prefer using a personal config file located in your user home directory (e.g. `~/.eslintrc`), be sure to tick the checkbox `'Use personal ESLint config instead of local'` under `Tools > Options >  VisualLinter`.
-
 If there are multiple config files in the same directory, `VisualLinter` will only use one. The priority order is:
 
-1.  .eslintrc.js
-2.  .eslintrc.yaml
-3.  .eslintrc.yml
-4.  .eslintrc.json
-5.  .eslintrc
+1. .eslintrc.js
+2. .eslintrc.yaml
+3. .eslintrc.yml
+4. .eslintrc.json
+5. .eslintrc
 
 Currently, `VisualLinter` does NOT support the use of `package.json` as its config file.
 
-Please note that additional `ESLint` plugins may be required in order to lint files depending on your config.
+Please note that additional `ESLint` plugins may be required in order to lint files depending on your `ESLint` config.
 The output window could help identify these plugins.
 
 ## Language Support
@@ -112,6 +112,8 @@ Creators of..
 
 - [SonarSource/SonarLint](https://github.com/SonarSource/sonarlint-visualstudio) extension for Visual Studio.
 - [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) ESLint package for the Atom text editor.
+
+..for inspiration.
 
 ## License
 [MIT](LICENSE)
