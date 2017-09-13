@@ -36,7 +36,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
         }
 
         [TestInitialize]
-        public void SetUp()
+        public void Initialize()
         {
             var mockTableManagerProvider = new Mock<ITableManagerProvider>();
             mockTableManagerProvider
