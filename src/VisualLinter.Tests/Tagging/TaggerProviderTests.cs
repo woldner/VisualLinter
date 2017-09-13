@@ -25,14 +25,14 @@ namespace jwldnr.VisualLinter.Tests.Tagging
         [TestMethod]
         public void CreateTagger_should_return_null_for_anything_but_javascript()
         {
-            var tagger1 = CreateTagger("foo.cs");
-            Assert.IsNull(tagger1);
+            var tagger1 = CreateTagger("foo.js");
+            Assert.IsNotNull(tagger1);
 
-            var tagger2 = CreateTagger("foo.java");
+            var tagger2 = CreateTagger("foo.cs");
             Assert.IsNull(tagger2);
 
-            var tagger3 = CreateTagger("foo.js");
-            Assert.IsNotNull(tagger3);
+            var tagger3 = CreateTagger("foo.java");
+            Assert.IsNull(tagger3);
         }
 
         [TestInitialize]
