@@ -58,13 +58,6 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Returns(true);
 
             var mockIVisualLinterOptions = new Mock<IVisualLinterOptions>();
-            mockIVisualLinterOptions
-                .Setup(o => o.UsePersonalConfig)
-                .Returns(false);
-            mockIVisualLinterOptions
-                .Setup(o => o.UseGlobalLinter)
-                .Returns(false);
-
             var visualLinterOptions = mockIVisualLinterOptions.Object;
 
             _provider = new TaggerProvider(
@@ -80,7 +73,6 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Returns(filePath);
 
             var mockTextBuffer = new Mock<ITextBuffer>();
-
             var textBuffer = mockTextBuffer.Object;
 
             var mockTextDataModel = new Mock<ITextDataModel>();
