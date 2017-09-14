@@ -22,7 +22,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 ## Features
 
-- Lint files using ESLint on file open/save. (see [Language Support](#language-support))
+- Linting on file open/save. (see [Language Support](#language-support))
 - Visually mark errors/warnings in document
 - Include tooltip content with info on errors/warnings
 
@@ -64,16 +64,16 @@ When `test.js` is being opened or saved the `.eslintrc` file in the `tests/` dir
 
 If there are multiple config files in the same directory, `VisualLinter` will only use one. The priority order is:
 
-1. .eslintrc.js
-2. .eslintrc.yaml
-3. .eslintrc.yml
-4. .eslintrc.json
-5. .eslintrc
+1. `.eslintrc.js`
+2. `.eslintrc.yaml`
+3. `.eslintrc.yml`
+4. `.eslintrc.json`
+5. `.eslintrc`
 
 Currently, `VisualLinter` does NOT support the use of `package.json` as its config file.
 
 Please note that additional `ESLint` plugins may be required in order to lint files depending on your `ESLint` config.
-The output window could help identify these plugins.
+The output window will help identify these plugins.
 
 ## Language Support
 
@@ -85,7 +85,7 @@ The output window could help identify these plugins.
 
 - If you're using a global installation of `ESLint` and receive an error saying that `ESLint` could not be found in `PATH`, restarting your computer would reload the environment variables.
 - If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure ESLint](http://eslint.org/docs/user-guide/configuring)
-- Visual Studio 2017 is using `ESLint` by default, however it does not visually mark errors in buffer-- if you're seeing duplicate messages in the error list window, you can disable the built in features by changing the following settings:
+- Visual Studio 2017 has built in `ESLint` support but does not visually mark errors in buffer. If you're seeing duplicate messages in the error list window, you can disable the built in features by changing the following settings:
 
 | Option | Value | Location |
 | --- | --- | ---- |
