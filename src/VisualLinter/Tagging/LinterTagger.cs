@@ -118,7 +118,8 @@ namespace jwldnr.VisualLinter.Tagging
                 var lineCount = _currentSnapshot.LineCount;
 
                 if (lineNumber > lineCount)
-                    throw new ArgumentOutOfRangeException($"line number ({lineNumber}) greater than line count ({lineCount})");
+                    throw new ArgumentOutOfRangeException(
+                        $"line number ({lineNumber}) greater than line count ({lineCount})");
 
                 var line = _currentSnapshot.GetLineFromLineNumber(lineNumber);
                 var lineText = line.GetText();
@@ -141,7 +142,8 @@ namespace jwldnr.VisualLinter.Tagging
                 }
 
                 if (columnStart > lineText.Length)
-                    throw new ArgumentOutOfRangeException($"column start ({columnStart}) greater than line length ({lineText.Length}) for line {lineNumber}");
+                    throw new ArgumentOutOfRangeException(
+                        $"column start ({columnStart}) greater than line length ({lineText.Length}) for line {lineNumber}");
 
                 return new MessageRange
                 {

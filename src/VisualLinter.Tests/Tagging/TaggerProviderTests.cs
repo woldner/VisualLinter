@@ -15,26 +15,6 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
         private TaggerProvider _provider;
 
-        [TestMethod]
-        public void CreateTagger_should_create_tagger_for_javascript()
-        {
-            var tagger = CreateTagger("foo.js");
-            Assert.IsNotNull(tagger);
-        }
-
-        [TestMethod]
-        public void CreateTagger_should_return_null_for_anything_but_javascript()
-        {
-            var tagger1 = CreateTagger("foo.js");
-            Assert.IsNotNull(tagger1);
-
-            var tagger2 = CreateTagger("foo.cs");
-            Assert.IsNull(tagger2);
-
-            var tagger3 = CreateTagger("foo.java");
-            Assert.IsNull(tagger3);
-        }
-
         [TestInitialize]
         public void Initialize()
         {
@@ -64,6 +44,26 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 tableManagerProvider,
                 textDocumentFactoryService,
                 visualLinterOptions);
+        }
+
+        [TestMethod]
+        public void CreateTagger_should_create_tagger_for_javascript()
+        {
+            var tagger = CreateTagger("foo.js");
+            Assert.IsNotNull(tagger);
+        }
+
+        [TestMethod]
+        public void CreateTagger_should_return_null_for_anything_but_javascript()
+        {
+            var tagger1 = CreateTagger("foo.js");
+            Assert.IsNotNull(tagger1);
+
+            var tagger2 = CreateTagger("foo.cs");
+            Assert.IsNull(tagger2);
+
+            var tagger3 = CreateTagger("foo.java");
+            Assert.IsNull(tagger3);
         }
 
         private ITagger<IErrorTag> CreateTagger(string filePath)

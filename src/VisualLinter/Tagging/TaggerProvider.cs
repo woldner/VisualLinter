@@ -60,6 +60,17 @@ namespace jwldnr.VisualLinter.Tagging
             _tableManager.AddSource(this, columns);
         }
 
+        public void Dispose()
+        {
+            _tableManager.RemoveSource(this);
+            _tableManager = null;
+        }
+
+        public IDisposable Subscribe(ITableDataSink sink)
+        {
+            return new SinkManager(this, sink);
+        }
+
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
             if (buffer != textView.TextBuffer || typeof(IErrorTag) != typeof(T))
@@ -84,17 +95,6 @@ namespace jwldnr.VisualLinter.Tagging
 
                 return tagger as ITagger<T>;
             }
-        }
-
-        public void Dispose()
-        {
-            _tableManager.RemoveSource(this);
-            _tableManager = null;
-        }
-
-        public IDisposable Subscribe(ITableDataSink sink)
-        {
-            return new SinkManager(this, sink);
         }
 
         internal void AddSinkManager(SinkManager manager)

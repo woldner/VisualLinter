@@ -19,6 +19,7 @@ namespace jwldnr.VisualLinter.Linting
         private readonly string _filePath;
         private readonly IList<LinterMarker> _markers;
         private readonly IReadOnlyCollection<LinterMarker> _readonlyMarkers;
+
         private string _projectName;
 
         internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<LinterMarker> markers)

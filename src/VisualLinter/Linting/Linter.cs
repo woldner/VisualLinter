@@ -1,4 +1,5 @@
 ﻿using jwldnr.VisualLinter.Helpers;
+using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.Threading;
 
 namespace jwldnr.VisualLinter.Linting
 {
@@ -20,7 +20,9 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        internal async Task<IEnumerable<LinterMessage>> LintAsync(string filePath, string source)
+        internal async Task<IEnumerable<LinterMessage>> LintAsync(
+            string filePath,
+            string source)
         {
             try
             {
@@ -45,7 +47,10 @@ namespace jwldnr.VisualLinter.Linting
             return Enumerable.Empty<LinterMessage>();
         }
 
-        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(string fileName, string arguments, string source)
+        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(
+            string fileName,
+            string arguments,
+            string source)
         {
             var startInfo = new ProcessStartInfo(fileName, arguments)
             {
@@ -120,7 +125,8 @@ namespace jwldnr.VisualLinter.Linting
         {
             if (_options.UseGlobalLinter)
                 return LinterHelper.GetGlobalLinterPath()
-                    ?? throw new Exception("fatal: no global eslint executable found. is eslint installed globally?");
+                    ?? throw new Exception(
+                        "fatal: no global eslint executable found. is eslint installed globally?");
 
             return LinterHelper.GetLocalLinterPath(filePath)
                 ?? throw new Exception("fatal: no local eslint executable found. is eslint installed locally?");
