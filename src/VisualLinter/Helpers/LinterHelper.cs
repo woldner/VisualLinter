@@ -67,22 +67,22 @@ namespace jwldnr.VisualLinter.Helpers
                 .FirstOrDefault();
         }
 
-        private static string FindRecursive(string filePath, Func<DirectoryInfo, string> findFile)
+        private static string FindRecursive(string filePath, Func<DirectoryInfo, string> findIn)
         {
             var directoryPath = Path.GetDirectoryName(filePath)
                 ?? throw new Exception($"error: could not get directory name for file '{filePath}'.");
 
-            var directory = new DirectoryInfo(directoryPath);
+            var workingDirectory = new DirectoryInfo(directoryPath);
 
-            while (null != directory && directory.Root.Name != directory.Name)
+            do
             {
-                var file = findFile(directory);
+                var file = findIn(workingDirectory);
 
                 if (null != file)
                     return file;
 
-                directory = directory.Parent;
-            }
+                workingDirectory = workingDirectory.Parent;
+            } while (null != workingDirectory && workingDirectory.Root.Name != workingDirectory.Name);
 
             return null;
         }

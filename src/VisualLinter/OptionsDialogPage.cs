@@ -8,8 +8,8 @@ namespace jwldnr.VisualLinter
 {
     internal class OptionsDialogPage : UIElementDialogPage
     {
-        protected override UIElement Child => _optionsDialogControl
-            ?? (_optionsDialogControl = new OptionsDialogPageControl());
+        protected override UIElement Child =>
+            _optionsDialogControl ?? (_optionsDialogControl = new OptionsDialogPageControl());
 
         internal const string PageName = "General";
 
