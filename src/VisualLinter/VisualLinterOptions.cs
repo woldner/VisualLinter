@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace jwldnr.VisualLinter
 {
-    internal interface IVisualLinterOptions
+    public interface IVisualLinterOptions
     {
         bool UseGlobalLinter { get; set; }
         bool UsePersonalConfig { get; set; }

@@ -17,7 +17,7 @@ namespace jwldnr.VisualLinter.Tagging
     [ContentType("text")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
-    internal sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
+    public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
     {
         public string DisplayName => "VisualLinter";
         public string Identifier => "VisualLinter";
@@ -31,7 +31,7 @@ namespace jwldnr.VisualLinter.Tagging
         private ITableManager _tableManager;
 
         [ImportingConstructor]
-        internal TaggerProvider(
+        public TaggerProvider(
             [Import] ITableManagerProvider tableManagerProvider,
             [Import] ITextDocumentFactoryService textDocumentFactoryService,
             [Import] IVisualLinterOptions visualLinterOptions)
