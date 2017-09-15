@@ -20,22 +20,20 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        internal async Task<IEnumerable<EslintMessage>> LintAsync(
-            string filePath,
-            string source)
+        internal async Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
         {
             try
             {
                 if (0 == source.Length)
                     return Enumerable.Empty<EslintMessage>();
 
-                var linterPath = GetLinterPath(filePath);
-                //OutputWindowHelper.WriteLine($"info: using linter @ '{linterPath}'.");
+                var eslintPath = GetEslintPath(filePath);
+                //OutputWindowHelper.WriteLine($"info: using linter @ '{eslintPath}'.");
 
                 var configPath = GetConfigPath(filePath);
                 //OutputWindowHelper.WriteLine($"info: using config @ '{configPath}'.");
 
-                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath), source);
+                var results = await ExecuteProcessAsync(eslintPath, GetArguments(configPath), source);
 
                 return ProcessResults(results);
             }
@@ -114,21 +112,21 @@ namespace jwldnr.VisualLinter.Linting
         private string GetConfigPath(string filePath)
         {
             if (_options.UsePersonalConfig)
-                return LinterHelper.GetPersonalConfigPath()
+                return EslintHelper.GetPersonalConfigPath()
                     ?? throw new Exception("fatal: no personal eslint config found.");
 
-            return LinterHelper.GetLocalConfigPath(filePath)
+            return EslintHelper.GetLocalConfigPath(filePath)
                 ?? throw new Exception("fatal: no local eslint config found.");
         }
 
-        private string GetLinterPath(string filePath)
+        private string GetEslintPath(string filePath)
         {
-            if (_options.UseGlobalLinter)
-                return LinterHelper.GetGlobalLinterPath()
+            if (_options.UseGlobalEslint)
+                return EslintHelper.GetGlobalEslintPath()
                     ?? throw new Exception(
                         "fatal: no global eslint executable found. is eslint installed globally?");
 
-            return LinterHelper.GetLocalLinterPath(filePath)
+            return EslintHelper.GetLocalEslintPath(filePath)
                 ?? throw new Exception("fatal: no local eslint executable found. is eslint installed locally?");
         }
     }

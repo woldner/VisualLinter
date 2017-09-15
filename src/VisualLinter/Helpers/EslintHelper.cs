@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace jwldnr.VisualLinter.Helpers
 {
-    internal static class LinterHelper
+    internal static class EslintHelper
     {
         private const string ExecutableName = "eslint.cmd";
         private const string VariableName = "eslint";
@@ -18,7 +18,7 @@ namespace jwldnr.VisualLinter.Helpers
             ".eslintrc"
         };
 
-        internal static string GetGlobalLinterPath()
+        internal static string GetGlobalEslintPath()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace jwldnr.VisualLinter.Helpers
             return FindRecursive(filePath, FindConfig);
         }
 
-        internal static string GetLocalLinterPath(string filePath)
+        internal static string GetLocalEslintPath(string filePath)
         {
             return FindRecursive(filePath, FindExecutable);
         }
@@ -67,7 +67,7 @@ namespace jwldnr.VisualLinter.Helpers
                 .FirstOrDefault();
         }
 
-        private static string FindRecursive(string filePath, Func<DirectoryInfo, string> findIn)
+        private static string FindRecursive(string filePath, Func<DirectoryInfo, string> fn)
         {
             var directoryPath = Path.GetDirectoryName(filePath)
                 ?? throw new Exception($"error: could not get directory name for file '{filePath}'.");
@@ -76,13 +76,13 @@ namespace jwldnr.VisualLinter.Helpers
 
             do
             {
-                var file = findIn(workingDirectory);
+                var file = fn(workingDirectory);
 
                 if (null != file)
                     return file;
 
                 workingDirectory = workingDirectory.Parent;
-            } while (null != workingDirectory && workingDirectory.Root.Name != workingDirectory.Name);
+            } while (null != workingDirectory && workingDirectory.Root.FullName != workingDirectory.FullName);
 
             return null;
         }
