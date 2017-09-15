@@ -28,6 +28,7 @@ namespace jwldnr.VisualLinter
 
             _optionsDialogControl.UseGlobalEslint = _options.UseGlobalEslint;
             _optionsDialogControl.UsePersonalConfig = _options.UsePersonalConfig;
+            _optionsDialogControl.DisableIgnorePath = _options.DisableIgnorePath;
         }
 
         protected override void OnApply(PageApplyEventArgs args)
@@ -36,6 +37,7 @@ namespace jwldnr.VisualLinter
             {
                 _options.UseGlobalEslint = _optionsDialogControl.UseGlobalEslint;
                 _options.UsePersonalConfig = _optionsDialogControl.UsePersonalConfig;
+                _options.DisableIgnorePath = _optionsDialogControl.DisableIgnorePath;
             }
 
             base.OnApply(args);

@@ -11,6 +11,7 @@ namespace jwldnr.VisualLinter
     {
         bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
+        bool DisableIgnorePath { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
@@ -27,6 +28,12 @@ namespace jwldnr.VisualLinter
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UsePersonalConfig), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
+        }
+
+        public bool DisableIgnorePath
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(DisableIgnorePath), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(DisableIgnorePath), value);
         }
 
         private const string CollectionPath = "jwldnr.VisualLinter";

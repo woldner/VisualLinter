@@ -10,6 +10,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -20,16 +21,22 @@
                FontWeight="Bold" />
 
         <CheckBox Grid.Row="1"
+                  Name="UseGlobalEslintCheckBox"
+                  Margin="5, 0, 0, 5"
+                  Content="Use global ESLint installation instead of local"
+                  Click="UseGlobalEslint_OnClick" />
+
+        <CheckBox Grid.Row="2"
                   Name="UsePersonalConfigCheckBox"
                   Margin="5, 0, 0, 5"
                   Content="Use personal ESLint config instead of local"
                   Click="UsePersonalConfig_OnClick" />
 
-        <CheckBox Grid.Row="2"
-                  Name="UseGlobalEslintCheckBox"
+        <CheckBox Grid.Row="3"
+                  Name="DisableIgnorePathCheckBox"
                   Margin="5, 0, 0, 5"
-                  Content="Use global ESLint installation instead of local"
-                  Click="UseGlobalEslint_OnClick" />
+                  Content="Don't use .eslintignore when linting files"
+                  Click="DisableIgnorePath_OnClick" />
 
         <Label Grid.Row="3"
                Name="SuggestNewFeaturesLabel"

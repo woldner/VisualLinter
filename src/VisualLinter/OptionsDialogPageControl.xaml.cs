@@ -22,6 +22,12 @@ namespace jwldnr.VisualLinter
             set => UsePersonalConfigCheckBox.IsChecked = value;
         }
 
+        internal bool DisableIgnorePath
+        {
+            get => DisableIgnorePathCheckBox.IsChecked ?? false;
+            set => DisableIgnorePathCheckBox.IsChecked = value;
+        }
+
         internal OptionsDialogPageControl()
         {
             InitializeComponent();
@@ -42,6 +48,12 @@ namespace jwldnr.VisualLinter
         {
             var value = UsePersonalConfig.ToString().ToLowerInvariant();
             OutputWindowHelper.WriteLine($"use personal config option set to '{value}'.");
+        }
+
+        private void DisableIgnorePath_OnClick(object sender, RoutedEventArgs e)
+        {
+            var value = DisableIgnorePath.ToString().ToLowerInvariant();
+            OutputWindowHelper.WriteLine($"don't use .eslintignore when linting files option set to '{value}'.");
         }
     }
 }
