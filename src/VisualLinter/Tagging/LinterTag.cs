@@ -8,7 +8,6 @@ namespace jwldnr.VisualLinter.Tagging
     internal class LinterTag : IErrorTag
     {
         public string ErrorType { get; }
-
         public object ToolTipContent { get; }
 
         internal LinterTag(EslintMessage message)
