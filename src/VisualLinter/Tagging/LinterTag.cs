@@ -11,13 +11,13 @@ namespace jwldnr.VisualLinter.Tagging
 
         public object ToolTipContent { get; }
 
-        internal LinterTag(LinterMessage message)
+        internal LinterTag(EslintMessage message)
         {
             ErrorType = GetErrorType(message);
             ToolTipContent = GetToolTipContent(message.IsFatal, message.Message, message.RuleId);
         }
 
-        private static string GetErrorType(LinterMessage message)
+        private static string GetErrorType(EslintMessage message)
         {
             if (message.IsFatal)
                 return PredefinedErrorTypeNames.SyntaxError;

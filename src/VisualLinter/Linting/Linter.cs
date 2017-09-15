@@ -20,14 +20,14 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        internal async Task<IEnumerable<LinterMessage>> LintAsync(
+        internal async Task<IEnumerable<EslintMessage>> LintAsync(
             string filePath,
             string source)
         {
             try
             {
                 if (0 == source.Length)
-                    return Enumerable.Empty<LinterMessage>();
+                    return Enumerable.Empty<EslintMessage>();
 
                 var linterPath = GetLinterPath(filePath);
                 //OutputWindowHelper.WriteLine($"info: using linter @ '{linterPath}'.");
@@ -44,10 +44,10 @@ namespace jwldnr.VisualLinter.Linting
                 OutputWindowHelper.WriteLine(e.Message);
             }
 
-            return Enumerable.Empty<LinterMessage>();
+            return Enumerable.Empty<EslintMessage>();
         }
 
-        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(
+        private static async Task<IEnumerable<EslintResult>> ExecuteProcessAsync(
             string fileName,
             string arguments,
             string source)
@@ -83,7 +83,7 @@ namespace jwldnr.VisualLinter.Linting
 
                 try
                 {
-                    return JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
+                    return JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(output);
                 }
                 catch (Exception e)
                 {
@@ -100,7 +100,7 @@ namespace jwldnr.VisualLinter.Linting
             return $"--config \"{configPath}\" --format json --stdin";
         }
 
-        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
+        private static IEnumerable<EslintMessage> ProcessResults(IEnumerable<EslintResult> results)
         {
             // this extension only support 1-1 linting
             // therefor results count will always be 1
@@ -108,7 +108,7 @@ namespace jwldnr.VisualLinter.Linting
 
             return null != result
                 ? result.Messages
-                : Enumerable.Empty<LinterMessage>();
+                : Enumerable.Empty<EslintMessage>();
         }
 
         private string GetConfigPath(string filePath)

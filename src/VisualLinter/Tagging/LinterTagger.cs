@@ -38,7 +38,7 @@ namespace jwldnr.VisualLinter.Tagging
             _dirtySpans = new NormalizedSnapshotSpanCollection();
 
             FilePath = document.FilePath;
-            Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<LinterMarker>()));
+            Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<MessageMarker>()));
 
             Initialize();
         }
@@ -72,7 +72,7 @@ namespace jwldnr.VisualLinter.Tagging
             return Enumerable.Empty<ITagSpan<IErrorTag>>();
         }
 
-        internal void UpdateMessages(IEnumerable<LinterMessage> messages)
+        internal void UpdateMessages(IEnumerable<EslintMessage> messages)
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
@@ -93,7 +93,7 @@ namespace jwldnr.VisualLinter.Tagging
             UpdateMessages(messages);
         }
 
-        private LinterMarker CreateMarker(LinterMessage message)
+        private MessageMarker CreateMarker(EslintMessage message)
         {
             var lineStart = message.Range.LineStart;
             var columnStart = message.Range.ColumnStart;
@@ -103,10 +103,10 @@ namespace jwldnr.VisualLinter.Tagging
             var columnEnd = message.Range.ColumnEnd;
             var end = _currentSnapshot.GetPointInLine(lineEnd, columnEnd);
 
-            return new LinterMarker(new SnapshotSpan(start, end), message);
+            return new MessageMarker(new SnapshotSpan(start, end), message);
         }
 
-        private MessageRange GetMessageRange(LinterMessage message)
+        private MessageRange GetMessageRange(EslintMessage message)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace jwldnr.VisualLinter.Tagging
             return AnalyzeAsync(FilePath);
         }
 
-        private Task<IEnumerable<LinterMessage>> LintAsync(string filePath, string source)
+        private Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
         {
             return _linter.LintAsync(filePath, source);
         }
@@ -198,7 +198,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        private IEnumerable<LinterMessage> ProcessMessages(IEnumerable<LinterMessage> messages)
+        private IEnumerable<EslintMessage> ProcessMessages(IEnumerable<EslintMessage> messages)
         {
             foreach (var message in messages)
             {

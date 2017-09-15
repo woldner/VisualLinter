@@ -13,22 +13,22 @@ namespace jwldnr.VisualLinter.Linting
         public override int Count => _markers.Count;
         public override int VersionNumber { get; }
 
-        internal IEnumerable<LinterMarker> Markers => _readonlyMarkers;
+        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
         internal LinterSnapshot NextSnapshot;
 
         private readonly string _filePath;
-        private readonly IList<LinterMarker> _markers;
-        private readonly IReadOnlyCollection<LinterMarker> _readonlyMarkers;
+        private readonly IList<MessageMarker> _markers;
+        private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
 
         private string _projectName;
 
-        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<LinterMarker> markers)
+        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<MessageMarker> markers)
         {
             _filePath = filePath;
             VersionNumber = versionNumber;
 
-            _markers = new List<LinterMarker>(markers);
-            _readonlyMarkers = new ReadOnlyCollection<LinterMarker>(_markers);
+            _markers = new List<MessageMarker>(markers);
+            _readonlyMarkers = new ReadOnlyCollection<MessageMarker>(_markers);
         }
 
         public override bool CanCreateDetailsContent(int index)
