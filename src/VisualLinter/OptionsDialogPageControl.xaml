@@ -26,10 +26,10 @@
                   Click="UsePersonalConfig_OnClick" />
 
         <CheckBox Grid.Row="2"
-                  Name="UseGlobalLinterCheckBox"
+                  Name="UseGlobalEslintCheckBox"
                   Margin="5, 0, 0, 5"
                   Content="Use global ESLint installation instead of local"
-                  Click="UseGlobalLinter_OnClick" />
+                  Click="UseGlobalEslint_OnClick" />
 
         <Label Grid.Row="3"
                Name="SuggestNewFeaturesLabel"

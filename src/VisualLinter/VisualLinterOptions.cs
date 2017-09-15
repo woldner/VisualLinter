@@ -9,7 +9,7 @@ namespace jwldnr.VisualLinter
 {
     public interface IVisualLinterOptions
     {
-        bool UseGlobalLinter { get; set; }
+        bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
     }
 
@@ -17,10 +17,10 @@ namespace jwldnr.VisualLinter
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class VisualLinterOptions : IVisualLinterOptions
     {
-        public bool UseGlobalLinter
+        public bool UseGlobalEslint
         {
-            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalLinter), false);
-            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalLinter), value);
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalEslint), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalEslint), value);
         }
 
         public bool UsePersonalConfig

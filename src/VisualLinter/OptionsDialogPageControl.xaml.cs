@@ -10,10 +10,10 @@ namespace jwldnr.VisualLinter
     /// </summary>
     public partial class OptionsDialogPageControl
     {
-        internal bool UseGlobalLinter
+        internal bool UseGlobalEslint
         {
-            get => UseGlobalLinterCheckBox.IsChecked ?? false;
-            set => UseGlobalLinterCheckBox.IsChecked = value;
+            get => UseGlobalEslintCheckBox.IsChecked ?? false;
+            set => UseGlobalEslintCheckBox.IsChecked = value;
         }
 
         internal bool UsePersonalConfig
@@ -32,10 +32,10 @@ namespace jwldnr.VisualLinter
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
         }
 
-        private void UseGlobalLinter_OnClick(object sender, RoutedEventArgs e)
+        private void UseGlobalEslint_OnClick(object sender, RoutedEventArgs e)
         {
-            var value = UseGlobalLinter.ToString().ToLowerInvariant();
-            OutputWindowHelper.WriteLine($"use global linter option set to '{value}'.");
+            var value = UseGlobalEslint.ToString().ToLowerInvariant();
+            OutputWindowHelper.WriteLine($"use global eslint option set to '{value}'.");
         }
 
         private void UsePersonalConfig_OnClick(object sender, RoutedEventArgs e)
