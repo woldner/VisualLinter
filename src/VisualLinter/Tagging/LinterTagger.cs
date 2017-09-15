@@ -87,9 +87,7 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
-            var source = _currentSnapshot.GetText();
-            var messages = await LintAsync(filePath, source);
-
+            var messages = await LintAsync(filePath);
             UpdateMessages(messages);
         }
 
@@ -171,9 +169,9 @@ namespace jwldnr.VisualLinter.Tagging
             return AnalyzeAsync(FilePath);
         }
 
-        private Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
+        private Task<IEnumerable<EslintMessage>> LintAsync(string filePath)
         {
-            return _linter.LintAsync(filePath, source);
+            return _linter.LintAsync(filePath);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
