@@ -35,29 +35,62 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetLocalConfigPath(string filePath)
         {
-            return FindRecursive(filePath, FindConfig);
+            return GetRecursive(filePath, ResolveConfigPath);
         }
 
         internal static string GetLocalEslintPath(string filePath)
         {
-            return FindRecursive(filePath, FindExecutable);
+            return GetRecursive(filePath, ResolveEslintPath);
+        }
+
+        internal static string GetIgnorePath(string filePath)
+        {
+            var projectPath = VsixHelper.GetProjectPath(filePath)
+                ?? throw new Exception($"error: could not get project path using file '{filePath}'.");
+
+            var projectDirectory = new DirectoryInfo(projectPath);
+
+            var directoryPath = Path.GetDirectoryName(filePath)
+                ?? throw new Exception($"error: could not get directory path using file '{filePath}'.");
+
+            var workingDirectory = new DirectoryInfo(directoryPath);
+
+            do
+            {
+                var foundFile = ResolveIgnorePath(workingDirectory);
+
+                if (null != foundFile)
+                    return foundFile;
+
+                workingDirectory = workingDirectory.Parent;
+            } while (null != workingDirectory && projectDirectory.FullName != workingDirectory.FullName);
+
+            return null;
         }
 
         internal static string GetPersonalConfigPath()
         {
             var directory = new DirectoryInfo(GetUserDirectoryPath());
 
-            return FindConfig(directory);
+            return ResolveConfigPath(directory);
         }
 
-        private static string FindConfig(FileSystemInfo directory)
+        private static string ResolveConfigPath(FileSystemInfo directory)
         {
             return SupportedConfigs
                 .Select(config => Path.Combine(directory.FullName, config))
                 .FirstOrDefault(File.Exists);
         }
 
-        private static string FindExecutable(DirectoryInfo directory)
+        private static string ResolveIgnorePath(DirectoryInfo directory)
+        {
+            return directory
+                .EnumerateFiles(".eslintignore", SearchOption.TopDirectoryOnly)
+                .FirstOrDefault()?
+                .FullName;
+        }
+
+        private static string ResolveEslintPath(DirectoryInfo directory)
         {
             var directories = directory.EnumerateDirectories("node_modules", SearchOption.TopDirectoryOnly);
 
@@ -67,19 +100,19 @@ namespace jwldnr.VisualLinter.Helpers
                 .FirstOrDefault();
         }
 
-        private static string FindRecursive(string filePath, Func<DirectoryInfo, string> fn)
+        private static string GetRecursive(string filePath, Func<DirectoryInfo, string> fn)
         {
             var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory name for file '{filePath}'.");
+                ?? throw new Exception($"error: could not get directory path using file '{filePath}'.");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
             do
             {
-                var file = fn(workingDirectory);
+                var foundFile = fn(workingDirectory);
 
-                if (null != file)
-                    return file;
+                if (null != foundFile)
+                    return foundFile;
 
                 workingDirectory = workingDirectory.Parent;
             } while (null != workingDirectory && workingDirectory.Root.FullName != workingDirectory.FullName);

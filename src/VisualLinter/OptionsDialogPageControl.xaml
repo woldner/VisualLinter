@@ -38,7 +38,7 @@
                   Content="Don't use .eslintignore when linting files"
                   Click="DisableIgnorePath_OnClick" />
 
-        <Label Grid.Row="3"
+        <Label Grid.Row="4"
                Name="SuggestNewFeaturesLabel"
                Margin="0, 5, 0, 5">
             <Hyperlink Name="SuggestNewFeaturesHyperlink"

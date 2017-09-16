@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Linting
         public string FilePath { get; set; }
 
         [JsonProperty("messages")]
-        public IEnumerable<EslintMessage> Messages { get; set; }
+        public EslintMessage[] Messages { get; set; }
 
         [JsonProperty("source")]
         public string Source { get; set; }

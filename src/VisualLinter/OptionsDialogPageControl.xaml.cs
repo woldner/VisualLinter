@@ -41,19 +41,19 @@ namespace jwldnr.VisualLinter
         private void UseGlobalEslint_OnClick(object sender, RoutedEventArgs e)
         {
             var value = UseGlobalEslint.ToString().ToLowerInvariant();
-            OutputWindowHelper.WriteLine($"use global eslint option set to '{value}'.");
+            OutputWindowHelper.WriteLine($"use global eslint option set to {value}.");
         }
 
         private void UsePersonalConfig_OnClick(object sender, RoutedEventArgs e)
         {
             var value = UsePersonalConfig.ToString().ToLowerInvariant();
-            OutputWindowHelper.WriteLine($"use personal config option set to '{value}'.");
+            OutputWindowHelper.WriteLine($"use personal config option set to {value}.");
         }
 
         private void DisableIgnorePath_OnClick(object sender, RoutedEventArgs e)
         {
             var value = DisableIgnorePath.ToString().ToLowerInvariant();
-            OutputWindowHelper.WriteLine($"don't use .eslintignore when linting files option set to '{value}'.");
+            OutputWindowHelper.WriteLine($"don't use .eslintignore when linting files option set to {value}.");
         }
     }
 }
