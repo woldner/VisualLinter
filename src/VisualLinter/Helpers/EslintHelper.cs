@@ -46,12 +46,12 @@ namespace jwldnr.VisualLinter.Helpers
         internal static string GetIgnorePath(string filePath)
         {
             var projectPath = VsixHelper.GetProjectPath(filePath)
-                ?? throw new Exception($"error: could not get project path using file '{filePath}'.");
+                ?? throw new Exception($"error: could not get project path using file {filePath}");
 
             var projectDirectory = new DirectoryInfo(projectPath);
 
             var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory path using file '{filePath}'.");
+                ?? throw new Exception($"error: could not get directory path using file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
@@ -103,7 +103,7 @@ namespace jwldnr.VisualLinter.Helpers
         private static string GetRecursive(string filePath, Func<DirectoryInfo, string> fn)
         {
             var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory path using file '{filePath}'.");
+                ?? throw new Exception($"error: could not get directory path using file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
