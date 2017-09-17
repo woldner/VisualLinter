@@ -33,46 +33,62 @@ namespace jwldnr.VisualLinter.Helpers
             return null;
         }
 
+        internal static string GetIgnorePath(string filePath)
+        {
+            var solutionPath = VsixHelper.GetSolutionPath(filePath)
+                ?? throw new Exception($"error: could not get solution for file {filePath}");
+
+            var directoryPath = Path.GetDirectoryName(filePath)
+                ?? throw new Exception($"error: could not get directory for file {filePath}");
+
+            var workingDirectory = new DirectoryInfo(directoryPath);
+
+            return FindRecursive(workingDirectory, solutionPath, ResolveIgnorePath);
+        }
+
         internal static string GetLocalConfigPath(string filePath)
         {
-            return GetRecursive(filePath, ResolveConfigPath);
+            var directoryPath = Path.GetDirectoryName(filePath)
+                ?? throw new Exception($"error: could not get directory for file {filePath}");
+
+            var workingDirectory = new DirectoryInfo(directoryPath);
+
+            return FindRecursive(workingDirectory, workingDirectory.Root.FullName, ResolveConfigPath);
         }
 
         internal static string GetLocalEslintPath(string filePath)
         {
-            return GetRecursive(filePath, ResolveEslintPath);
-        }
-
-        internal static string GetIgnorePath(string filePath)
-        {
-            var projectPath = VsixHelper.GetProjectPath(filePath)
-                ?? throw new Exception($"error: could not get project path using file {filePath}");
-
-            var projectDirectory = new DirectoryInfo(projectPath);
-
             var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory path using file {filePath}");
+                ?? throw new Exception($"error: could not get directory for file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
-            do
-            {
-                var foundFile = ResolveIgnorePath(workingDirectory);
-
-                if (null != foundFile)
-                    return foundFile;
-
-                workingDirectory = workingDirectory.Parent;
-            } while (null != workingDirectory && projectDirectory.FullName != workingDirectory.FullName);
-
-            return null;
+            return FindRecursive(workingDirectory, workingDirectory.Root.FullName, ResolveEslintPath);
         }
 
         internal static string GetPersonalConfigPath()
         {
-            var directory = new DirectoryInfo(GetUserDirectoryPath());
+            var directory = new DirectoryInfo(EnvironmentHelper.GetUserDirectoryPath());
 
             return ResolveConfigPath(directory);
+        }
+
+        private static string FindRecursive(DirectoryInfo workingDirectory, string end, Func<DirectoryInfo, string> fn)
+        {
+            do
+            {
+                var found = fn(workingDirectory);
+
+                if (null != found)
+                    return found;
+
+                workingDirectory = workingDirectory.Parent;
+
+                if (null == workingDirectory)
+                    return null;
+            } while (-1 != workingDirectory.FullName.IndexOf(end, StringComparison.OrdinalIgnoreCase));
+
+            return null;
         }
 
         private static string ResolveConfigPath(FileSystemInfo directory)
@@ -80,14 +96,6 @@ namespace jwldnr.VisualLinter.Helpers
             return SupportedConfigs
                 .Select(config => Path.Combine(directory.FullName, config))
                 .FirstOrDefault(File.Exists);
-        }
-
-        private static string ResolveIgnorePath(DirectoryInfo directory)
-        {
-            return directory
-                .EnumerateFiles(".eslintignore", SearchOption.TopDirectoryOnly)
-                .FirstOrDefault()?
-                .FullName;
         }
 
         private static string ResolveEslintPath(DirectoryInfo directory)
@@ -100,29 +108,12 @@ namespace jwldnr.VisualLinter.Helpers
                 .FirstOrDefault();
         }
 
-        private static string GetRecursive(string filePath, Func<DirectoryInfo, string> fn)
+        private static string ResolveIgnorePath(DirectoryInfo directory)
         {
-            var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory path using file {filePath}");
-
-            var workingDirectory = new DirectoryInfo(directoryPath);
-
-            do
-            {
-                var foundFile = fn(workingDirectory);
-
-                if (null != foundFile)
-                    return foundFile;
-
-                workingDirectory = workingDirectory.Parent;
-            } while (null != workingDirectory && workingDirectory.Root.FullName != workingDirectory.FullName);
-
-            return null;
-        }
-
-        private static string GetUserDirectoryPath()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            return directory
+                .EnumerateFiles(".eslintignore", SearchOption.TopDirectoryOnly)
+                .FirstOrDefault()?
+                .FullName;
         }
     }
 }

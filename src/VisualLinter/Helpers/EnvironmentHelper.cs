@@ -7,6 +7,11 @@ namespace jwldnr.VisualLinter.Helpers
 {
     internal static class EnvironmentHelper
     {
+        internal static string GetUserDirectoryPath()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        }
+
         internal static string GetVariable(string name, EnvironmentVariableTarget target)
         {
             var variables = GetVariableInfo("PATH", target);
