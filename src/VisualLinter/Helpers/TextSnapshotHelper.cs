@@ -11,18 +11,19 @@ namespace jwldnr.VisualLinter.Helpers
             return snapshotLine.Start.Add(column);
         }
 
-        internal static void ValidatePoint(this ITextSnapshot snapshot, int line, int column)
+        internal static bool ValidatePoint(this ITextSnapshot snapshot, int line, int column)
         {
             try
             {
                 snapshot.GetPointInLine(line, column);
+                return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine($"error: {line}:{column} isn't a valid point!");
             }
 
-            throw new Exception($"{line}:{column} isn't a valid point!");
+            return false;
         }
     }
 }

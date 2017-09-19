@@ -210,8 +210,11 @@ namespace jwldnr.VisualLinter.Tagging
 
                 if (messageEndColumn.HasValue && messageEndLine.HasValue)
                 {
-                    _currentSnapshot.ValidatePoint(messageLine, messageColumn);
-                    _currentSnapshot.ValidatePoint(messageEndLine.Value, messageEndColumn.Value);
+                    if (false == _currentSnapshot.ValidatePoint(messageLine, messageColumn))
+                        yield break;
+
+                    if (false == _currentSnapshot.ValidatePoint(messageEndLine.Value, messageEndColumn.Value))
+                        yield break;
 
                     message.Range = new MessageRange
                     {
