@@ -20,22 +20,15 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        internal async Task<IEnumerable<LinterMessage>> LintAsync(
-            string filePath,
-            string source)
+        internal async Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
         {
             try
             {
                 if (0 == source.Length)
-                    return Enumerable.Empty<LinterMessage>();
+                    return Enumerable.Empty<EslintMessage>();
 
-                var linterPath = GetLinterPath(filePath);
-                //OutputWindowHelper.WriteLine($"info: using linter @ '{linterPath}'.");
-
-                var configPath = GetConfigPath(filePath);
-                //OutputWindowHelper.WriteLine($"info: using config @ '{configPath}'.");
-
-                var results = await ExecuteProcessAsync(linterPath, GetArguments(configPath), source);
+                var eslintPath = GetEslintPath(filePath);
+                var results = await ExecuteProcessAsync(eslintPath, GetArguments(filePath), source);
 
                 return ProcessResults(results);
             }
@@ -44,29 +37,26 @@ namespace jwldnr.VisualLinter.Linting
                 OutputWindowHelper.WriteLine(e.Message);
             }
 
-            return Enumerable.Empty<LinterMessage>();
+            return Enumerable.Empty<EslintMessage>();
         }
 
-        private static async Task<IEnumerable<LinterResult>> ExecuteProcessAsync(
-            string fileName,
-            string arguments,
-            string source)
+        private static async Task<IEnumerable<EslintResult>> ExecuteProcessAsync(string filePath, string arguments, string source)
         {
-            var startInfo = new ProcessStartInfo(fileName, arguments)
+            var startInfo = new ProcessStartInfo(filePath, arguments)
             {
-                UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 StandardOutputEncoding = Encoding.UTF8,
-                StandardErrorEncoding = Encoding.UTF8
+                StandardErrorEncoding = Encoding.UTF8,
+                UseShellExecute = false
             };
 
             using (var process = Process.Start(startInfo))
             {
                 if (null == process)
-                    throw new Exception("fatal: unable to start eslint process.");
+                    throw new Exception("fatal: unable to start eslint process");
 
                 using (var stream = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(false)))
                 {
@@ -83,53 +73,69 @@ namespace jwldnr.VisualLinter.Linting
 
                 try
                 {
-                    return JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
+                    return JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(output);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    OutputWindowHelper.WriteLine(e.Message);
                     OutputWindowHelper.WriteLine(output);
                 }
 
-                throw new Exception($"fatal: eslint could not lint file '{fileName}'.");
+                throw new Exception($"fatal: error while trying to lint using eslint at {filePath}");
             }
         }
 
-        private static string GetArguments(string configPath)
+        private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
         {
-            return $"--config \"{configPath}\" --format json --stdin";
+            // return empty messages when warning about ignored files
+            if (1 == messages.Count && RegexHelper.IgnoreMatch(messages[0].Message))
+                return Enumerable.Empty<EslintMessage>();
+
+            return messages;
         }
 
-        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
+        private static IEnumerable<EslintMessage> ProcessResults(IEnumerable<EslintResult> results)
         {
-            // this extension only support 1-1 linting
-            // therefor results count will always be 1
+            //  this extension only support 1-1 linting
+            //  therefor results count will always be 1
             var result = results.FirstOrDefault();
 
             return null != result
-                ? result.Messages
-                : Enumerable.Empty<LinterMessage>();
+                ? ProcessMessages(result.Messages)
+                : Enumerable.Empty<EslintMessage>();
+        }
+
+        private string GetArguments(string filePath)
+        {
+            var configPath = GetConfigPath(filePath);
+
+            var arguments = $"--stdin --stdin-filename \"{filePath}\" --format json --config \"{configPath}\"";
+
+            if (_options.DisableIgnorePath)
+                return arguments;
+
+            var ignorePath = EslintHelper.GetIgnorePath(filePath);
+
+            return $"{arguments} --ignore-path \"{ignorePath}\"";
         }
 
         private string GetConfigPath(string filePath)
         {
             if (_options.UsePersonalConfig)
-                return LinterHelper.GetPersonalConfigPath()
-                    ?? throw new Exception("fatal: no personal eslint config found.");
+                return EslintHelper.GetPersonalConfigPath()
+                    ?? throw new Exception("fatal: no personal eslint config found");
 
-            return LinterHelper.GetLocalConfigPath(filePath)
-                ?? throw new Exception("fatal: no local eslint config found.");
+            return EslintHelper.GetLocalConfigPath(filePath)
+                ?? throw new Exception("fatal: no local eslint config found");
         }
 
-        private string GetLinterPath(string filePath)
+        private string GetEslintPath(string filePath)
         {
-            if (_options.UseGlobalLinter)
-                return LinterHelper.GetGlobalLinterPath()
-                    ?? throw new Exception(
-                        "fatal: no global eslint executable found. is eslint installed globally?");
+            if (_options.UseGlobalEslint)
+                return EslintHelper.GetGlobalEslintPath()
+                    ?? throw new Exception("fatal: no global eslint executable found-- is eslint installed globally?");
 
-            return LinterHelper.GetLocalLinterPath(filePath)
-                ?? throw new Exception("fatal: no local eslint executable found. is eslint installed locally?");
+            return EslintHelper.GetLocalEslintPath(filePath)
+                ?? throw new Exception("fatal: no local eslint executable found-- is eslint installed locally?");
         }
     }
 }

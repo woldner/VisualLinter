@@ -6,8 +6,8 @@ namespace jwldnr.VisualLinter.Helpers
 {
     internal static class OutputWindowHelper
     {
-        private static IVsOutputWindowPane OutputWindowPane =>
-            _outputWindowPane ?? (_outputWindowPane = GetOutputWindowPane());
+        private static IVsOutputWindowPane OutputWindowPane => _outputWindowPane
+            ?? (_outputWindowPane = GetOutputWindowPane());
 
         private static IVsOutputWindowPane _outputWindowPane;
 

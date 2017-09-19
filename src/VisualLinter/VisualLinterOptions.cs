@@ -9,24 +9,31 @@ namespace jwldnr.VisualLinter
 {
     public interface IVisualLinterOptions
     {
-        bool UseGlobalLinter { get; set; }
+        bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
+        bool DisableIgnorePath { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class VisualLinterOptions : IVisualLinterOptions
     {
-        public bool UseGlobalLinter
+        public bool UseGlobalEslint
         {
-            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalLinter), false);
-            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalLinter), value);
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalEslint), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UseGlobalEslint), value);
         }
 
         public bool UsePersonalConfig
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UsePersonalConfig), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
+        }
+
+        public bool DisableIgnorePath
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(DisableIgnorePath), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(DisableIgnorePath), value);
         }
 
         private const string CollectionPath = "jwldnr.VisualLinter";

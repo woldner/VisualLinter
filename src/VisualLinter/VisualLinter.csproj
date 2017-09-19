@@ -52,17 +52,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\EnvironmentHelper.cs" />
-    <Compile Include="Helpers\LinterHelper.cs" />
+    <Compile Include="Helpers\EslintHelper.cs" />
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
     <Compile Include="Helpers\TextSnapshotHelper.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Linting\Linter.cs" />
-    <Compile Include="Linting\LinterMessage.cs" />
-    <Compile Include="Linting\LinterResult.cs" />
+    <Compile Include="Linting\EslintMessage.cs" />
+    <Compile Include="Linting\EslintResult.cs" />
     <Compile Include="Linting\LinterSnapshot.cs" />
-    <Compile Include="Linting\LinterMarker.cs" />
+    <Compile Include="Linting\MessageMarker.cs" />
     <Compile Include="Linting\MessageRange.cs" />
     <Compile Include="Enums\RuleSeverity.cs" />
     <Compile Include="Linting\SinkManager.cs" />
