@@ -11,6 +11,11 @@ download in the
 These are the changes to each version that has been released
 on the official Visual Studio extension gallery.
 
+## 1.0 (2017-09-19)
+
+- [x] Add .eslintignore support
+- [x] Provide an option to disable the use of .eslintignore when linting files
+
 ## 1.0 (2017-09-09)
 
 - [x] Fix argument out of range exception bug
