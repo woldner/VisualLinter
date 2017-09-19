@@ -108,12 +108,10 @@ used by this project.
 
 ## Thanks to
 
-Creators of..
-
 - [SonarSource/SonarLint](https://github.com/SonarSource/sonarlint-visualstudio) extension for Visual Studio.
 - [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) ESLint package for the Atom text editor.
 
-..for inspiration.
+for inspiration.
 
 ## License
 [MIT](LICENSE)
