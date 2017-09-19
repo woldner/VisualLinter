@@ -28,8 +28,6 @@ namespace jwldnr.VisualLinter.Linting
                     return Enumerable.Empty<EslintMessage>();
 
                 var eslintPath = GetEslintPath(filePath);
-                OutputWindowHelper.WriteLine($"info: using eslint exec {eslintPath}");
-
                 var results = await ExecuteProcessAsync(eslintPath, GetArguments(filePath), source);
 
                 return ProcessResults(results);
@@ -109,19 +107,13 @@ namespace jwldnr.VisualLinter.Linting
         private string GetArguments(string filePath)
         {
             var configPath = GetConfigPath(filePath);
-            OutputWindowHelper.WriteLine($"info: using config file {configPath}");
 
             var arguments = $"--stdin --stdin-filename \"{filePath}\" --format json --config \"{configPath}\"";
+
             if (_options.DisableIgnorePath)
                 return arguments;
 
             var ignorePath = EslintHelper.GetIgnorePath(filePath);
-
-            var message = null == ignorePath
-                ? "info: could not find .eslintignore file, skipping"
-                : $"info: using .eslintignore file {ignorePath}";
-
-            OutputWindowHelper.WriteLine(message);
 
             return $"{arguments} --ignore-path \"{ignorePath}\"";
         }
