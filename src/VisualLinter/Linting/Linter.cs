@@ -107,14 +107,12 @@ namespace jwldnr.VisualLinter.Linting
         private string GetArguments(string filePath)
         {
             var configPath = GetConfigPath(filePath);
-
             var arguments = $"--stdin --stdin-filename \"{filePath}\" --format json --config \"{configPath}\"";
 
             if (_options.DisableIgnorePath)
                 return arguments;
 
             var ignorePath = EslintHelper.GetIgnorePath(filePath);
-
             return $"{arguments} --ignore-path \"{ignorePath}\"";
         }
 
