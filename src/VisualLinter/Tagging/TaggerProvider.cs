@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -29,6 +30,12 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly IVisualLinterOptions _visualLinterOptions;
 
         private ITableManager _tableManager;
+
+        private readonly string[] _supportedExtensions =
+        {
+            ".js",
+            ".jsx"
+        };
 
         [ImportingConstructor]
         public TaggerProvider(
@@ -81,7 +88,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             var filePath = document.FilePath;
             var extension = Path.GetExtension(filePath)?.ToLowerInvariant();
-            if (".js" != extension)
+            if (false == _supportedExtensions.Any(s => s.Equals(extension)))
                 return null;
 
             lock (_taggers)
