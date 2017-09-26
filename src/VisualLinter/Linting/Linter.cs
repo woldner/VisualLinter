@@ -1,4 +1,5 @@
 ﻿using jwldnr.VisualLinter.Helpers;
+using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace jwldnr.VisualLinter.Linting
                 if (false == string.IsNullOrEmpty(error))
                     OutputWindowHelper.WriteLine(error);
 
-                process.WaitForExit();
+                await process.WaitForExitAsync();
 
                 try
                 {
