@@ -5,7 +5,7 @@
 Visual Studio JavaScript linter using `ESLint`.
 
 Download this extension from the [VS Gallery](https://marketplace.visualstudio.com/vsgallery/a71a5b0d-9f75-4cd2-b1f1-c4afb79a0638)
-or get the [CI build](http://vsixgallery.com/extension/21d9f99b-ec42-4df4-8b16-2a62db5392a5/).
+or get the [CI build](https://vsixgallery.com/extension/21d9f99b-ec42-4df4-8b16-2a62db5392a5/).
 
 ---------------------------------------
 
@@ -77,7 +77,7 @@ The output window will help identify these plugins, if any.
 ## Troubleshooting
 
 - If you're using a global installation of `ESLint` and receive an error saying that `ESLint` could not be found in `PATH`, restarting your computer would reload the environment variables.
-- If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure ESLint](http://ESLint.org/docs/user-guide/configuring)
+- If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure ESLint](https://ESLint.org/docs/user-guide/configuring)
 - Visual Studio 2017 has built in `ESLint` support but does not visually mark errors in buffer. If you're seeing duplicate messages in the error list window, you can disable the built in features by changing the following options:
 
 | Option | Value | Location |
