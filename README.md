@@ -17,7 +17,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 - [Getting Started](#getting-started)
 - [Troubleshooting](#troubleshooting)
 - [Contribute](#contribute)
-- [Thanks to](#thanks-to)
+- [Inspiration](#inspiration)
 
 ## Features
 
@@ -95,12 +95,10 @@ if you want to contribute to this project.
 
 For cloning and building this project yourself, make sure to install the [Extensibility Tools 2015](https://visualstudiogallery.msdn.microsoft.com/ab39a092-1343-46e2-b0f1-6a3f91155aa6) extension for Visual Studio which enables some features used by this project.
 
-## Thanks to
+## Inspiration
 
 - [SonarSource/SonarLint](https://github.com/SonarSource/sonarlint-visualstudio) extension for Visual Studio.
 - [AtomLinter/linter-eslint](https://github.com/AtomLinter/linter-eslint/) `ESLint` package for the Atom text editor.
-
-for inspiration.
 
 ## License
 [MIT](LICENSE)
