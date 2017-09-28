@@ -77,7 +77,7 @@ The output window will help identify these plugins, if any.
 ## Troubleshooting
 
 - If you're using a global installation of `ESLint` and receive an error saying that `ESLint` could not be found in `PATH`, restarting your computer would reload the environment variables.
-- If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure ESLint](http://`ESLint`.org/docs/user-guide/configuring)
+- If you receive a message saying that `ESLint` could not verify your config, refer to the docs on [how to configure ESLint](http://ESLint.org/docs/user-guide/configuring)
 - Visual Studio 2017 has built in `ESLint` support but does not visually mark errors in buffer. If you're seeing duplicate messages in the error list window, you can disable the built in features by changing the following options:
 
 | Option | Value | Location |
