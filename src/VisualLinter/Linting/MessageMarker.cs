@@ -7,23 +7,23 @@ namespace jwldnr.VisualLinter.Linting
         internal EslintMessage Message { get; }
         internal SnapshotSpan Span { get; }
 
-        internal MessageMarker(SnapshotSpan span, EslintMessage message)
+        internal MessageMarker(EslintMessage message, SnapshotSpan span)
         {
             Message = message;
             Span = span;
         }
 
-        internal static MessageMarker Clone(MessageMarker marker)
+        internal MessageMarker Clone()
         {
-            return new MessageMarker(marker.Span, marker.Message);
+            return new MessageMarker(Message, Span);
         }
 
-        internal MessageMarker CloneAndTranslateTo(MessageMarker marker, ITextSnapshot newSnapshot)
+        internal MessageMarker CloneAndTranslateTo(ITextSnapshot newSnapshot)
         {
-            var newSpan = marker.Span.TranslateTo(newSnapshot, SpanTrackingMode.EdgeExclusive);
+            var newSpan = Span.TranslateTo(newSnapshot, SpanTrackingMode.EdgeExclusive);
 
-            return newSpan.Length == marker.Span.Length
-                ? new MessageMarker(newSpan, marker.Message)
+            return Span.Length == newSpan.Length
+                ? new MessageMarker(Message, newSpan)
                 : null;
         }
     }
