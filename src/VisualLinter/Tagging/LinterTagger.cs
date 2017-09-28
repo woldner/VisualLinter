@@ -82,6 +82,18 @@ namespace jwldnr.VisualLinter.Tagging
             SnapToNewSnapshot(newSnapshot);
         }
 
+        private static MessageRange GetRange(SnapshotPoint start, SnapshotPoint end, int line)
+        {
+            if (start > end)
+                throw new ArgumentOutOfRangeException($"start ({start.Position}) greater than end ({end.Position}) for line {line}");
+
+            return new MessageRange
+            {
+                Start = start,
+                End = end
+            };
+        }
+
         private async Task AnalyzeAsync(string filePath)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
@@ -90,75 +102,22 @@ namespace jwldnr.VisualLinter.Tagging
             var source = _currentSnapshot.GetText();
             var messages = await LintAsync(filePath, source);
 
-            UpdateMessages(messages);
-        }
-
-        private MessageMarker CreateMarker(EslintMessage message)
-        {
-            var lineStart = message.Range.LineStart;
-            var columnStart = message.Range.ColumnStart;
-            var start = _currentSnapshot.GetPointInLine(lineStart, columnStart);
-
-            var lineEnd = message.Range.LineEnd;
-            var columnEnd = message.Range.ColumnEnd;
-            var end = _currentSnapshot.GetPointInLine(lineEnd, columnEnd);
-
-            return new MessageMarker(new SnapshotSpan(start, end), message);
-        }
-
-        private MessageRange GetMessageRange(EslintMessage message)
-        {
             try
             {
-                var lineNumber = message.Line;
-
-                if (lineNumber < 0)
-                    lineNumber = 0;
-
-                var lineCount = _currentSnapshot.LineCount;
-
-                if (lineNumber > lineCount)
-                    throw new ArgumentOutOfRangeException(
-                        $"line number ({lineNumber}) greater than line count ({lineCount})");
-
-                var line = _currentSnapshot.GetLineFromLineNumber(lineNumber);
-                var lineText = line.GetText();
-                var columnEnd = lineText.Length;
-
-                var columnGiven = message.Column > -1;
-                var columnStart = columnGiven ? message.Column : 0;
-
-                if (columnGiven)
-                {
-                    var match = RegexHelper.GetWord(lineText.Substring(columnStart));
-                    if (match.Success)
-                        columnEnd = columnStart + match.Index + match.Length;
-                }
-                else
-                {
-                    var indentation = RegexHelper.GetIndentation(lineText);
-                    if (indentation.Success)
-                        columnStart = indentation.Length;
-                }
-
-                if (columnStart > lineText.Length)
-                    throw new ArgumentOutOfRangeException(
-                        $"column start ({columnStart}) greater than line length ({lineText.Length}) for line {lineNumber}");
-
-                return new MessageRange
-                {
-                    ColumnEnd = columnEnd,
-                    ColumnStart = columnStart,
-                    LineEnd = lineNumber,
-                    LineStart = lineNumber
-                };
+                UpdateMessages(messages);
             }
             catch (Exception e)
             {
                 OutputWindowHelper.WriteLine(e.Message);
             }
+        }
 
-            return null;
+        private MessageMarker CreateMarker(EslintMessage message)
+        {
+            var start = new SnapshotPoint(_currentSnapshot, message.Range.Start);
+            var end = new SnapshotPoint(_currentSnapshot, message.Range.End);
+
+            return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
         private Task Initialize()
@@ -202,31 +161,32 @@ namespace jwldnr.VisualLinter.Tagging
         {
             foreach (var message in messages)
             {
-                var messageColumn = message.Column;
-                var messageLine = message.Line;
+                var lineNumber = message.Line;
+                var lineCount = _currentSnapshot.LineCount;
 
-                var messageEndLine = message.EndLine;
-                var messageEndColumn = message.EndColumn;
+                if (lineNumber > lineCount)
+                    throw new ArgumentOutOfRangeException($"line ({lineNumber}) greater than line count ({lineCount})");
 
-                if (messageEndColumn.HasValue && messageEndLine.HasValue)
+                var startLine = _currentSnapshot.GetLineFromLineNumber(lineNumber);
+                var start = startLine.Start.Add(message.Column);
+
+                if (message.EndLine.HasValue && message.EndColumn.HasValue)
                 {
-                    if (false == _currentSnapshot.ValidatePoint(messageLine, messageColumn))
-                        yield break;
+                    var endLine = _currentSnapshot.GetLineFromLineNumber(message.EndLine.Value);
+                    var end = endLine.Start.Add(message.EndColumn.Value);
 
-                    if (false == _currentSnapshot.ValidatePoint(messageEndLine.Value, messageEndColumn.Value))
-                        yield break;
-
-                    message.Range = new MessageRange
-                    {
-                        ColumnEnd = messageEndColumn.Value,
-                        ColumnStart = messageColumn,
-                        LineEnd = messageEndLine.Value,
-                        LineStart = messageLine
-                    };
+                    message.Range = GetRange(start, end, message.EndLine.Value);
                 }
                 else
                 {
-                    message.Range = GetMessageRange(message);
+                    var lineText = startLine.GetText();
+                    var end = startLine.End;
+
+                    var match = RegexHelper.GetWord(lineText.Substring(message.Column));
+                    if (match.Success)
+                        end = start.Add(match.Index).Add(match.Length);
+
+                    message.Range = GetRange(start, end, lineNumber);
                 }
 
                 yield return message;
@@ -237,7 +197,7 @@ namespace jwldnr.VisualLinter.Tagging
         {
             var factory = Factory;
 
-            factory.UpdateResults(snapshot);
+            factory.UpdateMarkers(snapshot);
 
             _provider.UpdateAllSinks(factory);
 
@@ -251,7 +211,7 @@ namespace jwldnr.VisualLinter.Tagging
             var oldSnapshot = Factory.CurrentSnapshot;
 
             var newWarnings = oldSnapshot.Markers
-                .Select(marker => marker.CloneAndTranslateTo(marker, _currentSnapshot))
+                .Select(marker => marker.CloneAndTranslateTo(_currentSnapshot))
                 .Where(clone => null != clone);
 
             return new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, newWarnings);
@@ -283,19 +243,23 @@ namespace jwldnr.VisualLinter.Tagging
 
             if (null != oldSnapshot && 0 < oldSnapshot.Count)
             {
-                start = oldSnapshot.Markers.First().Span.Start
-                    .TranslateTo(currentSnapshot, PointTrackingMode.Negative);
-                end = oldSnapshot.Markers.Last().Span.End
-                    .TranslateTo(currentSnapshot, PointTrackingMode.Positive);
+                start = oldSnapshot.Markers
+                    .Select(marker => marker.Span.Start.TranslateTo(currentSnapshot, PointTrackingMode.Negative))
+                    .Min();
+                end = oldSnapshot.Markers
+                    .Select(marker => marker.Span.End.TranslateTo(currentSnapshot, PointTrackingMode.Positive))
+                    .Max();
             }
 
             if (0 < snapshot.Count)
             {
-                start = Math.Min(start, snapshot.Markers.First().Span.Start.Position);
-                end = Math.Max(end, snapshot.Markers.Last().Span.End.Position);
+                start = Math.Min(start, snapshot.Markers.Select(marker => marker.Span.Start.Position)
+                    .Min());
+                end = Math.Max(end, snapshot.Markers.Select(marker => marker.Span.End.Position)
+                    .Max());
             }
 
-            if (start >= end)
+            if (start > end)
                 return;
 
             handler(this, new SnapshotSpanEventArgs(new SnapshotSpan(

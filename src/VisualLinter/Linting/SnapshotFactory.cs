@@ -27,7 +27,7 @@ namespace jwldnr.VisualLinter.Linting
                 : null;
         }
 
-        internal void UpdateResults(LinterSnapshot snapshot)
+        internal void UpdateMarkers(LinterSnapshot snapshot)
         {
             CurrentSnapshot.NextSnapshot = snapshot;
             CurrentSnapshot = snapshot;
