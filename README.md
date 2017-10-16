@@ -25,11 +25,11 @@ See the [change log](CHANGELOG.md) for changes and road map.
 - Visually mark errors/warnings in open document
 - Include tooltip content with info on errors/warnings
 
-![Visual markers](media/markers.png)
+![Markers](media/markers.png)
 
 - Fully integrated with Visual Studio error list
 
-![Error list](media/error-list.png)
+![Error List](media/error-list.png)
 
 ## Getting Started
 
@@ -51,7 +51,7 @@ For instance, suppose you have the following structure:
 ```
 your-project
 ├── .eslintrc
-├── lib
+├─┬ lib
 │ └── source.js
 └─┬ tests
   ├── .eslintrc
