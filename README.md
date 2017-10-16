@@ -25,7 +25,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 - Visually mark errors/warnings in open document
 - Include tooltip content with info on errors/warnings
 
-![Visual markers](media/visual-markers.png)
+![Visual markers](media/markers.png)
 
 - Fully integrated with Visual Studio error list
 
