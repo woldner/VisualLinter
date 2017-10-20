@@ -8,7 +8,8 @@ namespace jwldnr.VisualLinter.Helpers
         private readonly Func<T, bool> _canExecute;
         private readonly Action<T> _execute;
 
-        internal RelayCommand(Action<T> execute) : this(execute, null)
+        internal RelayCommand(Action<T> execute)
+            : this(execute, null)
         {
         }
 
