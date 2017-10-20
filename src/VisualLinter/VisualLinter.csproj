@@ -55,6 +55,7 @@
     <Compile Include="Helpers\EslintHelper.cs" />
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
+    <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Linting\Linter.cs" />
