@@ -9,7 +9,6 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="300">
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -55,8 +54,8 @@
 
             <Hyperlink
                 Name="SuggestNewFeaturesHyperlink"
-                NavigateUri="https://github.com/jwldnr/VisualLinter">
-
+                Command="{Binding SuggestNewFeaturesCommand}"
+                CommandParameter="https://github.com/jwldnr/VisualLinter">
                 Suggest new features @ GitHub!
             </Hyperlink>
         </Label>

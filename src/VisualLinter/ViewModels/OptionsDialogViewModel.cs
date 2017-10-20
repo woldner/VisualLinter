@@ -1,12 +1,21 @@
 ﻿using jwldnr.VisualLinter.Helpers;
 using Microsoft.VisualStudio.Shell;
 using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Input;
 
 namespace jwldnr.VisualLinter.ViewModels
 {
     internal class OptionsDialogViewModel : ViewModelBase
     {
+        public ICommand SuggestNewFeaturesCommand
+        {
+            get => _suggestNewFeaturesCommand
+                ?? (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
+            set => _suggestNewFeaturesCommand = value;
+        }
+
         internal bool DisableIgnorePath
         {
             get => GetPropertyValue<bool>(DisableIgnorePathProperty);
@@ -47,6 +56,7 @@ namespace jwldnr.VisualLinter.ViewModels
                 new PropertyMetadata(default(bool)));
 
         private readonly IVisualLinterOptions _options;
+        private ICommand _suggestNewFeaturesCommand;
 
         internal OptionsDialogViewModel()
         {
@@ -65,6 +75,18 @@ namespace jwldnr.VisualLinter.ViewModels
         {
             LoadOptions();
             RaiseAllChanged();
+        }
+
+        private static void SuggestNewFeatures(object url)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo($"{url}"));
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
         }
 
         private void LoadOptions()
