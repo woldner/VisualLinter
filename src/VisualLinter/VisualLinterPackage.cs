@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio;
+﻿using jwldnr.VisualLinter.Options;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using System.Runtime.InteropServices;
 
