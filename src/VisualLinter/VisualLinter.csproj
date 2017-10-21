@@ -67,7 +67,9 @@
     <Compile Include="Enums\RuleSeverity.cs" />
     <Compile Include="Linting\SinkManager.cs" />
     <Compile Include="Linting\SnapshotFactory.cs" />
-    <Compile Include="Options\OptionsDialogPage.cs" />
+    <Compile Include="Options\OptionsDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Options\OptionsDialogPageControl.xaml.cs">
       <DependentUpon>OptionsDialogPageControl.xaml</DependentUpon>
     </Compile>

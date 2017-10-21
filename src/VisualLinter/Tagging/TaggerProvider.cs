@@ -15,7 +15,7 @@ namespace jwldnr.VisualLinter.Tagging
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
-    [ContentType("text")]
+    [ContentType("any")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
@@ -25,17 +25,20 @@ namespace jwldnr.VisualLinter.Tagging
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
 
         private readonly List<SinkManager> _managers = new List<SinkManager>();
+
+        private readonly string[] _supportedExtensions =
+        {
+            ".js",
+            ".jsx",
+            ".vue",
+            ".html"
+        };
+
         private readonly TaggerManager _taggers = new TaggerManager();
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
         private readonly IVisualLinterOptions _visualLinterOptions;
 
         private ITableManager _tableManager;
-
-        private readonly string[] _supportedExtensions =
-        {
-            ".js",
-            ".jsx"
-        };
 
         [ImportingConstructor]
         public TaggerProvider(
@@ -67,17 +70,6 @@ namespace jwldnr.VisualLinter.Tagging
             _tableManager.AddSource(this, columns);
         }
 
-        public void Dispose()
-        {
-            _tableManager.RemoveSource(this);
-            _tableManager = null;
-        }
-
-        public IDisposable Subscribe(ITableDataSink sink)
-        {
-            return new SinkManager(this, sink);
-        }
-
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
             if (buffer != textView.TextBuffer || typeof(IErrorTag) != typeof(T))
@@ -102,6 +94,17 @@ namespace jwldnr.VisualLinter.Tagging
 
                 return tagger as ITagger<T>;
             }
+        }
+
+        public void Dispose()
+        {
+            _tableManager.RemoveSource(this);
+            _tableManager = null;
+        }
+
+        public IDisposable Subscribe(ITableDataSink sink)
+        {
+            return new SinkManager(this, sink);
         }
 
         internal void AddSinkManager(SinkManager manager)

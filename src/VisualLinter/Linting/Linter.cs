@@ -27,6 +27,8 @@ namespace jwldnr.VisualLinter.Linting
                     return Enumerable.Empty<EslintMessage>();
 
                 var eslintPath = GetEslintPath(filePath);
+                Debug.WriteLine($"using eslint executable @ {eslintPath}");
+
                 var results = await ExecuteProcessAsync(eslintPath, GetArguments(filePath), source);
 
                 return ProcessResults(results);
@@ -85,8 +87,13 @@ namespace jwldnr.VisualLinter.Linting
 
         private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
         {
-            // return empty messages when warning about ignored files
-            if (1 == messages.Count && RegexHelper.IgnoreMatch(messages[0].Message))
+            // return empty messages when..
+            // .. warning about ignored files
+            if (1 == messages.Count && RegexHelper.IgnoreFileMatch(messages[0].Message))
+                return Enumerable.Empty<EslintMessage>();
+
+            // .. warning about parser errors
+            if (1 == messages.Count && RegexHelper.ParsingErrorMatch(messages[0].Message))
                 return Enumerable.Empty<EslintMessage>();
 
             return messages;
@@ -94,8 +101,8 @@ namespace jwldnr.VisualLinter.Linting
 
         private static IEnumerable<EslintMessage> ProcessResults(IEnumerable<EslintResult> results)
         {
-            //  this extension only support 1-1 linting
-            //  therefor results count will always be 1
+            // this extension only support 1-1 linting
+            // therefor results count will always be 1
             var result = results.FirstOrDefault();
 
             return null != result
@@ -106,12 +113,16 @@ namespace jwldnr.VisualLinter.Linting
         private string GetArguments(string filePath)
         {
             var configPath = GetConfigPath(filePath);
+            Debug.WriteLine($"using eslint configuration @ {configPath}");
+
             var arguments = $"--stdin --stdin-filename \"{filePath}\" --format json --config \"{configPath}\"";
 
             if (_options.DisableIgnorePath)
                 return arguments;
 
             var ignorePath = EslintHelper.GetIgnorePath(filePath);
+            Debug.WriteLine($"using .eslintignore @ {ignorePath}");
+
             return $"{arguments} --ignore-path \"{ignorePath}\"";
         }
 
