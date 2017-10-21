@@ -34,7 +34,9 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly string[] _supportedExtensions =
         {
             ".js",
-            ".jsx"
+            ".jsx",
+            ".vue",
+            ".html"
         };
 
         [ImportingConstructor]
