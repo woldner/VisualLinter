@@ -9,15 +9,49 @@ namespace jwldnr.VisualLinter
 {
     public interface IVisualLinterOptions
     {
+        bool DisableIgnorePath { get; set; }
+        bool EnableHtmlLanguageSupport { get; set; }
+        bool EnableJsLanguageSupport { get; set; }
+        bool EnableReactLanguageSupport { get; set; }
+        bool EnableVueLanguageSupport { get; set; }
         bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
-        bool DisableIgnorePath { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class VisualLinterOptions : IVisualLinterOptions
     {
+        public bool DisableIgnorePath
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(DisableIgnorePath), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(DisableIgnorePath), value);
+        }
+
+        public bool EnableHtmlLanguageSupport
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableHtmlLanguageSupport), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableHtmlLanguageSupport), value);
+        }
+
+        public bool EnableJsLanguageSupport
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableJsLanguageSupport), true);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableJsLanguageSupport), value);
+        }
+
+        public bool EnableReactLanguageSupport
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableReactLanguageSupport), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableReactLanguageSupport), value);
+        }
+
+        public bool EnableVueLanguageSupport
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableVueLanguageSupport), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableVueLanguageSupport), value);
+        }
+
         public bool UseGlobalEslint
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalEslint), false);
@@ -28,12 +62,6 @@ namespace jwldnr.VisualLinter
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UsePersonalConfig), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
-        }
-
-        public bool DisableIgnorePath
-        {
-            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(DisableIgnorePath), false);
-            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(DisableIgnorePath), value);
         }
 
         private const string CollectionPath = "jwldnr.VisualLinter";

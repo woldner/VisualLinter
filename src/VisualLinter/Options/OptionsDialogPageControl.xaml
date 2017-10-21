@@ -58,7 +58,7 @@
 
         <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -71,62 +71,66 @@
             <CheckBox
                 Grid.Row="0"
                 Grid.Column="0"
-                Name="LanguageSupportJavaScriptCheckBox"
-                IsChecked="{Binding EnableJsLanguageSupport}"
-                Margin="5, 0, 0, 0"
-                Content=".js"
-                VerticalAlignment="Center" />
+                Name="LanguageSupportHtmlCheckBox"
+                IsChecked="{Binding EnableHtmlLanguageSupport}"
+                Margin="5, 0, 0, 5"
+                Content=".html" />
 
             <Label
                 Grid.Row="0"
                 Grid.Column="1"
-                Name="LanguageSupportJavaScriptLabel"
+                Name="LanguageSupportHtmlLabel"
+                Margin="0"
+                Padding="0"
+                Content="HTML" />
+
+            <CheckBox
+                Grid.Row="1"
+                Grid.Column="0"
+                Name="LanguageSupportJsCheckBox"
+                IsChecked="{Binding EnableJsLanguageSupport}"
+                Margin="5, 0, 0, 5"
+                Content=".js" />
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Name="LanguageSupportJsLabel"
+                Margin="0"
+                Padding="0"
                 Content="JavaScript" />
 
             <CheckBox
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.Column="0"
                 Name="LanguageSupportReactCheckBox"
-                IsChecked="{Binding EnableJsxLanguageSupport}"
-                Margin="5, 0, 0, 0"
-                Content=".jsx"
-                VerticalAlignment="Center" />
+                IsChecked="{Binding EnableReactLanguageSupport}"
+                Margin="5, 0, 0, 5"
+                Content=".jsx" />
 
             <Label
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.Column="1"
                 Name="LanguageSupportReactLabel"
+                Margin="0"
+                Padding="0"
                 Content="React" />
 
             <CheckBox
-                Grid.Row="2"
+                Grid.Row="3"
                 Grid.Column="0"
                 Name="LanguageSupportVueCheckBox"
                 IsChecked="{Binding EnableVueLanguageSupport}"
-                Margin="5, 0, 0, 0"
-                Content=".vue"
-                VerticalAlignment="Center" />
+                Margin="5, 0, 0, 5"
+                Content=".vue" />
 
             <Label
-                Grid.Row="2"
+                Grid.Row="3"
                 Grid.Column="1"
                 Name="LanguageSupportVueLabel"
+                Margin="0"
+                Padding="0"
                 Content="Vue" />
-
-            <CheckBox
-                Grid.Row="3"
-                Grid.Column="0"
-                Name="LanguageSupportHtmlCheckBox"
-                IsChecked="{Binding EnableHtmlLanguageSupport}"
-                Margin="5, 0, 0, 0"
-                Content=".html"
-                VerticalAlignment="Center" />
-
-            <Label
-                Grid.Row="3"
-                Grid.Column="1"
-                Name="LanguageSupportHypertextLabel"
-                Content="Hypertext" />
         </Grid>
 
         <Label
