@@ -55,6 +55,7 @@
     <Compile Include="Helpers\EslintHelper.cs" />
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
+    <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Linting\Linter.cs" />
@@ -66,10 +67,8 @@
     <Compile Include="Enums\RuleSeverity.cs" />
     <Compile Include="Linting\SinkManager.cs" />
     <Compile Include="Linting\SnapshotFactory.cs" />
-    <Compile Include="OptionsDialogPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="OptionsDialogPageControl.xaml.cs">
+    <Compile Include="Options\OptionsDialogPage.cs" />
+    <Compile Include="Options\OptionsDialogPageControl.xaml.cs">
       <DependentUpon>OptionsDialogPageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -80,6 +79,8 @@
     <Compile Include="Tagging\LinterTagger.cs" />
     <Compile Include="Tagging\TaggerManager.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
+    <Compile Include="ViewModels\OptionsDialogViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -238,8 +239,9 @@
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Page Include="OptionsDialogPageControl.xaml">
+    <Page Include="Options\OptionsDialogPageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
