@@ -9,6 +9,11 @@ Features that have a checkmark are complete and available for download in the
 
 These are the changes to each version that has been released on the official Visual Studio extension gallery.
 
+## 1.0 (2017-10-21)
+
+- [x] Add `.html`file extension support
+- [x] Add `.vue`file extension support
+
 ## 1.0 (2017-09-28)
 
 - [x] Fix bug where trailing semi markers would not update in buffer
@@ -21,22 +26,22 @@ These are the changes to each version that has been released on the official Vis
 ## 1.0 (2017-09-09)
 
 - [x] Fix argument out of range exception bug
-- [x] Lint using stdin
+- [x] Lint using `stdin`
 
 ## 1.0 (2017-08-31)
 
-- [x] Widen search for `ESLint` instance/config when set to local
+- [x] Widen search for ESLint installation/config when set to local
 
 ## 1.0 (2017-08-30)
 
-- [x] Change the default behavior to use a local `ESLint` installation instead of global
-- [x] Provide an option to use global `ESLint` installation
+- [x] Change the default behavior to use a local installation instead of global
+- [x] Provide an option to use global installation
 
 ## 1.0 (2017-08-16)
 
 - [x] Provide options page
-- [x] Change the default behavior to use a local `ESLint` config (relative to file being linted) instead of a single personal config for all projects
-- [x] Provide option to use personal `ESLint` config
+- [x] Change the default behavior to use a local config (relative to file being linted) instead of a single personal config for all projects
+- [x] Provide option to use personal config
 
 ## 1.0 (2017-07-08)
 
