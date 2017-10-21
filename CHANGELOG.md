@@ -11,12 +11,16 @@ These are the changes to each version that has been released on the official Vis
 
 ## 1.0 (2017-10-21)
 
-- [x] Add `.html`file extension support
-- [x] Add `.vue`file extension support
+- [x] Add `.html` file extension support
+- [x] Add `.vue` file extension support
 
 ## 1.0 (2017-09-28)
 
 - [x] Fix bug where trailing semi markers would not update in buffer
+
+## 1.0 (2017-09-24)
+
+- [x] Add `.jsx` file extension support
 
 ## 1.0 (2017-09-19)
 
