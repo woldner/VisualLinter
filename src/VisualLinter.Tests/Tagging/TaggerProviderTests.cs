@@ -38,6 +38,9 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Returns(true);
 
             var mockIVisualLinterOptions = new Mock<IVisualLinterOptions>();
+            mockIVisualLinterOptions.Setup(o => o.EnableJsLanguageSupport)
+                .Returns(true);
+
             var visualLinterOptions = mockIVisualLinterOptions.Object;
 
             _provider = new TaggerProvider(
