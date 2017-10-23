@@ -92,10 +92,6 @@ namespace jwldnr.VisualLinter.Linting
             if (1 == messages.Count && RegexHelper.IgnoreFileMatch(messages[0].Message))
                 return Enumerable.Empty<EslintMessage>();
 
-            // .. warning about parser errors
-            if (1 == messages.Count && RegexHelper.ParsingErrorMatch(messages[0].Message))
-                return Enumerable.Empty<EslintMessage>();
-
             return messages;
         }
 

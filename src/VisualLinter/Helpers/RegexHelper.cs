@@ -6,8 +6,6 @@ namespace jwldnr.VisualLinter.Helpers
     {
         private const string IgnoreFilePattern = "^(File\\s+ignored)+";
 
-        private const string ParsingErrorPattern = "^(Parsing\\s+error)+";
-
         private const string WordPattern =
             "^[\t ]*$|[^\\s\\/\\\\\\(\\)\"\':,\\.;<>~!@#\\$%\\^&\\*\\|\\+=\\[\\]\\{\\}`\\?\\-…]+";
 
@@ -19,11 +17,6 @@ namespace jwldnr.VisualLinter.Helpers
         internal static bool IgnoreFileMatch(string value)
         {
             return ProcessMatch(value, IgnoreFilePattern);
-        }
-
-        internal static bool ParsingErrorMatch(string value)
-        {
-            return ProcessMatch(value, ParsingErrorPattern);
         }
 
         private static bool ProcessMatch(string value, string pattern)
