@@ -81,10 +81,13 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == extension)
                 return null;
 
-            if (false == _optionsMap.ContainsKey(extension) || false == _optionsMap.TryGetValue(extension, out var option))
+            if (false == _optionsMap.ContainsKey(extension))
                 return null;
 
-            if (false == option())
+            if (false == _optionsMap.TryGetValue(extension, out var optionValue))
+                return null;
+
+            if (false == optionValue())
                 return null;
 
             lock (_taggers)
