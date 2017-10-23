@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -25,16 +24,9 @@ namespace jwldnr.VisualLinter.Tagging
         public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
 
         private readonly List<SinkManager> _managers = new List<SinkManager>();
-
-        private readonly string[] _supportedExtensions =
-        {
-            ".js",
-            ".jsx",
-            ".vue",
-            ".html"
-        };
-
+        private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>();
         private readonly TaggerManager _taggers = new TaggerManager();
+
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
         private readonly IVisualLinterOptions _visualLinterOptions;
 
@@ -52,6 +44,11 @@ namespace jwldnr.VisualLinter.Tagging
             _textDocumentFactoryService = textDocumentFactoryService;
 
             _visualLinterOptions = visualLinterOptions;
+
+            _optionsMap.Add(".html", () => _visualLinterOptions.EnableHtmlLanguageSupport);
+            _optionsMap.Add(".js", () => _visualLinterOptions.EnableJsLanguageSupport);
+            _optionsMap.Add(".jsx", () => _visualLinterOptions.EnableReactLanguageSupport);
+            _optionsMap.Add(".vue", () => _visualLinterOptions.EnableVueLanguageSupport);
 
             var columns = new[]
             {
@@ -80,16 +77,25 @@ namespace jwldnr.VisualLinter.Tagging
 
             var filePath = document.FilePath;
             var extension = Path.GetExtension(filePath)?.ToLowerInvariant();
-            if (false == _supportedExtensions.Any(s => s.Equals(extension)))
+
+            if (null == extension)
+                return null;
+
+            if (false == _optionsMap.ContainsKey(extension))
+                return null;
+
+            if (false == _optionsMap.TryGetValue(extension, out var optionValue))
+                return null;
+
+            if (false == optionValue())
                 return null;
 
             lock (_taggers)
             {
-                if (!_taggers.Exists(filePath))
+                if (false == _taggers.Exists(filePath))
                     return new LinterTagger(this, new Linter(_visualLinterOptions), buffer, document) as ITagger<T>;
 
-                var result = _taggers.TryGetValue(filePath, out var tagger);
-                if (false == result)
+                if (false == _taggers.TryGetValue(filePath, out var tagger))
                     return null;
 
                 return tagger as ITagger<T>;

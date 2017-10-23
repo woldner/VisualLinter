@@ -12,8 +12,93 @@ namespace jwldnr.VisualLinter.Tests.Tagging
     public class TaggerProviderTests
     {
         private Mock<ITextDocument> _mockTextDocument;
+        private Mock<IVisualLinterOptions> _mockVisualLinterOptions;
 
         private TaggerProvider _provider;
+
+        [TestMethod]
+        public void CreateTagger_should_create_tagger_for_enabled_file_extensions()
+        {
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableHtmlLanguageSupport)
+                .Returns(true);
+
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableJsLanguageSupport)
+                .Returns(true);
+
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableReactLanguageSupport)
+                .Returns(true);
+
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableVueLanguageSupport)
+                .Returns(true);
+
+            var tagger1 = CreateTagger("foo.html");
+            Assert.IsNotNull(tagger1);
+
+            var tagger2 = CreateTagger("foo.js");
+            Assert.IsNotNull(tagger2);
+
+            var tagger3 = CreateTagger("foo.jsx");
+            Assert.IsNotNull(tagger3);
+
+            var tagger4 = CreateTagger("foo.vue");
+            Assert.IsNotNull(tagger4);
+        }
+
+        [TestMethod]
+        public void CreateTagger_should_create_tagger_for_javascript()
+        {
+            var tagger = CreateTagger("foo.js");
+            Assert.IsNotNull(tagger);
+        }
+
+        [TestMethod]
+        public void CreateTagger_should_return_null_for_disabled_file_extensions()
+        {
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableHtmlLanguageSupport)
+                .Returns(false);
+
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableJsLanguageSupport)
+                .Returns(false);
+
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableReactLanguageSupport)
+                .Returns(false);
+
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableVueLanguageSupport)
+                .Returns(false);
+
+            var tagger1 = CreateTagger("foo.html");
+            Assert.IsNull(tagger1);
+
+            var tagger2 = CreateTagger("foo.js");
+            Assert.IsNull(tagger2);
+
+            var tagger3 = CreateTagger("foo.jsx");
+            Assert.IsNull(tagger3);
+
+            var tagger4 = CreateTagger("foo.vue");
+            Assert.IsNull(tagger4);
+        }
+
+        [TestMethod]
+        public void CreateTagger_should_return_null_for_not_supported_file_extensions()
+        {
+            var tagger1 = CreateTagger("foo.js");
+            Assert.IsNotNull(tagger1);
+
+            var tagger2 = CreateTagger("foo.cs");
+            Assert.IsNull(tagger2);
+
+            var tagger3 = CreateTagger("foo.java");
+            Assert.IsNull(tagger3);
+        }
 
         [TestInitialize]
         public void Initialize()
@@ -37,33 +122,17 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(t => t.TryGetTextDocument(It.IsAny<ITextBuffer>(), out textDocument))
                 .Returns(true);
 
-            var mockIVisualLinterOptions = new Mock<IVisualLinterOptions>();
-            var visualLinterOptions = mockIVisualLinterOptions.Object;
+            _mockVisualLinterOptions = new Mock<IVisualLinterOptions>();
+            _mockVisualLinterOptions
+                .Setup(o => o.EnableJsLanguageSupport)
+                .Returns(true);
+
+            var visualLinterOptions = _mockVisualLinterOptions.Object;
 
             _provider = new TaggerProvider(
                 tableManagerProvider,
                 textDocumentFactoryService,
                 visualLinterOptions);
-        }
-
-        [TestMethod]
-        public void CreateTagger_should_create_tagger_for_javascript()
-        {
-            var tagger = CreateTagger("foo.js");
-            Assert.IsNotNull(tagger);
-        }
-
-        [TestMethod]
-        public void CreateTagger_should_return_null_for_anything_but_javascript()
-        {
-            var tagger1 = CreateTagger("foo.js");
-            Assert.IsNotNull(tagger1);
-
-            var tagger2 = CreateTagger("foo.cs");
-            Assert.IsNull(tagger2);
-
-            var tagger3 = CreateTagger("foo.java");
-            Assert.IsNull(tagger3);
         }
 
         private ITagger<IErrorTag> CreateTagger(string filePath)

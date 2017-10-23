@@ -16,6 +16,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -49,6 +51,90 @@
 
         <Label
             Grid.Row="4"
+            Name="LanguageSupportLabel"
+            Margin="0, 0, 0, 5"
+            FontWeight="Bold"
+            Content="Enable support for these languages:" />
+
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <CheckBox
+                Grid.Row="0"
+                Grid.Column="0"
+                Name="LanguageSupportHtmlCheckBox"
+                IsChecked="{Binding EnableHtmlLanguageSupport}"
+                Margin="5, 0, 0, 5"
+                Content=".html" />
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                Name="LanguageSupportHtmlLabel"
+                Margin="0"
+                Padding="0"
+                Content="HTML" />
+
+            <CheckBox
+                Grid.Row="1"
+                Grid.Column="0"
+                Name="LanguageSupportJsCheckBox"
+                IsChecked="{Binding EnableJsLanguageSupport}"
+                Margin="5, 0, 0, 5"
+                Content=".js" />
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Name="LanguageSupportJsLabel"
+                Margin="0"
+                Padding="0"
+                Content="JavaScript" />
+
+            <CheckBox
+                Grid.Row="2"
+                Grid.Column="0"
+                Name="LanguageSupportReactCheckBox"
+                IsChecked="{Binding EnableReactLanguageSupport}"
+                Margin="5, 0, 0, 5"
+                Content=".jsx" />
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="1"
+                Name="LanguageSupportReactLabel"
+                Margin="0"
+                Padding="0"
+                Content="React" />
+
+            <CheckBox
+                Grid.Row="3"
+                Grid.Column="0"
+                Name="LanguageSupportVueCheckBox"
+                IsChecked="{Binding EnableVueLanguageSupport}"
+                Margin="5, 0, 0, 5"
+                Content=".vue" />
+
+            <Label
+                Grid.Row="3"
+                Grid.Column="1"
+                Name="LanguageSupportVueLabel"
+                Margin="0"
+                Padding="0"
+                Content="Vue" />
+        </Grid>
+
+        <Label
+            Grid.Row="6"
             Name="SuggestNewFeaturesLabel"
             Margin="0, 5, 0, 5">
 
