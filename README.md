@@ -80,7 +80,7 @@ The VisualLinter output window will help identify these plugins, if any.
 | Language | File Extensions | Required Plugins |
 | --- | --- | ---- |
 | HTML | `.html` | [`eslint-plugin-html`](https://github.com/BenoitZugmeyer/eslint-plugin-html) |
-| JavaScript | `.js` | No additional plugin required! |
+| JavaScript | `.js` | No additional plugins required! |
 | Reactjs |`.jsx` | [`eslint-plugin-react`](https://github.com/yannickcr/eslint-plugin-react) |
 | Vuejs | `.vue` | [`eslint-plugin-vue`](https://github.com/vuejs/eslint-plugin-vue) |
 
