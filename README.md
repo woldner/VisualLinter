@@ -15,6 +15,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 
 - [Features](#features)
 - [Getting Started](#getting-started)
+- [Language Support](#language-support)
 - [Troubleshooting](#troubleshooting)
 - [Contribute](#contribute)
 - [Inspiration](#inspiration)
@@ -41,7 +42,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 ##### Notes
 
 The default behavior is set to use a local ESLint installation and config.
-If you instead wish to use a global installation and/or config, you can enable each respective option in Visual Studio `Tools` > `Options` > `VisualLinter`.
+If you instead wish to use a global installation and/or config, you can enable each respective option in Visual Studio under `Tools` > `Options` > `VisualLinter`.
 
 The closest installation/config found relative to the file being linted will always be used.
 If no `node_modules` directory or `.eslintrc` file is found in the same directory as the file being linted, `VisualLinter` will try and resolve the paths from ancestor directories up to, and including the root directory (e.g. `C:\\` on Windows).
@@ -73,6 +74,19 @@ Currently, VisualLinter does NOT support the use of `package.json` as its config
 
 Please note that additional ESLint plugins may be required in order to lint files depending on your configuration.
 The VisualLinter output window will help identify these plugins, if any.
+
+## Language Support
+
+| Language | File Extensions | Required Plugins |
+| --- | --- | ---- |
+| HTML | `.html` | [`eslint-plugin-html`](https://github.com/BenoitZugmeyer/eslint-plugin-html) |
+| JavaScript | `.js` | No additional plugin required! |
+| Reactjs |`.jsx` | [`eslint-plugin-react`](https://github.com/yannickcr/eslint-plugin-react) |
+| Vuejs | `.vue` | [`eslint-plugin-vue`](https://github.com/vuejs/eslint-plugin-vue) |
+
+You can enable or disable each respective language in Visual Studio under `Tools` > `Options` > `VisualLinter`.
+
+By default only JavaScript `(.js)` is enabled.
 
 ## Troubleshooting
 
