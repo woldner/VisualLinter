@@ -63,14 +63,14 @@ namespace jwldnr.VisualLinter.ViewModels
                 nameof(DisableIgnorePath),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
-                new PropertyMetadata(default(bool)));
+                new PropertyMetadata(false));
 
         internal static readonly DependencyProperty EnableHtmlLanguageSupportProperty =
             DependencyProperty.Register(
                 nameof(EnableHtmlLanguageSupport),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
-                new PropertyMetadata(default(bool)));
+                new PropertyMetadata(false));
 
         internal static readonly DependencyProperty EnableJsLanguageSupportProperty =
             DependencyProperty.Register(
@@ -84,28 +84,28 @@ namespace jwldnr.VisualLinter.ViewModels
                 nameof(EnableReactLanguageSupport),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
-                new PropertyMetadata(default(bool)));
+                new PropertyMetadata(false));
 
         internal static readonly DependencyProperty EnableVueLanguageSupportProperty =
             DependencyProperty.Register(
                 nameof(EnableVueLanguageSupport),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
-                new PropertyMetadata(default(bool)));
+                new PropertyMetadata(false));
 
         internal static readonly DependencyProperty UseGlobalEslintProperty =
             DependencyProperty.Register(
                 nameof(UseGlobalEslint),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
-                new PropertyMetadata(default(bool)));
+                new PropertyMetadata(false));
 
         internal static readonly DependencyProperty UsePersonalConfigProperty =
             DependencyProperty.Register(
                 nameof(UsePersonalConfig),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
-                new PropertyMetadata(default(bool)));
+                new PropertyMetadata(false));
 
         private readonly IVisualLinterOptions _options;
         private ICommand _suggestNewFeaturesCommand;
@@ -130,7 +130,7 @@ namespace jwldnr.VisualLinter.ViewModels
         internal void Initiailize()
         {
             LoadOptions();
-            RaiseAllChanged();
+            RaiseAllPropertiesChanged();
         }
 
         private static void SuggestNewFeatures(object url)
@@ -156,7 +156,7 @@ namespace jwldnr.VisualLinter.ViewModels
             DisableIgnorePath = _options.DisableIgnorePath;
         }
 
-        private void RaiseAllChanged()
+        private void RaiseAllPropertiesChanged()
         {
             RaisePropertyChanged(nameof(UseGlobalEslint));
             RaisePropertyChanged(nameof(EnableHtmlLanguageSupport));
