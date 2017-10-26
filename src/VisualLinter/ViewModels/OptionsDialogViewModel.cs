@@ -13,15 +13,14 @@ namespace jwldnr.VisualLinter.ViewModels
     {
         public ICommand SuggestNewFeaturesCommand
         {
-            get => _suggestNewFeaturesCommand
-                ?? (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
+            get => _suggestNewFeaturesCommand ?? (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
             set => _suggestNewFeaturesCommand = value;
         }
 
-        internal bool DisableIgnorePath
+        internal bool DisableEslintIgnore
         {
-            get => GetPropertyValue<bool>(DisableIgnorePathProperty);
-            set => SetPropertyValue(DisableIgnorePathProperty, value);
+            get => GetPropertyValue<bool>(DisableEslintIgnoreProperty);
+            set => SetPropertyValue(DisableEslintIgnoreProperty, value);
         }
 
         internal bool EnableHtmlLanguageSupport
@@ -60,9 +59,9 @@ namespace jwldnr.VisualLinter.ViewModels
             set => SetPropertyValue(UsePersonalConfigProperty, value);
         }
 
-        internal static readonly DependencyProperty DisableIgnorePathProperty =
+        internal static readonly DependencyProperty DisableEslintIgnoreProperty =
             DependencyProperty.Register(
-                nameof(DisableIgnorePath),
+                nameof(DisableEslintIgnore),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
                 new PropertyMetadata(false));
@@ -145,8 +144,7 @@ namespace jwldnr.VisualLinter.ViewModels
 
         public ICommand BrowseFileCommand
         {
-            get => _browseFileCommand
-                ?? (_browseFileCommand = new RelayCommand(BrowseFile));
+            get => _browseFileCommand ?? (_browseFileCommand = new RelayCommand(BrowseFile));
             set => _browseFileCommand = value;
         }
 
@@ -187,7 +185,7 @@ namespace jwldnr.VisualLinter.ViewModels
 
         internal void Apply()
         {
-            _options.DisableIgnorePath = DisableIgnorePath;
+            _options.DisableIgnorePath = DisableEslintIgnore;
             _options.EnableHtmlLanguageSupport = EnableHtmlLanguageSupport;
             _options.EnableJsLanguageSupport = EnableJsLanguageSupport;
             _options.EnableReactLanguageSupport = EnableReactLanguageSupport;
@@ -222,7 +220,7 @@ namespace jwldnr.VisualLinter.ViewModels
             EnableReactLanguageSupport = _options.EnableReactLanguageSupport;
             EnableVueLanguageSupport = _options.EnableVueLanguageSupport;
             UsePersonalConfig = _options.UsePersonalConfig;
-            DisableIgnorePath = _options.DisableIgnorePath;
+            DisableEslintIgnore = _options.DisableIgnorePath;
         }
 
         private void RaiseAllPropertiesChanged()
@@ -233,7 +231,7 @@ namespace jwldnr.VisualLinter.ViewModels
             RaisePropertyChanged(nameof(EnableReactLanguageSupport));
             RaisePropertyChanged(nameof(EnableVueLanguageSupport));
             RaisePropertyChanged(nameof(UsePersonalConfig));
-            RaisePropertyChanged(nameof(DisableIgnorePath));
+            RaisePropertyChanged(nameof(DisableEslintIgnore));
         }
     }
 }

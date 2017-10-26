@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 
-namespace jwldnr.VisualLinter.Options
+namespace jwldnr.VisualLinter.Views
 {
     internal class OptionsDialogPage : UIElementDialogPage
     {

@@ -1,0 +1,69 @@
+﻿<UserControl
+    x:Class="jwldnr.VisualLinter.Views.OptionsDialogPageControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:model="clr-namespace:jwldnr.VisualLinter.ViewModels"
+    d:DataContext="{d:DesignInstance Type=model:OptionsDialogViewModel}"
+    mc:Ignorable="d"
+    d:DesignHeight="300" d:DesignWidth="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <GroupBox
+            Grid.Row="0"
+            Header="General options">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <CheckBox
+                    Content="Use global ESLint installation instead of local"
+                    Grid.Row="0"
+                    IsChecked="{Binding UseGlobalEslint}"
+                    Margin="5, 0, 0, 5" />
+
+                <CheckBox
+                    Content="Use personal ESLint config instead of local"
+                    Grid.Row="1"
+                    IsChecked="{Binding UsePersonalConfig}"
+                    Margin="5, 0, 0, 5" />
+
+                <CheckBox
+                    Content="Do not use .eslintignore when linting files"
+                    Grid.Row="2"
+                    IsChecked="{Binding DisableEslintIgnore}"
+                    Margin="5, 0, 0, 5" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox
+            Grid.Row="1"
+            Header="Language support">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox
+                        Content=".html"
+                        IsChecked="{Binding EnableHtmlLanguageSupport}"
+                        Margin="5, 0, 0, 5" />
+
+                    <Label Content="HTML" Margin="0" Padding="0" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

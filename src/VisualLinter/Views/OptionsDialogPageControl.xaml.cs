@@ -1,6 +1,6 @@
 ﻿using jwldnr.VisualLinter.ViewModels;
 
-namespace jwldnr.VisualLinter.Options
+namespace jwldnr.VisualLinter.Views
 {
     /// <summary>
     /// Interaction logic for OptionsDialogPageControl.xaml
