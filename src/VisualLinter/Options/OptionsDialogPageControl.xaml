@@ -18,6 +18,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -37,26 +39,56 @@
 
         <CheckBox
             Grid.Row="2"
+            Name="OverrideGlobalEslintPathCheckBox"
+            IsEnabled="{Binding UseGlobalEslint}"
+            IsChecked="{Binding OverrideEslintPath}"
+            Margin="5, 0, 0, 5"
+            Content="Override global ESLint path" />
+
+        <Grid
+            Grid.Row="3"
+            IsEnabled="{Binding OverrideEslintPath}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <TextBox
+                Grid.Column="0"
+                Padding="2"
+                Margin="5, 0, 0, 5"
+                Text="{Binding EslintOverridePath}" />
+
+                <Button
+                    Grid.Column="1"
+                    Padding="2"
+                    Margin="5, 0, 5, 5"
+                    Content="Browse.."
+                    Command="{Binding BrowseFileCommand}" />
+        </Grid>
+
+        <CheckBox
+            Grid.Row="4"
             Name="UsePersonalConfigCheckBox"
             IsChecked="{Binding UsePersonalConfig}"
             Margin="5, 0, 0, 5"
             Content="Use personal ESLint config instead of local" />
 
         <CheckBox
-            Grid.Row="3"
+            Grid.Row="5"
             Name="DisableIgnorePathCheckBox"
             IsChecked="{Binding DisableIgnorePath}"
             Margin="5, 0, 0, 5"
             Content="Do not use .eslintignore when linting files" />
 
         <Label
-            Grid.Row="4"
+            Grid.Row="6"
             Name="LanguageSupportLabel"
             Margin="0, 0, 0, 5"
             FontWeight="Bold"
             Content="Enable support for these languages:" />
 
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="7">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -134,7 +166,7 @@
         </Grid>
 
         <Label
-            Grid.Row="6"
+            Grid.Row="8"
             Name="SuggestNewFeaturesLabel"
             Margin="0, 5, 0, 5">
 

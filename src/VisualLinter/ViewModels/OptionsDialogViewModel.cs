@@ -2,8 +2,10 @@
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace jwldnr.VisualLinter.ViewModels
 {
@@ -109,6 +111,73 @@ namespace jwldnr.VisualLinter.ViewModels
 
         private readonly IVisualLinterOptions _options;
         private ICommand _suggestNewFeaturesCommand;
+
+
+        // begin test open file
+
+        internal static readonly DependencyProperty OverrideEslintPathProperty =
+            DependencyProperty.Register(
+                nameof(OverrideEslintPath),
+                typeof(bool),
+                typeof(OptionsDialogViewModel),
+                new PropertyMetadata(false));
+
+        internal static readonly DependencyProperty EslintOverridePathProperty =
+            DependencyProperty.Register(
+                nameof(EslintOverridePath),
+                typeof(string),
+                typeof(OptionsDialogViewModel),
+                new PropertyMetadata(null));
+
+        internal bool OverrideEslintPath
+        {
+            get => GetPropertyValue<bool>(OverrideEslintPathProperty);
+            set => SetPropertyValue(OverrideEslintPathProperty, value);
+        }
+
+        internal string EslintOverridePath
+        {
+            get => GetPropertyValue<string>(EslintOverridePathProperty);
+            set => SetPropertyValue(EslintOverridePathProperty, value);
+        }
+
+        private ICommand _browseFileCommand;
+
+        public ICommand BrowseFileCommand
+        {
+            get => _browseFileCommand
+                ?? (_browseFileCommand = new RelayCommand(BrowseFile));
+            set => _browseFileCommand = value;
+        }
+
+        private void BrowseFile()
+        {
+            try
+            {
+                var path = Path.GetDirectoryName(EslintOverridePath.NullIfEmpty())
+                    ?? EnvironmentHelper.GetUserDirectoryPath();
+
+                var dialog = new OpenFileDialog
+                {
+                    CheckFileExists = true,
+                    Filter = "(*.cmd, *.exe)|*.cmd;*.exe",
+                    InitialDirectory = path
+                };
+
+                var result = dialog.ShowDialog() ?? false;
+                if (false == result)
+                    return;
+
+                EslintOverridePath = dialog.FileName;
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine("error: unable to open file browse dialog:");
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+        }
+
+        // end test open file
 
         internal OptionsDialogViewModel()
         {
