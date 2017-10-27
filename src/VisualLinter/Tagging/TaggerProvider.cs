@@ -19,10 +19,6 @@ namespace jwldnr.VisualLinter.Tagging
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
     {
-        public string DisplayName => "VisualLinter";
-        public string Identifier => "VisualLinter";
-        public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
-
         private readonly List<SinkManager> _managers = new List<SinkManager>();
         private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>();
         private readonly TaggerManager _taggers = new TaggerManager();
@@ -31,6 +27,10 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly IVisualLinterOptions _visualLinterOptions;
 
         private ITableManager _tableManager;
+
+        public string DisplayName => "VisualLinter";
+        public string Identifier => "VisualLinter";
+        public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
 
         [ImportingConstructor]
         public TaggerProvider(
@@ -46,7 +46,7 @@ namespace jwldnr.VisualLinter.Tagging
             _visualLinterOptions = visualLinterOptions;
 
             _optionsMap.Add(".html", () => _visualLinterOptions.EnableHtmlLanguageSupport);
-            _optionsMap.Add(".js", () => _visualLinterOptions.EnableJsLanguageSupport);
+            _optionsMap.Add(".js", () => _visualLinterOptions.EnableJavaScriptLanguageSupport);
             _optionsMap.Add(".jsx", () => _visualLinterOptions.EnableReactLanguageSupport);
             _optionsMap.Add(".vue", () => _visualLinterOptions.EnableVueLanguageSupport);
 

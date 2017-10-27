@@ -11,9 +11,15 @@ namespace jwldnr.VisualLinter
     {
         bool DisableIgnorePath { get; set; }
         bool EnableHtmlLanguageSupport { get; set; }
-        bool EnableJsLanguageSupport { get; set; }
+        bool EnableJavaScriptLanguageSupport { get; set; }
         bool EnableReactLanguageSupport { get; set; }
         bool EnableVueLanguageSupport { get; set; }
+        string EslintConfigOverridePath { get; set; }
+        string EslintIgnoreOverridePath { get; set; }
+        string EslintOverridePath { get; set; }
+        bool ShouldOverrideEslint { get; set; }
+        bool ShouldOverrideEslintConfig { get; set; }
+        bool ShouldOverrideEslintIgnore { get; set; }
         bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
     }
@@ -22,6 +28,10 @@ namespace jwldnr.VisualLinter
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class VisualLinterOptions : IVisualLinterOptions
     {
+        private const string CollectionPath = "jwldnr.VisualLinter";
+
+        private readonly WritableSettingsStore _writableSettingsStore;
+
         public bool DisableIgnorePath
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(DisableIgnorePath), false);
@@ -34,10 +44,10 @@ namespace jwldnr.VisualLinter
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableHtmlLanguageSupport), value);
         }
 
-        public bool EnableJsLanguageSupport
+        public bool EnableJavaScriptLanguageSupport
         {
-            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableJsLanguageSupport), true);
-            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableJsLanguageSupport), value);
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableJavaScriptLanguageSupport), true);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableJavaScriptLanguageSupport), value);
         }
 
         public bool EnableReactLanguageSupport
@@ -52,6 +62,42 @@ namespace jwldnr.VisualLinter
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableVueLanguageSupport), value);
         }
 
+        public string EslintConfigOverridePath
+        {
+            get => _writableSettingsStore.GetString(CollectionPath, nameof(EslintConfigOverridePath), string.Empty);
+            set => _writableSettingsStore.SetString(CollectionPath, nameof(EslintConfigOverridePath), value);
+        }
+
+        public string EslintIgnoreOverridePath
+        {
+            get => _writableSettingsStore.GetString(CollectionPath, nameof(EslintIgnoreOverridePath), string.Empty);
+            set => _writableSettingsStore.SetString(CollectionPath, nameof(EslintIgnoreOverridePath), value);
+        }
+
+        public string EslintOverridePath
+        {
+            get => _writableSettingsStore.GetString(CollectionPath, nameof(EslintOverridePath), string.Empty);
+            set => _writableSettingsStore.SetString(CollectionPath, nameof(EslintOverridePath), value);
+        }
+
+        public bool ShouldOverrideEslint
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(ShouldOverrideEslint), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(ShouldOverrideEslint), value);
+        }
+
+        public bool ShouldOverrideEslintConfig
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(ShouldOverrideEslintConfig), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(ShouldOverrideEslintConfig), value);
+        }
+
+        public bool ShouldOverrideEslintIgnore
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(ShouldOverrideEslintIgnore), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(ShouldOverrideEslintIgnore), value);
+        }
+
         public bool UseGlobalEslint
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalEslint), false);
@@ -63,10 +109,6 @@ namespace jwldnr.VisualLinter
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UsePersonalConfig), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
         }
-
-        private const string CollectionPath = "jwldnr.VisualLinter";
-
-        private readonly WritableSettingsStore _writableSettingsStore;
 
         [ImportingConstructor]
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]

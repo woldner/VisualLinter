@@ -35,8 +35,8 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetIgnorePath(string filePath)
         {
-            var solutionPath = VsixHelper.GetSolutionPath(filePath)
-                ?? throw new Exception($"error: could not get solution for file {filePath}");
+            var solutionPath = VsixHelper.GetSolutionPath()
+                ?? throw new Exception("error: could not get solution path");
 
             var directoryPath = Path.GetDirectoryName(filePath)
                 ?? throw new Exception($"error: could not get directory for file {filePath}");

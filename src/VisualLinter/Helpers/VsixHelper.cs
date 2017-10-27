@@ -20,7 +20,7 @@ namespace jwldnr.VisualLinter.Helpers
             return project?.Name;
         }
 
-        internal static string GetSolutionPath(string filePath)
+        internal static string GetSolutionPath()
         {
             var solution = GetSolution();
 
