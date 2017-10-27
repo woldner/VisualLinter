@@ -155,11 +155,9 @@ namespace jwldnr.VisualLinter.Linting
 
         private string GetIgnorePath(string filePath)
         {
-            if (_options.ShouldOverrideEslintIgnore)
-                return GetOverrideEslintIgnorePath();
-
-            return EslintHelper.GetIgnorePath(filePath)
-                ?? throw new Exception("fatal: no local .eslintignore found");
+            return _options.ShouldOverrideEslintIgnore
+                ? GetOverrideEslintIgnorePath()
+                : EslintHelper.GetIgnorePath(filePath);
         }
 
         private string GetOverrideEslintConfigPath()
