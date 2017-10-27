@@ -76,13 +76,20 @@
     <Compile Include="Tagging\LinterTagger.cs" />
     <Compile Include="Tagging\TaggerManager.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
-    <Compile Include="ViewModels\OptionsDialogViewModel.cs" />
+    <Compile Include="ViewModels\AdvancedOptionsDialogViewModel.cs" />
+    <Compile Include="ViewModels\GeneralOptionsDialogViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Views\OptionsDialogPage.cs">
+    <Compile Include="Views\AdvancedOptionsDialogPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Views\OptionsDialogPageControl.xaml.cs">
-      <DependentUpon>OptionsDialogPageControl.xaml</DependentUpon>
+    <Compile Include="Views\AdvancedOptionsDialogPageControl.xaml.cs">
+      <DependentUpon>AdvancedOptionsDialogPageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GeneralOptionsDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\GeneralOptionsDialogPageControl.xaml.cs">
+      <DependentUpon>GeneralOptionsDialogPageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>
@@ -242,8 +249,13 @@
       <ManifestResourceName>VSPackage</ManifestResourceName>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Page Include="Views\OptionsDialogPageControl.xaml">
+    <Page Include="Views\AdvancedOptionsDialogPageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GeneralOptionsDialogPageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

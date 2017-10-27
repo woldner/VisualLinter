@@ -46,7 +46,7 @@ namespace jwldnr.VisualLinter.Tagging
             _visualLinterOptions = visualLinterOptions;
 
             _optionsMap.Add(".html", () => _visualLinterOptions.EnableHtmlLanguageSupport);
-            _optionsMap.Add(".js", () => _visualLinterOptions.EnableJsLanguageSupport);
+            _optionsMap.Add(".js", () => _visualLinterOptions.EnableJavaScriptLanguageSupport);
             _optionsMap.Add(".jsx", () => _visualLinterOptions.EnableReactLanguageSupport);
             _optionsMap.Add(".vue", () => _visualLinterOptions.EnableVueLanguageSupport);
 

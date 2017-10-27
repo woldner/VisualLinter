@@ -1,0 +1,110 @@
+﻿<UserControl
+    x:Class="jwldnr.VisualLinter.Views.AdvancedOptionsDialogPageControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:model="clr-namespace:jwldnr.VisualLinter.ViewModels"
+    d:DataContext="{d:DesignInstance Type=model:AdvancedOptionsDialogViewModel}"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="300">
+    <GroupBox
+        Margin="0, 0, 5, 0"
+        Header="Advanced">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <CheckBox
+                Content="Override ESLint path"
+                Grid.Row="0"
+                IsChecked="{Binding ShouldOverrideEslint}"
+                Margin="5, 5, 0, 5" />
+
+            <Grid
+                Grid.Row="1"
+                IsEnabled="{Binding ShouldOverrideEslint}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Grid.Column="0"
+                    Padding="2"
+                    Margin="5, 0, 0, 5"
+                    Text="{Binding EslintOverridePath}" />
+
+                <Button
+                    Grid.Column="1"
+                    Padding="2"
+                    Margin="5, 0, 5, 5"
+                    Content="Browse.."
+                    Command="{Binding BrowseEslintFileCommand}" />
+            </Grid>
+
+            <CheckBox
+                Content="Override ESLint config path"
+                Grid.Row="2"
+                IsChecked="{Binding ShouldOverrideEslintConfig}"
+                Margin="5, 0, 0, 5" />
+
+            <Grid
+                Grid.Row="3"
+                IsEnabled="{Binding ShouldOverrideEslintConfig}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Grid.Column="0"
+                    Padding="2"
+                    Margin="5, 0, 0, 5"
+                    Text="{Binding EslintConfigOverridePath}" />
+
+                <Button
+                    Grid.Column="1"
+                    Padding="2"
+                    Margin="5, 0, 5, 5"
+                    Content="Browse.."
+                    Command="{Binding BrowseEslintConfigFileCommand}" />
+            </Grid>
+
+            <CheckBox
+                Content="Override .eslintignore path"
+                Grid.Row="4"
+                IsChecked="{Binding ShouldOverrideEslintIgnore}"
+                Margin="5, 0, 0, 5" />
+
+            <Grid
+                Grid.Row="5"
+                IsEnabled="{Binding ShouldOverrideEslintIgnore}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Grid.Column="0"
+                    Padding="2"
+                    Margin="5, 0, 0, 5"
+                    Text="{Binding EslintIgnoreOverridePath}" />
+
+                <Button
+                    Grid.Column="1"
+                    Padding="2"
+                    Margin="5, 0, 5, 5"
+                    Content="Browse.."
+                    Command="{Binding BrowseEslintIgnoreFileCommand}" />
+            </Grid>
+        </Grid>
+    </GroupBox>
+</UserControl>

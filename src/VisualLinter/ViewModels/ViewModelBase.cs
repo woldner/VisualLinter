@@ -21,12 +21,13 @@ namespace jwldnr.VisualLinter.ViewModels
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetPropertyValue<T>(DependencyProperty property, T value, [CallerMemberName] string propertyName = null)
+        protected bool SetPropertyValue<T>(DependencyProperty property, T newValue, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(value, GetPropertyValue<T>(property)))
+            var oldValue = GetPropertyValue<T>(property);
+            if (EqualityComparer<T>.Default.Equals(newValue, oldValue))
                 return false;
 
-            SetValue(property, value);
+            SetValue(property, newValue);
             RaisePropertyChanged(propertyName);
 
             return true;

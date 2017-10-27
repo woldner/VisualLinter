@@ -24,7 +24,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Returns(true);
 
             _mockVisualLinterOptions
-                .Setup(o => o.EnableJsLanguageSupport)
+                .Setup(o => o.EnableJavaScriptLanguageSupport)
                 .Returns(true);
 
             _mockVisualLinterOptions
@@ -63,7 +63,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Returns(false);
 
             _mockVisualLinterOptions
-                .Setup(o => o.EnableJsLanguageSupport)
+                .Setup(o => o.EnableJavaScriptLanguageSupport)
                 .Returns(false);
 
             _mockVisualLinterOptions
@@ -124,7 +124,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             _mockVisualLinterOptions = new Mock<IVisualLinterOptions>();
             _mockVisualLinterOptions
-                .Setup(o => o.EnableJsLanguageSupport)
+                .Setup(o => o.EnableJavaScriptLanguageSupport)
                 .Returns(true);
 
             var visualLinterOptions = _mockVisualLinterOptions.Object;
