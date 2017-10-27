@@ -8,161 +8,166 @@
     d:DataContext="{d:DesignInstance Type=model:OptionsDialogViewModel}"
     mc:Ignorable="d"
     d:DesignHeight="400" d:DesignWidth="400">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <GroupBox
-            Grid.Row="0"
-            Header="General">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
+            <GroupBox
+                Grid.Row="0"
+                Margin="0, 0, 5, 0"
+                Header="General">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                <CheckBox
-                    Content="Use global ESLint installation instead of local"
-                    Grid.Row="0"
-                    IsChecked="{Binding UseGlobalEslint}"
-                    Margin="5, 5, 0, 5" />
+                    <CheckBox
+                        Content="Use global ESLint installation instead of local"
+                        Grid.Row="0"
+                        IsChecked="{Binding UseGlobalEslint}"
+                        Margin="5, 5, 0, 5" />
 
-                <CheckBox
-                    Content="Use personal ESLint config instead of local"
-                    Grid.Row="1"
-                    IsChecked="{Binding UsePersonalConfig}"
-                    Margin="5, 0, 0, 5" />
+                    <CheckBox
+                        Content="Use personal ESLint config instead of local"
+                        Grid.Row="1"
+                        IsChecked="{Binding UsePersonalConfig}"
+                        Margin="5, 0, 0, 5" />
 
-                <CheckBox
-                    Content="Do not use .eslintignore when linting files"
-                    Grid.Row="2"
-                    IsChecked="{Binding DisableEslintIgnore}"
-                    Margin="5, 0, 0, 5" />
-            </Grid>
-        </GroupBox>
-
-        <GroupBox
-            Grid.Row="1"
-            Header="Advanced">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-
-                <CheckBox
-                    Content="Override global ESLint path"
-                    Grid.Row="0"
-                    IsEnabled="{Binding UseGlobalEslint}"
-                    IsChecked="{Binding OverrideGlobalEslintPath}"
-                    Margin="5, 5, 0, 5" />
-
-                <Grid
-                    Grid.Row="1"
-                    IsEnabled="{Binding OverrideGlobalEslintPath}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox
-                        Grid.Column="0"
-                        Padding="2"
-                        Margin="5, 0, 0, 5"
-                        Text="{Binding GlobalEslintOverridePath}" />
-
-                    <Button
-                        Grid.Column="1"
-                        Padding="2"
-                        Margin="5, 0, 5, 5"
-                        Content="Browse.."
-                        Command="{Binding BrowseGlobalEslintFileCommand}" />
+                    <CheckBox
+                        Content="Do not use .eslintignore when linting files"
+                        Grid.Row="2"
+                        IsChecked="{Binding DisableEslintIgnore}"
+                        Margin="5, 0, 0, 5" />
                 </Grid>
+            </GroupBox>
 
-                <CheckBox
-                    Content="Override personal ESLint config path"
-                    Grid.Row="2"
-                    IsEnabled="{Binding UsePersonalConfig}"
-                    IsChecked="{Binding OverridePersonalConfigPath}"
-                    Margin="5, 0, 0, 5" />
+            <GroupBox
+                Grid.Row="1"
+                Margin="0, 0, 5, 0"
+                Header="Advanced">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                <Grid
-                    Grid.Row="3"
-                    IsEnabled="{Binding OverridePersonalConfigPath}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
+                    <CheckBox
+                        Content="Override global ESLint path"
+                        Grid.Row="0"
+                        IsEnabled="{Binding UseGlobalEslint}"
+                        IsChecked="{Binding OverrideGlobalEslintPath}"
+                        Margin="5, 5, 0, 5" />
 
-                    <TextBox
-                        Grid.Column="0"
-                        Padding="2"
-                        Margin="5, 0, 0, 5"
-                        Text="{Binding PersonalConfigOverridePath}" />
+                    <Grid
+                        Grid.Row="1"
+                        IsEnabled="{Binding OverrideGlobalEslintPath}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
-                    <Button
-                        Grid.Column="1"
-                        Padding="2"
-                        Margin="5, 0, 5, 5"
-                        Content="Browse.."
-                        Command="{Binding BrowsePersonalConfigFileCommand}" />
+                        <TextBox
+                            Grid.Column="0"
+                            Padding="2"
+                            Margin="5, 0, 0, 5"
+                            Text="{Binding GlobalEslintOverridePath}" />
+
+                        <Button
+                            Grid.Column="1"
+                            Padding="2"
+                            Margin="5, 0, 5, 5"
+                            Content="Browse.."
+                            Command="{Binding BrowseGlobalEslintFileCommand}" />
+                    </Grid>
+
+                    <CheckBox
+                        Content="Override personal ESLint config path"
+                        Grid.Row="2"
+                        IsEnabled="{Binding UsePersonalConfig}"
+                        IsChecked="{Binding OverridePersonalConfigPath}"
+                        Margin="5, 0, 0, 5" />
+
+                    <Grid
+                        Grid.Row="3"
+                        IsEnabled="{Binding OverridePersonalConfigPath}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            Grid.Column="0"
+                            Padding="2"
+                            Margin="5, 0, 0, 5"
+                            Text="{Binding PersonalConfigOverridePath}" />
+
+                        <Button
+                            Grid.Column="1"
+                            Padding="2"
+                            Margin="5, 0, 5, 5"
+                            Content="Browse.."
+                            Command="{Binding BrowsePersonalConfigFileCommand}" />
+                    </Grid>
                 </Grid>
-            </Grid>
-        </GroupBox>
+            </GroupBox>
 
-        <GroupBox
-            Grid.Row="2"
-            Header="Language support">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
+            <GroupBox
+                Grid.Row="2"
+                Margin="0, 0, 5, 0"
+                Header="Language support">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                <CheckBox
-                    Content="HTML (.html)"
-                    Grid.Row="0"
-                    IsChecked="{Binding EnableHtmlLanguageSupport}"
-                    Margin="5, 5, 0, 5" />
+                    <CheckBox
+                        Content="HTML (.html)"
+                        Grid.Row="0"
+                        IsChecked="{Binding EnableHtmlLanguageSupport}"
+                        Margin="5, 5, 0, 5" />
 
-                <CheckBox
-                    Content="JavaScript (.js)"
-                    Grid.Row="1"
-                    IsChecked="{Binding EnableJsLanguageSupport}"
-                    Margin="5, 0, 0, 5" />
+                    <CheckBox
+                        Content="JavaScript (.js)"
+                        Grid.Row="1"
+                        IsChecked="{Binding EnableJsLanguageSupport}"
+                        Margin="5, 0, 0, 5" />
 
-                <CheckBox
-                    Content="React (.jsx)"
-                    Grid.Row="2"
-                    IsChecked="{Binding EnableReactLanguageSupport}"
-                    Margin="5, 0, 0, 5" />
+                    <CheckBox
+                        Content="React (.jsx)"
+                        Grid.Row="2"
+                        IsChecked="{Binding EnableReactLanguageSupport}"
+                        Margin="5, 0, 0, 5" />
 
-                <CheckBox
-                    Content="Vue (.vue)"
-                    Grid.Row="3"
-                    IsChecked="{Binding EnableVueLanguageSupport}"
-                    Margin="5, 0, 0, 5" />
-            </Grid>
-        </GroupBox>
+                    <CheckBox
+                        Content="Vue (.vue)"
+                        Grid.Row="3"
+                        IsChecked="{Binding EnableVueLanguageSupport}"
+                        Margin="5, 0, 0, 5" />
+                </Grid>
+            </GroupBox>
 
-        <Label
-            Grid.Row="3"
-            Margin="0, 5, 0, 5">
+            <Label
+                Grid.Row="3"
+                Margin="0, 5, 5, 5">
 
-            <Hyperlink
-                Command="{Binding SuggestNewFeaturesCommand}"
-                CommandParameter="https://github.com/jwldnr/VisualLinter">
-                Suggest new features @ GitHub!
-            </Hyperlink>
-        </Label>
-    </Grid>
+                <Hyperlink
+                    Command="{Binding SuggestNewFeaturesCommand}"
+                    CommandParameter="https://github.com/jwldnr/VisualLinter">
+                    Suggest new features @ GitHub!
+                </Hyperlink>
+            </Label>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
