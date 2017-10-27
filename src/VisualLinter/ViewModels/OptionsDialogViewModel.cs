@@ -1,64 +1,16 @@
 ﻿using jwldnr.VisualLinter.Helpers;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Win32;
 
 namespace jwldnr.VisualLinter.ViewModels
 {
     internal class OptionsDialogViewModel : ViewModelBase
     {
-        public ICommand SuggestNewFeaturesCommand
-        {
-            get => _suggestNewFeaturesCommand ?? (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
-            set => _suggestNewFeaturesCommand = value;
-        }
-
-        internal bool DisableEslintIgnore
-        {
-            get => GetPropertyValue<bool>(DisableEslintIgnoreProperty);
-            set => SetPropertyValue(DisableEslintIgnoreProperty, value);
-        }
-
-        internal bool EnableHtmlLanguageSupport
-        {
-            get => GetPropertyValue<bool>(EnableHtmlLanguageSupportProperty);
-            set => SetPropertyValue(EnableHtmlLanguageSupportProperty, value);
-        }
-
-        internal bool EnableJsLanguageSupport
-        {
-            get => GetPropertyValue<bool>(EnableJsLanguageSupportProperty);
-            set => SetPropertyValue(EnableJsLanguageSupportProperty, value);
-        }
-
-        internal bool EnableReactLanguageSupport
-        {
-            get => GetPropertyValue<bool>(EnableReactLanguageSupportProperty);
-            set => SetPropertyValue(EnableReactLanguageSupportProperty, value);
-        }
-
-        internal bool EnableVueLanguageSupport
-        {
-            get => GetPropertyValue<bool>(EnableVueLanguageSupportProperty);
-            set => SetPropertyValue(EnableVueLanguageSupportProperty, value);
-        }
-
-        internal bool UseGlobalEslint
-        {
-            get => GetPropertyValue<bool>(UseGlobalEslintProperty);
-            set => SetPropertyValue(UseGlobalEslintProperty, value);
-        }
-
-        internal bool UsePersonalConfig
-        {
-            get => GetPropertyValue<bool>(UsePersonalConfigProperty);
-            set => SetPropertyValue(UsePersonalConfigProperty, value);
-        }
-
         internal static readonly DependencyProperty DisableEslintIgnoreProperty =
             DependencyProperty.Register(
                 nameof(DisableEslintIgnore),
@@ -108,74 +60,123 @@ namespace jwldnr.VisualLinter.ViewModels
                 typeof(OptionsDialogViewModel),
                 new PropertyMetadata(false));
 
-        private readonly IVisualLinterOptions _options;
-        private ICommand _suggestNewFeaturesCommand;
-
-
-        // begin test open file
-
-        internal static readonly DependencyProperty OverrideEslintPathProperty =
+        internal static readonly DependencyProperty OverrideGlobalEslintPathProperty =
             DependencyProperty.Register(
-                nameof(OverrideEslintPath),
+                nameof(OverrideGlobalEslintPath),
                 typeof(bool),
                 typeof(OptionsDialogViewModel),
                 new PropertyMetadata(false));
 
-        internal static readonly DependencyProperty EslintOverridePathProperty =
+        internal static readonly DependencyProperty OverridePersonalConfigPathProperty =
             DependencyProperty.Register(
-                nameof(EslintOverridePath),
+                nameof(OverridePersonalConfigPath),
+                typeof(bool),
+                typeof(OptionsDialogViewModel),
+                new PropertyMetadata(false));
+
+        internal static readonly DependencyProperty GlobalEslintOverridePathProperty =
+            DependencyProperty.Register(
+                nameof(GlobalEslintOverridePath),
                 typeof(string),
                 typeof(OptionsDialogViewModel),
                 new PropertyMetadata(null));
 
-        internal bool OverrideEslintPath
+        internal static readonly DependencyProperty PersonalConfigOverridePathProperty =
+            DependencyProperty.Register(
+                nameof(PersonalConfigOverridePath),
+                typeof(string),
+                typeof(OptionsDialogViewModel),
+                new PropertyMetadata(null));
+
+        private readonly IVisualLinterOptions _options;
+
+        private ICommand _suggestNewFeaturesCommand;
+        private ICommand _browseGlobalEslintFileCommand;
+        private ICommand _browsePersonalConfigFileCommand;
+
+        public ICommand SuggestNewFeaturesCommand
         {
-            get => GetPropertyValue<bool>(OverrideEslintPathProperty);
-            set => SetPropertyValue(OverrideEslintPathProperty, value);
+            get => _suggestNewFeaturesCommand ?? (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
+            set => _suggestNewFeaturesCommand = value;
         }
 
-        internal string EslintOverridePath
+        public ICommand BrowseGlobalEslintFileCommand
         {
-            get => GetPropertyValue<string>(EslintOverridePathProperty);
-            set => SetPropertyValue(EslintOverridePathProperty, value);
+            get => _browseGlobalEslintFileCommand ?? (_browseGlobalEslintFileCommand = new RelayCommand(BrowseGlobalEslintFile));
+            set => _browseGlobalEslintFileCommand = value;
         }
 
-        private ICommand _browseFileCommand;
-
-        public ICommand BrowseFileCommand
+        public ICommand BrowsePersonalConfigFileCommand
         {
-            get => _browseFileCommand ?? (_browseFileCommand = new RelayCommand(BrowseFile));
-            set => _browseFileCommand = value;
+            get => _browsePersonalConfigFileCommand ?? (_browsePersonalConfigFileCommand = new RelayCommand(BrowsePersonalConfigFile));
+            set => _browsePersonalConfigFileCommand = value;
         }
 
-        private void BrowseFile()
+        internal bool DisableEslintIgnore
         {
-            try
-            {
-                var path = Path.GetDirectoryName(EslintOverridePath.NullIfEmpty())
-                    ?? EnvironmentHelper.GetUserDirectoryPath();
-
-                var dialog = new OpenFileDialog
-                {
-                    CheckFileExists = true,
-                    Filter = "(*.cmd, *.exe)|*.cmd;*.exe",
-                    InitialDirectory = path
-                };
-
-                var result = dialog.ShowDialog() ?? false;
-                if (false == result)
-                    return;
-
-                EslintOverridePath = dialog.FileName;
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine("error: unable to open file browse dialog:");
-                OutputWindowHelper.WriteLine(e.Message);
-            }
+            get => GetPropertyValue<bool>(DisableEslintIgnoreProperty);
+            set => SetPropertyValue(DisableEslintIgnoreProperty, value);
         }
 
-        // end test open file
+        internal bool EnableHtmlLanguageSupport
+        {
+            get => GetPropertyValue<bool>(EnableHtmlLanguageSupportProperty);
+            set => SetPropertyValue(EnableHtmlLanguageSupportProperty, value);
+        }
+
+        internal bool EnableJsLanguageSupport
+        {
+            get => GetPropertyValue<bool>(EnableJsLanguageSupportProperty);
+            set => SetPropertyValue(EnableJsLanguageSupportProperty, value);
+        }
+
+        internal bool EnableReactLanguageSupport
+        {
+            get => GetPropertyValue<bool>(EnableReactLanguageSupportProperty);
+            set => SetPropertyValue(EnableReactLanguageSupportProperty, value);
+        }
+
+        internal bool EnableVueLanguageSupport
+        {
+            get => GetPropertyValue<bool>(EnableVueLanguageSupportProperty);
+            set => SetPropertyValue(EnableVueLanguageSupportProperty, value);
+        }
+
+        internal bool UseGlobalEslint
+        {
+            get => GetPropertyValue<bool>(UseGlobalEslintProperty);
+            set => SetPropertyValue(UseGlobalEslintProperty, value);
+        }
+
+        internal bool UsePersonalConfig
+        {
+            get => GetPropertyValue<bool>(UsePersonalConfigProperty);
+            set => SetPropertyValue(UsePersonalConfigProperty, value);
+        }
+
+        internal bool OverrideGlobalEslintPath
+        {
+            get => GetPropertyValue<bool>(OverrideGlobalEslintPathProperty);
+            set => SetPropertyValue(OverrideGlobalEslintPathProperty, value);
+        }
+
+        internal bool OverridePersonalConfigPath
+        {
+            get => GetPropertyValue<bool>(OverridePersonalConfigPathProperty);
+            set => SetPropertyValue(OverridePersonalConfigPathProperty, value);
+        }
+
+        internal string GlobalEslintOverridePath
+        {
+            get => GetPropertyValue<string>(GlobalEslintOverridePathProperty);
+            set => SetPropertyValue(GlobalEslintOverridePathProperty, value);
+        }
+
+        internal string PersonalConfigOverridePath
+        {
+            get => GetPropertyValue<string>(PersonalConfigOverridePathProperty);
+            set => SetPropertyValue(PersonalConfigOverridePathProperty, value);
+        }
 
         internal OptionsDialogViewModel()
         {
@@ -208,6 +209,60 @@ namespace jwldnr.VisualLinter.ViewModels
             }
             catch (Exception e)
             {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+        }
+
+        private void BrowseGlobalEslintFile()
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName(GlobalEslintOverridePath.NullIfEmpty())
+                    ?? EnvironmentHelper.GetUserDirectoryPath();
+
+                var dialog = new OpenFileDialog
+                {
+                    CheckFileExists = true,
+                    Filter = "(*.cmd, *.exe)|*.cmd;*.exe",
+                    InitialDirectory = dir
+                };
+
+                var result = dialog.ShowDialog() ?? false;
+                if (false == result)
+                    return;
+
+                GlobalEslintOverridePath = dialog.FileName;
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine("error: unable to open global eslint file browse dialog:");
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+        }
+
+        private void BrowsePersonalConfigFile()
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName(PersonalConfigOverridePath.NullIfEmpty())
+                    ?? EnvironmentHelper.GetUserDirectoryPath();
+
+                var dialog = new OpenFileDialog
+                {
+                    CheckFileExists = true,
+                    Filter = "(*.js, *.yaml, *.yml, *.json, *.eslintrc)|*.cmd;*.exe;*.yaml;*.yml;*.json;*.eslintrc",
+                    InitialDirectory = dir
+                };
+
+                var result = dialog.ShowDialog() ?? false;
+                if (false == result)
+                    return;
+
+                PersonalConfigOverridePath = dialog.FileName;
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine("error: unable to open personal config file browse dialog:");
                 OutputWindowHelper.WriteLine(e.Message);
             }
         }
