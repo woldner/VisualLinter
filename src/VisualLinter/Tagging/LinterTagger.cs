@@ -11,10 +11,6 @@ namespace jwldnr.VisualLinter.Tagging
 {
     internal class LinterTagger : ITagger<IErrorTag>, IDisposable
     {
-        internal SnapshotFactory Factory { get; }
-        internal string FilePath { get; private set; }
-        internal LinterSnapshot Snapshot { get; set; }
-
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
         private readonly Linter _linter;
@@ -22,6 +18,10 @@ namespace jwldnr.VisualLinter.Tagging
 
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
+
+        internal SnapshotFactory Factory { get; }
+        internal string FilePath { get; private set; }
+        internal LinterSnapshot Snapshot { get; set; }
 
         internal LinterTagger(
             TaggerProvider provider,

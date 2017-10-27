@@ -22,6 +22,10 @@ namespace jwldnr.VisualLinter
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class VisualLinterOptions : IVisualLinterOptions
     {
+        private const string CollectionPath = "jwldnr.VisualLinter";
+
+        private readonly WritableSettingsStore _writableSettingsStore;
+
         public bool DisableIgnorePath
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(DisableIgnorePath), false);
@@ -63,10 +67,6 @@ namespace jwldnr.VisualLinter
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UsePersonalConfig), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
         }
-
-        private const string CollectionPath = "jwldnr.VisualLinter";
-
-        private readonly WritableSettingsStore _writableSettingsStore;
 
         [ImportingConstructor]
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
