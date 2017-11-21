@@ -58,8 +58,6 @@ namespace jwldnr.VisualLinter.ViewModels
                 typeof(GeneralOptionsDialogViewModel),
                 new PropertyMetadata(false));
 
-        private readonly IVisualLinterOptions _options;
-
         private ICommand _suggestNewFeaturesCommand;
 
         public ICommand SuggestNewFeaturesCommand
@@ -110,21 +108,15 @@ namespace jwldnr.VisualLinter.ViewModels
             set => SetPropertyValue(UsePersonalConfigProperty, value);
         }
 
-        internal GeneralOptionsDialogViewModel()
-        {
-            _options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("fatal: unable to retrieve options");
-        }
-
         internal void Apply()
         {
-            _options.DisableIgnorePath = DisableEslintIgnore;
-            _options.EnableHtmlLanguageSupport = EnableHtmlLanguageSupport;
-            _options.EnableJavaScriptLanguageSupport = EnableJavaScriptLanguageSupport;
-            _options.EnableReactLanguageSupport = EnableReactLanguageSupport;
-            _options.EnableVueLanguageSupport = EnableVueLanguageSupport;
-            _options.UseGlobalEslint = UseGlobalEslint;
-            _options.UsePersonalConfig = UsePersonalConfig;
+            Options.DisableIgnorePath = DisableEslintIgnore;
+            Options.EnableHtmlLanguageSupport = EnableHtmlLanguageSupport;
+            Options.EnableJavaScriptLanguageSupport = EnableJavaScriptLanguageSupport;
+            Options.EnableReactLanguageSupport = EnableReactLanguageSupport;
+            Options.EnableVueLanguageSupport = EnableVueLanguageSupport;
+            Options.UseGlobalEslint = UseGlobalEslint;
+            Options.UsePersonalConfig = UsePersonalConfig;
         }
 
         internal void Initiailize()
@@ -148,13 +140,13 @@ namespace jwldnr.VisualLinter.ViewModels
 
         private void LoadOptions()
         {
-            UseGlobalEslint = _options.UseGlobalEslint;
-            EnableHtmlLanguageSupport = _options.EnableHtmlLanguageSupport;
-            EnableJavaScriptLanguageSupport = _options.EnableJavaScriptLanguageSupport;
-            EnableReactLanguageSupport = _options.EnableReactLanguageSupport;
-            EnableVueLanguageSupport = _options.EnableVueLanguageSupport;
-            UsePersonalConfig = _options.UsePersonalConfig;
-            DisableEslintIgnore = _options.DisableIgnorePath;
+            UseGlobalEslint = Options.UseGlobalEslint;
+            EnableHtmlLanguageSupport = Options.EnableHtmlLanguageSupport;
+            EnableJavaScriptLanguageSupport = Options.EnableJavaScriptLanguageSupport;
+            EnableReactLanguageSupport = Options.EnableReactLanguageSupport;
+            EnableVueLanguageSupport = Options.EnableVueLanguageSupport;
+            UsePersonalConfig = Options.UsePersonalConfig;
+            DisableEslintIgnore = Options.DisableIgnorePath;
         }
 
         private void RaiseAllPropertiesChanged()

@@ -9,6 +9,11 @@ Features that have a checkmark are complete and available for download in the
 
 These are the changes to each version that has been released on the official Visual Studio extension gallery.
 
+## 1.0 (2017-11-21)
+
+- [x] Add `Enable verbose logging` option 
+- [x] Move options to `ViewModelBase`
+
 ## 1.0 (2017-10-21)
 
 - [x] Add `.html` file extension support
@@ -16,6 +21,7 @@ These are the changes to each version that has been released on the official Vis
 
 ## 1.0 (2017-09-28)
 
+- [x] Improve tagging
 - [x] Fix bug where trailing semi markers would not update in buffer
 
 ## 1.0 (2017-09-24)
@@ -25,7 +31,7 @@ These are the changes to each version that has been released on the official Vis
 ## 1.0 (2017-09-19)
 
 - [x] Add `.eslintignore` support
-- [x] Provide an option to disable the use of `.eslintignore` when linting files
+- [x] Add option to disable the use of `.eslintignore` when linting files
 
 ## 1.0 (2017-09-09)
 
@@ -39,13 +45,13 @@ These are the changes to each version that has been released on the official Vis
 ## 1.0 (2017-08-30)
 
 - [x] Change the default behavior to use a local installation instead of global
-- [x] Provide an option to use global installation
+- [x] Add option to use global installation
 
 ## 1.0 (2017-08-16)
 
-- [x] Provide options page
+- [x] Add options page
 - [x] Change the default behavior to use a local config (relative to file being linted) instead of a single personal config for all projects
-- [x] Provide option to use personal config
+- [x] Add option to use personal config
 
 ## 1.0 (2017-07-08)
 

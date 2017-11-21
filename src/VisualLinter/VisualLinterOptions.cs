@@ -1,9 +1,8 @@
-﻿using Microsoft.VisualStudio.Settings;
+﻿using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Settings;
-using System;
-using System.ComponentModel.Composition;
-using System.Diagnostics.CodeAnalysis;
 
 namespace jwldnr.VisualLinter
 {
@@ -22,6 +21,7 @@ namespace jwldnr.VisualLinter
         bool ShouldOverrideEslintIgnore { get; set; }
         bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
+        bool EnableVerboseLogging { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
@@ -110,14 +110,19 @@ namespace jwldnr.VisualLinter
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
         }
 
+        public bool EnableVerboseLogging
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableVerboseLogging), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableVerboseLogging), value);
+        }
+
         [ImportingConstructor]
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         internal VisualLinterOptions([Import] SVsServiceProvider serviceProvider)
         {
             var settingsManager = new ShellSettingsManager(serviceProvider);
 
-            _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
-                ?? throw new ArgumentNullException(nameof(settingsManager));
+            _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
 
             if (null == _writableSettingsStore || _writableSettingsStore.CollectionExists(CollectionPath))
                 return;

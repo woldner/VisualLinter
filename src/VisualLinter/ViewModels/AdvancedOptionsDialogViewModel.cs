@@ -1,10 +1,9 @@
-﻿using jwldnr.VisualLinter.Helpers;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using jwldnr.VisualLinter.Helpers;
+using Microsoft.Win32;
 
 namespace jwldnr.VisualLinter.ViewModels
 {
@@ -52,7 +51,12 @@ namespace jwldnr.VisualLinter.ViewModels
                 typeof(AdvancedOptionsDialogViewModel),
                 new PropertyMetadata(false));
 
-        private readonly IVisualLinterOptions _options;
+        internal static readonly DependencyProperty EnableVerboseLoggingProperty =
+            DependencyProperty.Register(
+                nameof(EnableVerboseLogging),
+                typeof(bool),
+                typeof(AdvancedOptionsDialogViewModel),
+                new PropertyMetadata(false));
 
         private ICommand _browseEslintConfigFileCommand;
         private ICommand _browseEslintFileCommand;
@@ -115,22 +119,21 @@ namespace jwldnr.VisualLinter.ViewModels
             set => SetPropertyValue(ShouldOverrideEslintIgnoreProperty, value);
         }
 
-        internal AdvancedOptionsDialogViewModel()
+        internal bool EnableVerboseLogging
         {
-            _options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("fatal: unable to retrieve options");
+            get => GetPropertyValue<bool>(EnableVerboseLoggingProperty);
+            set => SetPropertyValue(EnableVerboseLoggingProperty, value);
         }
 
         internal void Apply()
         {
-            _options.ShouldOverrideEslint = ShouldOverrideEslint;
-            _options.EslintOverridePath = EslintOverridePath;
-
-            _options.ShouldOverrideEslintConfig = ShouldOverrideEslintConfig;
-            _options.EslintConfigOverridePath = EslintConfigOverridePath;
-
-            _options.ShouldOverrideEslintIgnore = ShouldOverrideEslintIgnore;
-            _options.EslintIgnoreOverridePath = EslintIgnoreOverridePath;
+            Options.ShouldOverrideEslint = ShouldOverrideEslint;
+            Options.EslintOverridePath = EslintOverridePath;
+            Options.ShouldOverrideEslintConfig = ShouldOverrideEslintConfig;
+            Options.EslintConfigOverridePath = EslintConfigOverridePath;
+            Options.ShouldOverrideEslintIgnore = ShouldOverrideEslintIgnore;
+            Options.EslintIgnoreOverridePath = EslintIgnoreOverridePath;
+            Options.EnableVerboseLogging = EnableVerboseLogging;
         }
 
         internal void Initiailize()
@@ -207,26 +210,24 @@ namespace jwldnr.VisualLinter.ViewModels
 
         private void LoadOptions()
         {
-            ShouldOverrideEslint = _options.ShouldOverrideEslint;
-            EslintOverridePath = _options.EslintOverridePath;
-
-            ShouldOverrideEslintConfig = _options.ShouldOverrideEslintConfig;
-            EslintConfigOverridePath = _options.EslintConfigOverridePath;
-
-            ShouldOverrideEslintIgnore = _options.ShouldOverrideEslintIgnore;
-            EslintIgnoreOverridePath = _options.EslintIgnoreOverridePath;
+            ShouldOverrideEslint = Options.ShouldOverrideEslint;
+            EslintOverridePath = Options.EslintOverridePath;
+            ShouldOverrideEslintConfig = Options.ShouldOverrideEslintConfig;
+            EslintConfigOverridePath = Options.EslintConfigOverridePath;
+            ShouldOverrideEslintIgnore = Options.ShouldOverrideEslintIgnore;
+            EslintIgnoreOverridePath = Options.EslintIgnoreOverridePath;
+            EnableVerboseLogging = Options.EnableVerboseLogging;
         }
 
         private void RaiseAllPropertiesChanged()
         {
             RaisePropertyChanged(nameof(ShouldOverrideEslint));
             RaisePropertyChanged(nameof(EslintOverridePath));
-
             RaisePropertyChanged(nameof(ShouldOverrideEslintConfig));
             RaisePropertyChanged(nameof(EslintConfigOverridePath));
-
             RaisePropertyChanged(nameof(ShouldOverrideEslintIgnore));
             RaisePropertyChanged(nameof(EslintIgnoreOverridePath));
+            RaisePropertyChanged(nameof(EnableVerboseLogging));
         }
     }
 }

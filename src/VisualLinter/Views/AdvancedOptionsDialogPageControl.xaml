@@ -20,6 +20,8 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
             <CheckBox
@@ -105,6 +107,12 @@
                     Content="Browse.."
                     Command="{Binding BrowseEslintIgnoreFileCommand}" />
             </Grid>
+
+            <CheckBox
+                Content="Enable verbose logging"
+                Grid.Row="7"
+                IsChecked="{Binding EnableVerboseLogging}"
+                Margin="5, 0, 0, 5" />
         </Grid>
     </GroupBox>
 </UserControl>

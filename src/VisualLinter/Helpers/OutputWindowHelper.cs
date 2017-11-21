@@ -1,33 +1,35 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using System;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using System;
 
 namespace jwldnr.VisualLinter.Helpers
 {
     internal static class OutputWindowHelper
     {
+        private static IVsOutputWindowPane _outputWindowPane;
+
         private static IVsOutputWindowPane OutputWindowPane => _outputWindowPane
             ?? (_outputWindowPane = GetOutputWindowPane());
-
-        private static IVsOutputWindowPane _outputWindowPane;
 
         internal static void WriteLine(object message)
         {
             var outputWindowPane = OutputWindowPane;
+            if (null == outputWindowPane)
+                return;
 
-            outputWindowPane?.OutputString($"{message + Environment.NewLine}");
+            outputWindowPane.OutputStringThreadSafe($"{message + Environment.NewLine}");
+            outputWindowPane.Activate();
         }
 
         private static IVsOutputWindowPane GetOutputWindowPane()
         {
-            var outputWindow = Package.GetGlobalService(typeof(SVsOutputWindow)) as IVsOutputWindow;
-            if (null == outputWindow)
+            if (!(Package.GetGlobalService(typeof(SVsOutputWindow)) is IVsOutputWindow outputWindow))
                 return null;
 
             var outputPaneGuid = new Guid(PackageGuids.GuidVisualLinterPackageOutputPane.ToByteArray());
 
             outputWindow.CreatePane(ref outputPaneGuid, Vsix.Name, 1, 1);
-            outputWindow.GetPane(ref outputPaneGuid, out IVsOutputWindowPane windowPane);
+            outputWindow.GetPane(ref outputPaneGuid, out var windowPane);
 
             return windowPane;
         }
