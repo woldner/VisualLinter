@@ -109,9 +109,9 @@
             </Grid>
 
             <CheckBox
-                Content="Enable verbose logging"
+                Content="Show debug information"
                 Grid.Row="7"
-                IsChecked="{Binding EnableVerboseLogging}"
+                IsChecked="{Binding ShowDebugInformation}"
                 Margin="5, 0, 0, 5" />
         </Grid>
     </GroupBox>

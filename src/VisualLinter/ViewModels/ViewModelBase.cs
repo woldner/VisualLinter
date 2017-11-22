@@ -25,7 +25,7 @@ namespace jwldnr.VisualLinter.ViewModels
         {
             var value = (T)GetValue(property);
 
-            if (Options.EnableVerboseLogging)
+            if (Options.ShowDebugInformation)
                 OutputWindowHelper.WriteLine($"[GetPropertyValue] {property.Name} value is {value}");
 
             return value;
@@ -44,7 +44,7 @@ namespace jwldnr.VisualLinter.ViewModels
             if (EqualityComparer<T>.Default.Equals(newValue, oldValue))
                 return false;
 
-            if (Options.EnableVerboseLogging)
+            if (Options.ShowDebugInformation)
                 OutputWindowHelper.WriteLine($"[SetPropertyValue] {propertyName} value is {newValue}");
 
             SetValue(property, newValue);

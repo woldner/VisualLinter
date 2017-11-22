@@ -11,7 +11,7 @@ These are the changes to each version that has been released on the official Vis
 
 ## 1.0 (2017-11-21)
 
-- [x] Add `Enable verbose logging` option 
+- [x] Add `Show debug information` option 
 - [x] Move options to `ViewModelBase`
 
 ## 1.0 (2017-10-21)

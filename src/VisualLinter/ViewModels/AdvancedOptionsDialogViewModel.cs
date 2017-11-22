@@ -51,9 +51,9 @@ namespace jwldnr.VisualLinter.ViewModels
                 typeof(AdvancedOptionsDialogViewModel),
                 new PropertyMetadata(false));
 
-        internal static readonly DependencyProperty EnableVerboseLoggingProperty =
+        internal static readonly DependencyProperty ShowDebugInformationProperty =
             DependencyProperty.Register(
-                nameof(EnableVerboseLogging),
+                nameof(ShowDebugInformation),
                 typeof(bool),
                 typeof(AdvancedOptionsDialogViewModel),
                 new PropertyMetadata(false));
@@ -119,10 +119,10 @@ namespace jwldnr.VisualLinter.ViewModels
             set => SetPropertyValue(ShouldOverrideEslintIgnoreProperty, value);
         }
 
-        internal bool EnableVerboseLogging
+        internal bool ShowDebugInformation
         {
-            get => GetPropertyValue<bool>(EnableVerboseLoggingProperty);
-            set => SetPropertyValue(EnableVerboseLoggingProperty, value);
+            get => GetPropertyValue<bool>(ShowDebugInformationProperty);
+            set => SetPropertyValue(ShowDebugInformationProperty, value);
         }
 
         internal void Apply()
@@ -133,7 +133,7 @@ namespace jwldnr.VisualLinter.ViewModels
             Options.EslintConfigOverridePath = EslintConfigOverridePath;
             Options.ShouldOverrideEslintIgnore = ShouldOverrideEslintIgnore;
             Options.EslintIgnoreOverridePath = EslintIgnoreOverridePath;
-            Options.EnableVerboseLogging = EnableVerboseLogging;
+            Options.ShowDebugInformation = ShowDebugInformation;
         }
 
         internal void Initiailize()
@@ -216,7 +216,7 @@ namespace jwldnr.VisualLinter.ViewModels
             EslintConfigOverridePath = Options.EslintConfigOverridePath;
             ShouldOverrideEslintIgnore = Options.ShouldOverrideEslintIgnore;
             EslintIgnoreOverridePath = Options.EslintIgnoreOverridePath;
-            EnableVerboseLogging = Options.EnableVerboseLogging;
+            ShowDebugInformation = Options.ShowDebugInformation;
         }
 
         private void RaiseAllPropertiesChanged()
@@ -227,7 +227,7 @@ namespace jwldnr.VisualLinter.ViewModels
             RaisePropertyChanged(nameof(EslintConfigOverridePath));
             RaisePropertyChanged(nameof(ShouldOverrideEslintIgnore));
             RaisePropertyChanged(nameof(EslintIgnoreOverridePath));
-            RaisePropertyChanged(nameof(EnableVerboseLogging));
+            RaisePropertyChanged(nameof(ShowDebugInformation));
         }
     }
 }
