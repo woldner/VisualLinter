@@ -23,15 +23,10 @@ namespace jwldnr.VisualLinter.Helpers
         {
             Debug.WriteLine(message);
 
-            var outputWindowPane = OutputWindowPane;
-            if (null == outputWindowPane)
-                return;
-
             if (false == Options.ShowDebugInformation)
                 return;
 
-            outputWindowPane.OutputStringThreadSafe($"{message + Environment.NewLine}");
-            outputWindowPane.Activate();
+            WriteLine(message);
         }
 
         internal static void WriteLine(object message)
