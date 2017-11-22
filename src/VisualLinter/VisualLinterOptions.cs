@@ -21,7 +21,7 @@ namespace jwldnr.VisualLinter
         bool ShouldOverrideEslintIgnore { get; set; }
         bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
-        bool EnableVerboseLogging { get; set; }
+        bool ShowDebugInformation { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
@@ -110,10 +110,10 @@ namespace jwldnr.VisualLinter
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
         }
 
-        public bool EnableVerboseLogging
+        public bool ShowDebugInformation
         {
-            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableVerboseLogging), false);
-            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableVerboseLogging), value);
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(ShowDebugInformation), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(ShowDebugInformation), value);
         }
 
         [ImportingConstructor]

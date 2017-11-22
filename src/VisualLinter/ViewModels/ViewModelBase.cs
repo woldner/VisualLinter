@@ -25,8 +25,7 @@ namespace jwldnr.VisualLinter.ViewModels
         {
             var value = (T)GetValue(property);
 
-            if (Options.ShowDebugInformation)
-                OutputWindowHelper.WriteLine($"[GetPropertyValue] {property.Name} value is {value}");
+            OutputWindowHelper.DebugLine($"[GetPropertyValue] {property.Name} is {value}");
 
             return value;
         }
@@ -44,8 +43,7 @@ namespace jwldnr.VisualLinter.ViewModels
             if (EqualityComparer<T>.Default.Equals(newValue, oldValue))
                 return false;
 
-            if (Options.ShowDebugInformation)
-                OutputWindowHelper.WriteLine($"[SetPropertyValue] {propertyName} value is {newValue}");
+            OutputWindowHelper.DebugLine($"[SetPropertyValue] {propertyName} is {newValue}");
 
             SetValue(property, newValue);
             RaisePropertyChanged(propertyName);
