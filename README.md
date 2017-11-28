@@ -44,6 +44,9 @@ See the [change log](CHANGELOG.md) for changes and road map.
 The default behavior is set to use a local ESLint installation and config.
 If you instead wish to use a global installation and/or config, you can enable each respective option in Visual Studio under `Tools` > `Options` > `VisualLinter`.
 
+Please note that enabling the option `Use global ESLint installation instead of local` has no effect on the use of a config file (and vice versa).
+A local config will still be used unless `Use personal ESLint config instead of local` is also enabled in options.
+
 The closest installation/config found relative to the file being linted will always be used.
 If no `node_modules` directory or `.eslintrc` file is found in the same directory as the file being linted, `VisualLinter` will try and resolve the paths from ancestor directories up to, and including the root directory (e.g. `C:\\` on Windows).
 
