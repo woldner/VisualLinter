@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.Text.Tagging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -111,13 +110,12 @@ namespace jwldnr.VisualLinter.Tagging
             };
         }
 
-        private async Task Analyze(string filePath)
+        private void Analyze(string filePath)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
-            var source = _currentSnapshot.GetText();
-            await _linter.LintAsync();
+            _linter.LintAsync(filePath, this);
         }
 
         private MessageMarker CreateMarker(EslintMessage message)
