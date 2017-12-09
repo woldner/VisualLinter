@@ -9,7 +9,12 @@ using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    internal class LinterTagger : ITagger<IErrorTag>, IDisposable
+    public interface ILinterTagger
+    {
+        void Accept(string filePath, IEnumerable<EslintMessage> messages);
+    }
+
+    internal class LinterTagger : ITagger<IErrorTag>, ILinterTagger, IDisposable
     {
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
@@ -44,6 +49,18 @@ namespace jwldnr.VisualLinter.Tagging
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+
+        public void Accept(string filePath, IEnumerable<EslintMessage> messages)
+        {
+            try
+            {
+                UpdateMessages(messages);
+            }
+            catch (Exception exception)
+            {
+                OutputWindowHelper.WriteLine(exception.Message);
+            }
+        }
 
         public void Dispose()
         {
@@ -94,22 +111,13 @@ namespace jwldnr.VisualLinter.Tagging
             };
         }
 
-        private async Task AnalyzeAsync(string filePath)
+        private async Task Analyze(string filePath)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
             var source = _currentSnapshot.GetText();
-            var messages = await LintAsync(filePath, source);
-
-            try
-            {
-                UpdateMessages(messages);
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
+            await _linter.LintAsync();
         }
 
         private MessageMarker CreateMarker(EslintMessage message)
@@ -120,19 +128,14 @@ namespace jwldnr.VisualLinter.Tagging
             return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
-        private Task Initialize()
+        private void Initialize()
         {
             _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
             _provider.AddTagger(this);
 
-            return AnalyzeAsync(FilePath);
-        }
-
-        private Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
-        {
-            return _linter.LintAsync(filePath, source);
+            Analyze(FilePath);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
@@ -144,7 +147,7 @@ namespace jwldnr.VisualLinter.Tagging
             SnapToNewSnapshot(newSnapshot);
         }
 
-        private async void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
+        private void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
         {
             if (0 != (e.FileActionType & FileActionTypes.DocumentRenamed))
             {
@@ -153,7 +156,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
             else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
             {
-                await AnalyzeAsync(FilePath);
+                Analyze(FilePath);
             }
         }
 
