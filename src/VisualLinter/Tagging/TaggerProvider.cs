@@ -111,7 +111,7 @@ namespace jwldnr.VisualLinter.Tagging
             lock (_taggers)
             {
                 if (false == _taggers.Exists(filePath))
-                    return new LinterTagger(this, _linter, buffer, document) as ITagger<T>;
+                    return new LinterTagger(this, buffer, document) as ITagger<T>;
 
                 if (false == _taggers.TryGetValue(filePath, out var tagger))
                     return null;
@@ -161,6 +161,17 @@ namespace jwldnr.VisualLinter.Tagging
 
                 foreach (var manager in _managers)
                     manager.AddFactory(tagger.Factory);
+            }
+        }
+
+        internal void Analyze(string filePath)
+        {
+            lock (_taggers)
+            {
+                if (false == _taggers.TryGetValue(filePath, out var _))
+                    return;
+
+                _linter.LintAsync(filePath, this);
             }
         }
 

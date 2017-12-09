@@ -1,5 +1,6 @@
 ﻿using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Tagging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -12,7 +13,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        void LintAsync(string filePath, ILinterTagger tagger);
+        void LintAsync(string filePath, ILinterProvider provider);
     }
 
     [Export(typeof(ILinter))]
@@ -27,16 +28,14 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        public void LintAsync(string filePath, ILinterTagger tagger)
+        public void LintAsync(string filePath, ILinterProvider provider)
         {
             try
             {
                 var eslintPath = GetEslintPath(filePath);
-
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                var arguments = GetArguments(filePath);
-                RunAsync(eslintPath, arguments);
+                ExecAsync(eslintPath, filePath, provider);
             }
             catch (Exception e)
             {
@@ -54,6 +53,35 @@ namespace jwldnr.VisualLinter.Linting
         {
             return EslintHelper.GetPersonalConfigPath()
                 ?? throw new Exception("fatal: no personal eslint config found");
+        }
+
+        private static void OnErrorDataReceived(DataReceivedEventArgs e, string filePath, ILinterProvider provider)
+        {
+            var result = e.Data;
+            if (null == result.NullIfEmpty())
+                return;
+
+            OutputWindowHelper.WriteLine(result);
+            provider.Accept(filePath, Enumerable.Empty<EslintMessage>());
+        }
+
+        private static void OnOutputDataReceived(DataReceivedEventArgs e, string filePath, ILinterProvider provider)
+        {
+            var result = e.Data;
+            if (null == result.NullIfEmpty())
+                return;
+
+            try
+            {
+                var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
+                var messages = ProcessResults(results);
+
+                provider.Accept(filePath, messages);
+            }
+            catch (Exception exception)
+            {
+                OutputWindowHelper.WriteLine(exception.Message);
+            }
         }
 
         private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
@@ -76,8 +104,10 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private static void RunAsync(string eslintPath, string arguments)
+        private void ExecAsync(string eslintPath, string filePath, ILinterProvider provider)
         {
+            var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
+
             var startInfo = new ProcessStartInfo(eslintPath, arguments)
             {
                 CreateNoWindow = true,
@@ -90,6 +120,9 @@ namespace jwldnr.VisualLinter.Linting
 
             var process = new Process { StartInfo = startInfo };
 
+            process.ErrorDataReceived += (sender, e) => OnErrorDataReceived(e, filePath, provider);
+            process.OutputDataReceived += (sender, e) => OnOutputDataReceived(e, filePath, provider);
+
             // var tcs = new TaskCompletionSource<int>();
 
             Task.Run(() =>
@@ -99,8 +132,8 @@ namespace jwldnr.VisualLinter.Linting
                     if (false == process.Start())
                         throw new Exception("fatal: unable to start eslint process");
 
-                    //process.BeginErrorReadLine();
-                    //process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.BeginOutputReadLine();
 
                     process.WaitForExit();
                 }
@@ -119,21 +152,20 @@ namespace jwldnr.VisualLinter.Linting
         private string GetArguments(string filePath)
         {
             var configPath = GetConfigPath(filePath);
-
             OutputWindowHelper.DebugLine($"using eslint configuration @ {configPath}");
 
-            var arguments = $"--stdin --stdin-filename \"{filePath}\" --format json --config \"{configPath}\"";
+            var arguments = $"--format=\"json\" --config=\"{configPath}\"";
 
             OutputWindowHelper.DebugLine($"DisableIgnorePath: {_options.DisableIgnorePath}");
-
             if (_options.DisableIgnorePath)
                 return arguments;
 
             var ignorePath = GetIgnorePath(filePath);
+            if (null == ignorePath.NullIfEmpty())
+                return arguments;
 
-            OutputWindowHelper.DebugLine($"using .eslintignore @ {ignorePath.NullIfEmpty() ?? "null"}");
-
-            return $"{arguments} --ignore-path \"{ignorePath}\"";
+            OutputWindowHelper.DebugLine($"using .eslintignore @ {ignorePath}");
+            return $"{arguments} --ignore-path=\"{ignorePath}\"";
         }
 
         private string GetConfigPath(string filePath)

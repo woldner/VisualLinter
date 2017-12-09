@@ -8,16 +8,10 @@ using System.Linq;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    public interface ILinterTagger
-    {
-        void Accept(string filePath, IEnumerable<EslintMessage> messages);
-    }
-
-    internal class LinterTagger : ITagger<IErrorTag>, ILinterTagger, IDisposable
+    internal class LinterTagger : ITagger<IErrorTag>, IDisposable
     {
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
-        private readonly ILinter _linter;
         private readonly TaggerProvider _provider;
 
         private ITextSnapshot _currentSnapshot;
@@ -29,12 +23,10 @@ namespace jwldnr.VisualLinter.Tagging
 
         internal LinterTagger(
             TaggerProvider provider,
-            ILinter linter,
             ITextBuffer buffer,
             ITextDocument document)
         {
             _provider = provider;
-            _linter = linter;
             _buffer = buffer;
             _document = document;
 
@@ -48,18 +40,6 @@ namespace jwldnr.VisualLinter.Tagging
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
-
-        public void Accept(string filePath, IEnumerable<EslintMessage> messages)
-        {
-            try
-            {
-                UpdateMessages(messages);
-            }
-            catch (Exception exception)
-            {
-                OutputWindowHelper.WriteLine(exception.Message);
-            }
-        }
 
         public void Dispose()
         {
@@ -115,7 +95,7 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
-            _linter.LintAsync(filePath, this);
+            _provider.Analyze(filePath);
         }
 
         private MessageMarker CreateMarker(EslintMessage message)
