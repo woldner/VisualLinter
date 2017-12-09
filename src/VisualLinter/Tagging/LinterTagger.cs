@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Tagging
     {
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
-        private readonly Linter _linter;
+        private readonly ILinter _linter;
         private readonly TaggerProvider _provider;
 
         private ITextSnapshot _currentSnapshot;
@@ -25,7 +25,7 @@ namespace jwldnr.VisualLinter.Tagging
 
         internal LinterTagger(
             TaggerProvider provider,
-            Linter linter,
+            ILinter linter,
             ITextBuffer buffer,
             ITextDocument document)
         {
@@ -132,7 +132,8 @@ namespace jwldnr.VisualLinter.Tagging
 
         private Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
         {
-            return _linter.LintAsync(filePath, source);
+            return null;
+            //return _linter.LintAsync(filePath, source);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)

@@ -19,13 +19,12 @@ namespace jwldnr.VisualLinter.Tagging
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
     {
+        private readonly ILinter _linter;
         private readonly List<SinkManager> _managers = new List<SinkManager>();
         private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>();
         private readonly TaggerManager _taggers = new TaggerManager();
 
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
-        private readonly IVisualLinterOptions _visualLinterOptions;
-
         private ITableManager _tableManager;
 
         public string DisplayName => "VisualLinter";
@@ -36,19 +35,20 @@ namespace jwldnr.VisualLinter.Tagging
         public TaggerProvider(
             [Import] ITableManagerProvider tableManagerProvider,
             [Import] ITextDocumentFactoryService textDocumentFactoryService,
-            [Import] IVisualLinterOptions visualLinterOptions)
+            [Import] IVisualLinterOptions visualLinterOptions,
+            [Import] ILinter linter)
         {
             _tableManager = tableManagerProvider
                 .GetTableManager(StandardTables.ErrorsTable);
 
             _textDocumentFactoryService = textDocumentFactoryService;
 
-            _visualLinterOptions = visualLinterOptions;
+            _linter = linter;
 
-            _optionsMap.Add(".html", () => _visualLinterOptions.EnableHtmlLanguageSupport);
-            _optionsMap.Add(".js", () => _visualLinterOptions.EnableJavaScriptLanguageSupport);
-            _optionsMap.Add(".jsx", () => _visualLinterOptions.EnableReactLanguageSupport);
-            _optionsMap.Add(".vue", () => _visualLinterOptions.EnableVueLanguageSupport);
+            _optionsMap.Add(".html", () => visualLinterOptions.EnableHtmlLanguageSupport);
+            _optionsMap.Add(".js", () => visualLinterOptions.EnableJavaScriptLanguageSupport);
+            _optionsMap.Add(".jsx", () => visualLinterOptions.EnableReactLanguageSupport);
+            _optionsMap.Add(".vue", () => visualLinterOptions.EnableVueLanguageSupport);
 
             var columns = new[]
             {
@@ -93,7 +93,7 @@ namespace jwldnr.VisualLinter.Tagging
             lock (_taggers)
             {
                 if (false == _taggers.Exists(filePath))
-                    return new LinterTagger(this, new Linter(_visualLinterOptions), buffer, document) as ITagger<T>;
+                    return new LinterTagger(this, _linter, buffer, document) as ITagger<T>;
 
                 if (false == _taggers.TryGetValue(filePath, out var tagger))
                     return null;

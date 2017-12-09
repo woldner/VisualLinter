@@ -22,7 +22,8 @@ namespace jwldnr.VisualLinter.Linting
     {
         private readonly IVisualLinterOptions _options;
 
-        internal Linter(IVisualLinterOptions options)
+        [ImportingConstructor]
+        internal Linter([Import] IVisualLinterOptions options)
         {
             _options = options;
         }
