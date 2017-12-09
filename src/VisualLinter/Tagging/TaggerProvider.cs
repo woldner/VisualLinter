@@ -23,7 +23,7 @@ namespace jwldnr.VisualLinter.Tagging
     [ContentType("any")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
-    public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, IDisposable
+    public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, ILinterProvider, IDisposable
     {
         private readonly ILinter _linter;
         private readonly List<SinkManager> _managers = new List<SinkManager>();
