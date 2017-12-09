@@ -132,8 +132,7 @@ namespace jwldnr.VisualLinter.Tagging
 
         private Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
         {
-            return null;
-            //return _linter.LintAsync(filePath, source);
+            return _linter.LintAsync(filePath, source);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
