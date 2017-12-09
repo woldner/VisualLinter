@@ -1,4 +1,5 @@
-﻿using jwldnr.VisualLinter.Linting;
+﻿using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Microsoft.VisualStudio.Text;
@@ -12,6 +13,11 @@ using System.IO;
 
 namespace jwldnr.VisualLinter.Tagging
 {
+    public interface ILinterProvider
+    {
+        void Accept(string filePath, IEnumerable<EslintMessage> messages);
+    }
+
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
     [ContentType("any")]
@@ -67,12 +73,24 @@ namespace jwldnr.VisualLinter.Tagging
             _tableManager.AddSource(this, columns);
         }
 
+        public void Accept(string filePath, IEnumerable<EslintMessage> messages)
+        {
+            try
+            {
+                UpdateMessages(filePath, messages);
+            }
+            catch (Exception exception)
+            {
+                OutputWindowHelper.WriteLine(exception.Message);
+            }
+        }
+
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
             if (buffer != textView.TextBuffer || typeof(IErrorTag) != typeof(T))
                 return null;
 
-            if (!TryGetTextDocument(textView.TextDataModel.DocumentBuffer, out var document))
+            if (false == TryGetTextDocument(textView.TextDataModel.DocumentBuffer, out var document))
                 return null;
 
             var filePath = document.FilePath;
@@ -111,6 +129,17 @@ namespace jwldnr.VisualLinter.Tagging
         public IDisposable Subscribe(ITableDataSink sink)
         {
             return new SinkManager(this, sink);
+        }
+
+        public void UpdateMessages(string filePath, IEnumerable<EslintMessage> messages)
+        {
+            lock (_taggers)
+            {
+                if (false == _taggers.TryGetValue(filePath, out var tagger))
+                    return;
+
+                tagger.UpdateMessages(messages);
+            }
         }
 
         internal void AddSinkManager(SinkManager manager)
