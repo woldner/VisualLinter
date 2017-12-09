@@ -17,6 +17,7 @@ namespace jwldnr.VisualLinter.Linting
     }
 
     [Export(typeof(ILinter))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
