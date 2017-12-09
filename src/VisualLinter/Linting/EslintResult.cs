@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    internal class EslintResult
+    public class EslintResult
     {
         [JsonProperty("errorCount")]
         public int ErrorCount { get; set; }

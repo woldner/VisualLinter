@@ -1,6 +1,6 @@
 ﻿namespace jwldnr.VisualLinter.Linting
 {
-    internal class MessageRange
+    public class MessageRange
     {
         public int Start { get; set; }
 

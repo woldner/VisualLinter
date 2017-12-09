@@ -10,7 +10,12 @@ using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Linting
 {
-    internal class Linter
+    public interface ILinter
+    {
+        Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source);
+    }
+
+    internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
 
@@ -19,7 +24,7 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        internal async Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
+        public async Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source)
         {
             try
             {

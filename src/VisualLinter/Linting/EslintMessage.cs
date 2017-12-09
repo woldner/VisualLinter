@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    internal class EslintMessage
+    public class EslintMessage
     {
         [JsonProperty("column")]
         public int Column
