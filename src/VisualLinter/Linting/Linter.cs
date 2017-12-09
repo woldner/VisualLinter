@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace jwldnr.VisualLinter.Linting
         Task<IEnumerable<EslintMessage>> LintAsync(string filePath, string source);
     }
 
+    [Export(typeof(ILinter))]
     internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
