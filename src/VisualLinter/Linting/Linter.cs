@@ -21,6 +21,7 @@ namespace jwldnr.VisualLinter.Linting
     internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
+        private bool _isRunning;
 
         [ImportingConstructor]
         internal Linter([Import] IVisualLinterOptions options)
@@ -30,6 +31,11 @@ namespace jwldnr.VisualLinter.Linting
 
         public void LintAsync(ILinterProvider provider, string filePath)
         {
+            if (_isRunning)
+                return;
+
+            _isRunning = true;
+
             try
             {
                 var eslintPath = GetEslintPath(filePath);
@@ -142,6 +148,7 @@ namespace jwldnr.VisualLinter.Linting
                 finally
                 {
                     process.Close();
+                    _isRunning = false;
                 }
             });
         }
