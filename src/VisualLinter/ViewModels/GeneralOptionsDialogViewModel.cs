@@ -1,5 +1,4 @@
 ﻿using jwldnr.VisualLinter.Helpers;
-using Microsoft.VisualStudio.Shell;
 using System;
 using System.Diagnostics;
 using System.Windows;

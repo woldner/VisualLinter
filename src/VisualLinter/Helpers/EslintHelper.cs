@@ -86,7 +86,6 @@ namespace jwldnr.VisualLinter.Helpers
 
                 if (null == workingDirectory)
                     return null;
-
             } while (-1 != workingDirectory.FullName.IndexOf(end, StringComparison.OrdinalIgnoreCase));
 
             return null;
