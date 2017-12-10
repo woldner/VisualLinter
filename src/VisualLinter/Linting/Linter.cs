@@ -148,6 +148,7 @@ namespace jwldnr.VisualLinter.Linting
                 finally
                 {
                     process.Close();
+
                     _isRunning = false;
                 }
             });
