@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.Composition;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.VisualStudio.Settings;
+﻿using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Settings;
+using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 
 namespace jwldnr.VisualLinter
 {
@@ -19,9 +19,9 @@ namespace jwldnr.VisualLinter
         bool ShouldOverrideEslint { get; set; }
         bool ShouldOverrideEslintConfig { get; set; }
         bool ShouldOverrideEslintIgnore { get; set; }
+        bool ShowDebugInformation { get; set; }
         bool UseGlobalEslint { get; set; }
         bool UsePersonalConfig { get; set; }
-        bool ShowDebugInformation { get; set; }
     }
 
     [Export(typeof(IVisualLinterOptions))]
@@ -98,6 +98,12 @@ namespace jwldnr.VisualLinter
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(ShouldOverrideEslintIgnore), value);
         }
 
+        public bool ShowDebugInformation
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(ShowDebugInformation), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(ShowDebugInformation), value);
+        }
+
         public bool UseGlobalEslint
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UseGlobalEslint), false);
@@ -108,12 +114,6 @@ namespace jwldnr.VisualLinter
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(UsePersonalConfig), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
-        }
-
-        public bool ShowDebugInformation
-        {
-            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(ShowDebugInformation), false);
-            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(ShowDebugInformation), value);
         }
 
         [ImportingConstructor]

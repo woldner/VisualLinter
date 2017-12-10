@@ -26,7 +26,8 @@ namespace jwldnr.VisualLinter.Tagging
         internal void Rename(string oldPath, string newPath)
         {
             var oldKey = Key(oldPath);
-            if (!_taggers.TryGetValue(oldKey, out LinterTagger tagger))
+
+            if (false == _taggers.TryGetValue(oldKey, out var tagger))
                 return;
 
             _taggers.Add(Key(newPath), tagger);

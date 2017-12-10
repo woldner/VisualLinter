@@ -10,10 +10,6 @@ namespace jwldnr.VisualLinter.Linting
 {
     internal class LinterSnapshot : WpfTableEntriesSnapshotBase
     {
-        public override int Count => _markers.Count;
-        public override int VersionNumber { get; }
-
-        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
         internal LinterSnapshot NextSnapshot;
 
         private readonly string _filePath;
@@ -21,6 +17,11 @@ namespace jwldnr.VisualLinter.Linting
         private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
 
         private string _projectName;
+
+        public override int Count => _markers.Count;
+        public override int VersionNumber { get; }
+
+        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
 
         internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<MessageMarker> markers)
         {
