@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        void LintAsync(string filePath, ILinterProvider provider);
+        void LintAsync(ILinterProvider provider, string filePath);
     }
 
     [Export(typeof(ILinter))]
@@ -28,14 +28,14 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        public void LintAsync(string filePath, ILinterProvider provider)
+        public void LintAsync(ILinterProvider provider, string filePath)
         {
             try
             {
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                ExecAsync(eslintPath, filePath, provider);
+                ExecAsync(provider, filePath, eslintPath);
             }
             catch (Exception e)
             {
@@ -55,7 +55,7 @@ namespace jwldnr.VisualLinter.Linting
                 ?? throw new Exception("fatal: no personal eslint config found");
         }
 
-        private static void OnErrorDataReceived(DataReceivedEventArgs e, string filePath, ILinterProvider provider)
+        private static void OnErrorDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
         {
             var result = e.Data;
             if (null == result.NullIfEmpty())
@@ -65,7 +65,7 @@ namespace jwldnr.VisualLinter.Linting
             provider.Accept(filePath, Enumerable.Empty<EslintMessage>());
         }
 
-        private static void OnOutputDataReceived(DataReceivedEventArgs e, string filePath, ILinterProvider provider)
+        private static void OnOutputDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
         {
             var result = e.Data;
             if (null == result.NullIfEmpty())
@@ -104,7 +104,7 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private void ExecAsync(string eslintPath, string filePath, ILinterProvider provider)
+        private void ExecAsync(ILinterProvider provider, string filePath, string eslintPath)
         {
             var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
 
@@ -120,10 +120,8 @@ namespace jwldnr.VisualLinter.Linting
 
             var process = new Process { StartInfo = startInfo };
 
-            process.ErrorDataReceived += (sender, e) => OnErrorDataReceived(e, filePath, provider);
-            process.OutputDataReceived += (sender, e) => OnOutputDataReceived(e, filePath, provider);
-
-            // var tcs = new TaskCompletionSource<int>();
+            process.ErrorDataReceived += (sender, e) => OnErrorDataReceived(e, provider, filePath);
+            process.OutputDataReceived += (sender, e) => OnOutputDataReceived(e, provider, filePath);
 
             Task.Run(() =>
             {
@@ -139,7 +137,6 @@ namespace jwldnr.VisualLinter.Linting
                 }
                 catch (Exception exception)
                 {
-                    //tcs.SetException(exception);
                     OutputWindowHelper.WriteLine(exception.Message);
                 }
                 finally

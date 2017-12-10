@@ -171,7 +171,7 @@ namespace jwldnr.VisualLinter.Tagging
                 if (false == _taggers.TryGetValue(filePath, out var _))
                     return;
 
-                _linter.LintAsync(filePath, this);
+                _linter.LintAsync(this, filePath);
             }
         }
 
