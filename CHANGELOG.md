@@ -9,50 +9,57 @@ Features that have a checkmark are complete and available for download in the
 
 These are the changes to each version that has been released on the official Visual Studio extension gallery.
 
+## 1.1 (2017-12-10)
+
+- Fix process timeout bug
+- Change the way ESLint process is run
+- Various performance improvements
+- Add [Known Issues](README.md#known-issues) section to the [README](README.md)
+
 ## 1.0 (2017-11-21)
 
-- [x] Add `Show debug information` option 
-- [x] Move options to `ViewModelBase`
+- Add `Show debug information` option 
+- Move options to `ViewModelBase`
 
 ## 1.0 (2017-10-21)
 
-- [x] Add `.html` file extension support
-- [x] Add `.vue` file extension support
+- Add `.html` file extension support
+- Add `.vue` file extension support
 
 ## 1.0 (2017-09-28)
 
-- [x] Improve tagging
-- [x] Fix bug where trailing semi markers would not update in buffer
+- Improve tagging
+- Fix bug where trailing semi markers would not update in buffer
 
 ## 1.0 (2017-09-24)
 
-- [x] Add `.jsx` file extension support
+- Add `.jsx` file extension support
 
 ## 1.0 (2017-09-19)
 
-- [x] Add `.eslintignore` support
-- [x] Add option to disable the use of `.eslintignore` when linting files
+- Add `.eslintignore` support
+- Add option to disable the use of `.eslintignore` when linting files
 
 ## 1.0 (2017-09-09)
 
-- [x] Fix argument out of range exception bug
-- [x] Lint using `stdin`
+- Fix argument out of range exception bug
+- Lint using `stdin`
 
 ## 1.0 (2017-08-31)
 
-- [x] Widen search for ESLint installation/config when set to local
+- Widen search for ESLint installation/config when set to local
 
 ## 1.0 (2017-08-30)
 
-- [x] Change the default behavior to use a local installation instead of global
-- [x] Add option to use global installation
+- Change the default behavior to use a local installation instead of global
+- Add option to use global installation
 
 ## 1.0 (2017-08-16)
 
-- [x] Add options page
-- [x] Change the default behavior to use a local config (relative to file being linted) instead of a single personal config for all projects
-- [x] Add option to use personal config
+- Add options page
+- Change the default behavior to use a local config (relative to file being linted) instead of a single personal config for all projects
+- Add option to use personal config
 
 ## 1.0 (2017-07-08)
 
-- [x] Initial release
+- Initial release
