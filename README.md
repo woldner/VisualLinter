@@ -17,6 +17,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 - [Getting Started](#getting-started)
 - [Language Support](#language-support)
 - [Troubleshooting](#troubleshooting)
+- [Known Issues](#known-issues)
 - [Contribute](#contribute)
 - [Inspiration](#inspiration)
 
@@ -103,6 +104,10 @@ By default only JavaScript `(.js)` is enabled.
 | `Enable JavaScript errors` | `false` | `Options` > `Text Editor` > `JavaScript/TypeScript` > `Code Validation` |
 
 Please note that VisualLinter is a direct replacement for both options.
+
+## Known Issues
+
+- Option values do not stick when switching between `General` and `Advanced` views.
 
 ## Contribute
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
