@@ -41,7 +41,7 @@ namespace jwldnr.VisualLinter.Tagging
         public TaggerProvider(
             [Import] ITableManagerProvider tableManagerProvider,
             [Import] ITextDocumentFactoryService textDocumentFactoryService,
-            [Import] IVisualLinterOptions visualLinterOptions,
+            [Import] IVisualLinterOptions options,
             [Import] ILinter linter)
         {
             _tableManager = tableManagerProvider
@@ -51,10 +51,10 @@ namespace jwldnr.VisualLinter.Tagging
 
             _linter = linter;
 
-            _optionsMap.Add(".html", () => visualLinterOptions.EnableHtmlLanguageSupport);
-            _optionsMap.Add(".js", () => visualLinterOptions.EnableJavaScriptLanguageSupport);
-            _optionsMap.Add(".jsx", () => visualLinterOptions.EnableReactLanguageSupport);
-            _optionsMap.Add(".vue", () => visualLinterOptions.EnableVueLanguageSupport);
+            _optionsMap.Add(".html", () => options.EnableHtmlLanguageSupport);
+            _optionsMap.Add(".js", () => options.EnableJavaScriptLanguageSupport);
+            _optionsMap.Add(".jsx", () => options.EnableReactLanguageSupport);
+            _optionsMap.Add(".vue", () => options.EnableVueLanguageSupport);
 
             var columns = new[]
             {

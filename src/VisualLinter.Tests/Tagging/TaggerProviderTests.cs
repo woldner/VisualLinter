@@ -11,27 +11,27 @@ namespace jwldnr.VisualLinter.Tests.Tagging
     [TestClass]
     public class TaggerProviderTests
     {
+        private Mock<IVisualLinterOptions> _mockOptions;
         private Mock<ITextDocument> _mockTextDocument;
-        private Mock<IVisualLinterOptions> _mockVisualLinterOptions;
 
         private TaggerProvider _provider;
 
         [TestMethod]
         public void CreateTagger_should_create_tagger_for_enabled_file_extensions()
         {
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableHtmlLanguageSupport)
                 .Returns(true);
 
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableJavaScriptLanguageSupport)
                 .Returns(true);
 
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableReactLanguageSupport)
                 .Returns(true);
 
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableVueLanguageSupport)
                 .Returns(true);
 
@@ -58,19 +58,19 @@ namespace jwldnr.VisualLinter.Tests.Tagging
         [TestMethod]
         public void CreateTagger_should_return_null_for_disabled_file_extensions()
         {
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableHtmlLanguageSupport)
                 .Returns(false);
 
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableJavaScriptLanguageSupport)
                 .Returns(false);
 
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableReactLanguageSupport)
                 .Returns(false);
 
-            _mockVisualLinterOptions
+            _mockOptions
                 .Setup(o => o.EnableVueLanguageSupport)
                 .Returns(false);
 
@@ -122,12 +122,12 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(t => t.TryGetTextDocument(It.IsAny<ITextBuffer>(), out textDocument))
                 .Returns(true);
 
-            _mockVisualLinterOptions = new Mock<IVisualLinterOptions>();
-            _mockVisualLinterOptions
+            _mockOptions = new Mock<IVisualLinterOptions>();
+            _mockOptions
                 .Setup(o => o.EnableJavaScriptLanguageSupport)
                 .Returns(true);
 
-            var visualLinterOptions = _mockVisualLinterOptions.Object;
+            var visualLinterOptions = _mockOptions.Object;
 
             _provider = new TaggerProvider(
                 tableManagerProvider,
