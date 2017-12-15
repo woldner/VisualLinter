@@ -11,7 +11,7 @@ namespace jwldnr.VisualLinter.Views
 
         protected override UIElement Child => _generalOptionsDialogControl;
 
-        internal GeneralOptionsDialogPage()
+        public GeneralOptionsDialogPage()
         {
             _generalOptionsDialogControl = new GeneralOptionsDialogPageControl();
         }

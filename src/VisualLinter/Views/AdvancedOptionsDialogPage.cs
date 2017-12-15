@@ -11,7 +11,7 @@ namespace jwldnr.VisualLinter.Views
 
         protected override UIElement Child => _advancedOptionsDialogControl;
 
-        internal AdvancedOptionsDialogPage()
+        public AdvancedOptionsDialogPage()
         {
             _advancedOptionsDialogControl = new AdvancedOptionsDialogPageControl();
         }
