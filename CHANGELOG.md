@@ -1,6 +1,6 @@
 # Road map
 
-- [ ] Automatically fix errors (provided by `ESLint`)
+- Automatically fix errors (provided by `ESLint`)
 
 Features that have a checkmark are complete and available for download in the
 [CI build](http://vsixgallery.com/extension/832aee43-88e1-4e51-ac31-d412d356dfdf/).
