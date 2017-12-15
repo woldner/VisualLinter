@@ -52,13 +52,13 @@ namespace jwldnr.VisualLinter.Linting
         private static string GetGlobalEslintPath()
         {
             return EslintHelper.GetGlobalEslintPath()
-                ?? throw new Exception("fatal: no global eslint found-- is eslint installed globally?");
+                ?? throw new Exception("exception: no global eslint found-- is eslint installed globally?");
         }
 
         private static string GetPersonalConfigPath()
         {
             return EslintHelper.GetPersonalConfigPath()
-                ?? throw new Exception("fatal: no personal eslint config found");
+                ?? throw new Exception("exception: no personal eslint config found");
         }
 
         private static void OnErrorDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
@@ -134,7 +134,7 @@ namespace jwldnr.VisualLinter.Linting
                 try
                 {
                     if (false == process.Start())
-                        throw new Exception("fatal: unable to start eslint process");
+                        throw new Exception("exception: unable to start eslint process");
 
                     process.BeginErrorReadLine();
                     process.BeginOutputReadLine();
@@ -186,7 +186,7 @@ namespace jwldnr.VisualLinter.Linting
                 return GetPersonalConfigPath();
 
             return EslintHelper.GetLocalConfigPath(filePath)
-                ?? throw new Exception("fatal: no local eslint config found");
+                ?? throw new Exception("exception: no local eslint config found");
         }
 
         private string GetEslintPath(string filePath)
@@ -202,7 +202,7 @@ namespace jwldnr.VisualLinter.Linting
                 return GetGlobalEslintPath();
 
             return EslintHelper.GetLocalEslintPath(filePath)
-                ?? throw new Exception("fatal: no local eslint found-- is eslint installed locally?");
+                ?? throw new Exception("exception: no local eslint found-- is eslint installed locally?");
         }
 
         private string GetIgnorePath(string filePath)
@@ -219,7 +219,7 @@ namespace jwldnr.VisualLinter.Linting
             OutputWindowHelper.DebugLine($"EslintConfigOverridePath: {_options.EslintConfigOverridePath.NullIfEmpty() ?? "null"}");
 
             return _options.EslintConfigOverridePath.NullIfEmpty()
-                ?? throw new Exception("fatal: option 'Override .eslintignore path' is set to true-- but no path is set");
+                ?? throw new Exception("exception: option 'Override .eslintignore path' is set to true-- but no path is set");
         }
 
         private string GetOverrideEslintIgnorePath()
@@ -227,7 +227,7 @@ namespace jwldnr.VisualLinter.Linting
             OutputWindowHelper.DebugLine($"EslintIgnoreOverridePath: {_options.EslintIgnoreOverridePath.NullIfEmpty() ?? "null"}");
 
             return _options.EslintIgnoreOverridePath.NullIfEmpty()
-                ?? throw new Exception("fatal: option 'Override ESLint config path' is set to true-- but no path is set");
+                ?? throw new Exception("exception: option 'Override ESLint config path' is set to true-- but no path is set");
         }
 
         private string GetOverrideEslintPath()
@@ -235,7 +235,7 @@ namespace jwldnr.VisualLinter.Linting
             OutputWindowHelper.DebugLine($"EslintOverridePath: {_options.EslintOverridePath.NullIfEmpty() ?? "null"}");
 
             return _options.EslintOverridePath.NullIfEmpty()
-                ?? throw new Exception("fatal: option 'Override ESLint path' set to true-- but no path is set");
+                ?? throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
         }
     }
 }

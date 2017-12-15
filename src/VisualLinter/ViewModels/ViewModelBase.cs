@@ -16,7 +16,7 @@ namespace jwldnr.VisualLinter.ViewModels
         protected ViewModelBase()
         {
             Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("fatal: unable to retrieve options");
+                ?? throw new Exception("exception: unable to retrieve options");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -25,7 +25,7 @@ namespace jwldnr.VisualLinter.ViewModels
         {
             var value = (T)GetValue(property);
 
-            OutputWindowHelper.DebugLine($"[GetPropertyValue] {property.Name} is {value}");
+            OutputWindowHelper.DebugLine($"[GetPropertyValue]: prop {property.Name} set to {value}");
 
             return value;
         }
@@ -43,7 +43,7 @@ namespace jwldnr.VisualLinter.ViewModels
             if (EqualityComparer<T>.Default.Equals(newValue, oldValue))
                 return false;
 
-            OutputWindowHelper.DebugLine($"[SetPropertyValue] {propertyName} is {newValue}");
+            OutputWindowHelper.DebugLine($"[SetPropertyValue]: prop {propertyName} set to {newValue}");
 
             SetValue(property, newValue);
             RaisePropertyChanged(propertyName);

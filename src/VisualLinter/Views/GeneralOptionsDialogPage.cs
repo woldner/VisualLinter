@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.Shell;
-using System.ComponentModel;
 using System.Windows;
 
 namespace jwldnr.VisualLinter.Views
@@ -8,24 +7,27 @@ namespace jwldnr.VisualLinter.Views
     {
         internal const string PageName = "General";
 
-        private GeneralOptionsDialogPageControl _generalOptionsDialogControl;
+        private readonly GeneralOptionsDialogPageControl _generalOptionsDialogControl;
 
-        protected override UIElement Child => _generalOptionsDialogControl
-            ?? (_generalOptionsDialogControl = new GeneralOptionsDialogPageControl());
+        protected override UIElement Child => _generalOptionsDialogControl;
 
-        protected override void OnActivate(CancelEventArgs e)
+        internal GeneralOptionsDialogPage()
         {
-            base.OnActivate(e);
-
-            _generalOptionsDialogControl.ViewModel.Initiailize();
+            _generalOptionsDialogControl = new GeneralOptionsDialogPageControl();
         }
 
-        protected override void OnApply(PageApplyEventArgs args)
+        public override void LoadSettingsFromStorage()
         {
-            if (args.ApplyBehavior == ApplyKind.Apply)
-                _generalOptionsDialogControl.ViewModel.Apply();
+            base.LoadSettingsFromStorage();
 
-            base.OnApply(args);
+            _generalOptionsDialogControl.ViewModel.Load();
+        }
+
+        public override void SaveSettingsToStorage()
+        {
+            base.SaveSettingsToStorage();
+
+            _generalOptionsDialogControl.ViewModel.Save();
         }
     }
 }
