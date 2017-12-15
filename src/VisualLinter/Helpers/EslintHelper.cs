@@ -25,9 +25,9 @@ namespace jwldnr.VisualLinter.Helpers
                 return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User)
                     ?? EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine(exception.Message);
             }
 
             return null;

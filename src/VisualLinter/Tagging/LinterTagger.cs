@@ -60,9 +60,9 @@ namespace jwldnr.VisualLinter.Tagging
                     .Where(marker => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(marker.Span)))
                     .Select(marker => new TagSpan<IErrorTag>(marker.Span, new LinterTag(marker.Message)));
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine(exception.Message);
             }
 
             return Enumerable.Empty<ITagSpan<IErrorTag>>();

@@ -131,9 +131,10 @@ namespace jwldnr.VisualLinter.ViewModels
             {
                 Process.Start(new ProcessStartInfo($"{url}"));
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine($"error: could not go to url: {url}");
+                OutputWindowHelper.WriteLine(exception.Message);
             }
         }
 

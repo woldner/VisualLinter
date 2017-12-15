@@ -160,10 +160,10 @@ namespace jwldnr.VisualLinter.ViewModels
                     ? null
                     : dialog.FileName;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
                 OutputWindowHelper.WriteLine("error: unable to open file browse dialog:");
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine(exception.Message);
             }
 
             return null;

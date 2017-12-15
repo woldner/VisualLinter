@@ -43,9 +43,9 @@ namespace jwldnr.VisualLinter.Linting
 
                 ExecAsync(provider, filePath, eslintPath);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine(exception.Message);
             }
         }
 
