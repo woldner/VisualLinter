@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.Shell;
-using System.ComponentModel;
 using System.Windows;
 
 namespace jwldnr.VisualLinter.Views
@@ -8,24 +7,27 @@ namespace jwldnr.VisualLinter.Views
     {
         internal const string PageName = "Advanced";
 
-        private AdvancedOptionsDialogPageControl _advancedOptionsDialogControl;
+        private readonly AdvancedOptionsDialogPageControl _advancedOptionsDialogControl;
 
-        protected override UIElement Child => _advancedOptionsDialogControl
-            ?? (_advancedOptionsDialogControl = new AdvancedOptionsDialogPageControl());
+        protected override UIElement Child => _advancedOptionsDialogControl;
 
-        protected override void OnActivate(CancelEventArgs e)
+        public AdvancedOptionsDialogPage()
         {
-            base.OnActivate(e);
-
-            _advancedOptionsDialogControl.ViewModel.Initiailize();
+            _advancedOptionsDialogControl = new AdvancedOptionsDialogPageControl();
         }
 
-        protected override void OnApply(PageApplyEventArgs args)
+        public override void LoadSettingsFromStorage()
         {
-            if (args.ApplyBehavior == ApplyKind.Apply)
-                _advancedOptionsDialogControl.ViewModel.Apply();
+            base.LoadSettingsFromStorage();
 
-            base.OnApply(args);
+            _advancedOptionsDialogControl.ViewModel.Load();
+        }
+
+        public override void SaveSettingsToStorage()
+        {
+            base.SaveSettingsToStorage();
+
+            _advancedOptionsDialogControl.ViewModel.Save();
         }
     }
 }

@@ -107,37 +107,7 @@ namespace jwldnr.VisualLinter.ViewModels
             set => SetPropertyValue(UsePersonalConfigProperty, value);
         }
 
-        internal void Apply()
-        {
-            Options.DisableIgnorePath = DisableEslintIgnore;
-            Options.EnableHtmlLanguageSupport = EnableHtmlLanguageSupport;
-            Options.EnableJavaScriptLanguageSupport = EnableJavaScriptLanguageSupport;
-            Options.EnableReactLanguageSupport = EnableReactLanguageSupport;
-            Options.EnableVueLanguageSupport = EnableVueLanguageSupport;
-            Options.UseGlobalEslint = UseGlobalEslint;
-            Options.UsePersonalConfig = UsePersonalConfig;
-        }
-
-        internal void Initiailize()
-        {
-            LoadOptions();
-
-            RaiseAllPropertiesChanged();
-        }
-
-        private static void SuggestNewFeatures(object url)
-        {
-            try
-            {
-                Process.Start(new ProcessStartInfo($"{url}"));
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-        }
-
-        private void LoadOptions()
+        internal void Load()
         {
             UseGlobalEslint = Options.UseGlobalEslint;
             EnableHtmlLanguageSupport = Options.EnableHtmlLanguageSupport;
@@ -148,15 +118,28 @@ namespace jwldnr.VisualLinter.ViewModels
             DisableEslintIgnore = Options.DisableIgnorePath;
         }
 
-        private void RaiseAllPropertiesChanged()
+        internal void Save()
         {
-            RaisePropertyChanged(nameof(UseGlobalEslint));
-            RaisePropertyChanged(nameof(EnableHtmlLanguageSupport));
-            RaisePropertyChanged(nameof(EnableJavaScriptLanguageSupport));
-            RaisePropertyChanged(nameof(EnableReactLanguageSupport));
-            RaisePropertyChanged(nameof(EnableVueLanguageSupport));
-            RaisePropertyChanged(nameof(UsePersonalConfig));
-            RaisePropertyChanged(nameof(DisableEslintIgnore));
+            Options.DisableIgnorePath = DisableEslintIgnore;
+            Options.EnableHtmlLanguageSupport = EnableHtmlLanguageSupport;
+            Options.EnableJavaScriptLanguageSupport = EnableJavaScriptLanguageSupport;
+            Options.EnableReactLanguageSupport = EnableReactLanguageSupport;
+            Options.EnableVueLanguageSupport = EnableVueLanguageSupport;
+            Options.UseGlobalEslint = UseGlobalEslint;
+            Options.UsePersonalConfig = UsePersonalConfig;
+        }
+
+        private static void SuggestNewFeatures(object url)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo($"{url}"));
+            }
+            catch (Exception exception)
+            {
+                OutputWindowHelper.WriteLine($"exception: could not open {url}");
+                OutputWindowHelper.WriteLine(exception.Message);
+            }
         }
     }
 }

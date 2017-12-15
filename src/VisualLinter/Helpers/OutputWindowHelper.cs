@@ -16,7 +16,7 @@ namespace jwldnr.VisualLinter.Helpers
         static OutputWindowHelper()
         {
             Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("fatal: unable to retrieve options");
+                ?? throw new Exception("exception: unable to retrieve options");
         }
 
         internal static void DebugLine(object message)

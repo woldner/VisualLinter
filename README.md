@@ -107,7 +107,7 @@ Please note that VisualLinter is a direct replacement for both options.
 
 ## Known Issues
 
-- Option values do not stick when switching between `General` and `Advanced` views.
+- None
 
 ## Contribute
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)

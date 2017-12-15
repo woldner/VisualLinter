@@ -125,7 +125,18 @@ namespace jwldnr.VisualLinter.ViewModels
             set => SetPropertyValue(ShowDebugInformationProperty, value);
         }
 
-        internal void Apply()
+        internal void Load()
+        {
+            ShouldOverrideEslint = Options.ShouldOverrideEslint;
+            EslintOverridePath = Options.EslintOverridePath;
+            ShouldOverrideEslintConfig = Options.ShouldOverrideEslintConfig;
+            EslintConfigOverridePath = Options.EslintConfigOverridePath;
+            ShouldOverrideEslintIgnore = Options.ShouldOverrideEslintIgnore;
+            EslintIgnoreOverridePath = Options.EslintIgnoreOverridePath;
+            ShowDebugInformation = Options.ShowDebugInformation;
+        }
+
+        internal void Save()
         {
             Options.ShouldOverrideEslint = ShouldOverrideEslint;
             Options.EslintOverridePath = EslintOverridePath;
@@ -134,13 +145,6 @@ namespace jwldnr.VisualLinter.ViewModels
             Options.ShouldOverrideEslintIgnore = ShouldOverrideEslintIgnore;
             Options.EslintIgnoreOverridePath = EslintIgnoreOverridePath;
             Options.ShowDebugInformation = ShowDebugInformation;
-        }
-
-        internal void Initiailize()
-        {
-            LoadOptions();
-
-            RaiseAllPropertiesChanged();
         }
 
         private static string GetDialogValue(string filter, string initialDirectory)
@@ -160,10 +164,10 @@ namespace jwldnr.VisualLinter.ViewModels
                     ? null
                     : dialog.FileName;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                OutputWindowHelper.WriteLine("error: unable to open file browse dialog:");
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine("exception: unable to open file browse dialog");
+                OutputWindowHelper.WriteLine(exception.Message);
             }
 
             return null;
@@ -206,28 +210,6 @@ namespace jwldnr.VisualLinter.ViewModels
                 return;
 
             EslintIgnoreOverridePath = value;
-        }
-
-        private void LoadOptions()
-        {
-            ShouldOverrideEslint = Options.ShouldOverrideEslint;
-            EslintOverridePath = Options.EslintOverridePath;
-            ShouldOverrideEslintConfig = Options.ShouldOverrideEslintConfig;
-            EslintConfigOverridePath = Options.EslintConfigOverridePath;
-            ShouldOverrideEslintIgnore = Options.ShouldOverrideEslintIgnore;
-            EslintIgnoreOverridePath = Options.EslintIgnoreOverridePath;
-            ShowDebugInformation = Options.ShowDebugInformation;
-        }
-
-        private void RaiseAllPropertiesChanged()
-        {
-            RaisePropertyChanged(nameof(ShouldOverrideEslint));
-            RaisePropertyChanged(nameof(EslintOverridePath));
-            RaisePropertyChanged(nameof(ShouldOverrideEslintConfig));
-            RaisePropertyChanged(nameof(EslintConfigOverridePath));
-            RaisePropertyChanged(nameof(ShouldOverrideEslintIgnore));
-            RaisePropertyChanged(nameof(EslintIgnoreOverridePath));
-            RaisePropertyChanged(nameof(ShowDebugInformation));
         }
     }
 }

@@ -25,9 +25,9 @@ namespace jwldnr.VisualLinter.Helpers
                 return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User)
                     ?? EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                OutputWindowHelper.WriteLine(exception.Message);
             }
 
             return null;
@@ -36,10 +36,10 @@ namespace jwldnr.VisualLinter.Helpers
         internal static string GetIgnorePath(string filePath)
         {
             var solutionPath = VsixHelper.GetSolutionPath()
-                ?? throw new Exception("error: could not get solution path");
+                ?? throw new Exception("exception: could not get solution path");
 
             var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory for file {filePath}");
+                ?? throw new Exception($"exception: could not get directory for file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
@@ -49,7 +49,7 @@ namespace jwldnr.VisualLinter.Helpers
         internal static string GetLocalConfigPath(string filePath)
         {
             var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory for file {filePath}");
+                ?? throw new Exception($"exception: could not get directory for file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
@@ -59,7 +59,7 @@ namespace jwldnr.VisualLinter.Helpers
         internal static string GetLocalEslintPath(string filePath)
         {
             var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"error: could not get directory for file {filePath}");
+                ?? throw new Exception($"exception: could not get directory for file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
