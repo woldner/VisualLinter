@@ -25,8 +25,6 @@ namespace jwldnr.VisualLinter.ViewModels
         {
             var value = (T)GetValue(property);
 
-            OutputWindowHelper.DebugLine($"[GetPropertyValue]: prop {property.Name} set to {value}");
-
             return value;
         }
 
@@ -42,8 +40,6 @@ namespace jwldnr.VisualLinter.ViewModels
 
             if (EqualityComparer<T>.Default.Equals(newValue, oldValue))
                 return false;
-
-            OutputWindowHelper.DebugLine($"[SetPropertyValue]: prop {propertyName} set to {newValue}");
 
             SetValue(property, newValue);
             RaisePropertyChanged(propertyName);
