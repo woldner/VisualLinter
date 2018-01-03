@@ -100,8 +100,8 @@ By default only JavaScript `(.js)` is enabled.
 
 | Option | Value | Location |
 | --- | --- | ---- |
-| `Enable ESLint` | `false` | `Options` > `Text Editor` > `JavaScript/TypeScript` > `ESLint` |
-| `Enable JavaScript errors` | `false` | `Options` > `Text Editor` > `JavaScript/TypeScript` > `Code Validation` |
+| Enable ESLint | `false` | Options -> Text Editor -> JavaScript/TypeScript -> ESLint |
+| Enable JavaScript errors | `false` | Options -> Text Editor -> JavaScript/TypeScript -> Code Validation |
 
 Please note that VisualLinter is a direct replacement for both options.
 
