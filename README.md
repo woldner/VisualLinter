@@ -18,7 +18,7 @@ See the [change log](CHANGELOG.md) for changes and road map.
 - [Language Support](#language-support)
 - [Troubleshooting](#troubleshooting)
 - [Known Issues](#known-issues)
-- [Contribute](#contribute)
+- [Contributing](#contributing)
 - [Inspiration](#inspiration)
 
 ## Features
@@ -109,13 +109,14 @@ Please note that VisualLinter is a direct replacement for both options.
 
 - None
 
-## Contribute
-[See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
+## Contributing
+
+⇄ Pull requests and ★ Stars are always welcome.  
+For bugs and feature requests, please create an issue.
 
 Check out the [contribution guidelines](CONTRIBUTING.md) if you want to contribute to this project.
 
-For cloning and building this project yourself, make sure to install the [Extensibility Tools 2015](https://visualstudiogallery.msdn.microsoft.com/ab39a092-1343-46e2-b0f1-6a3f91155aa6)
-extension for Visual Studio which enables some features used by this project.
+[See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
 
 ## Inspiration
 
