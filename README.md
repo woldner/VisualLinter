@@ -114,9 +114,9 @@ Please note that VisualLinter is a direct replacement for both options.
 ⇄ Pull requests and ★ Stars are always welcome.  
 For bugs and feature requests, please create an issue.
 
-Check out the [contribution guidelines](.github/CONTRIBUTING.md) if you want to contribute to this project.
-
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
+
+Check out the [contribution guidelines](.github/CONTRIBUTING.md) if you want to contribute to this project.
 
 ## Inspiration
 
