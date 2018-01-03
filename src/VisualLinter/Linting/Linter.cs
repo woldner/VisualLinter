@@ -47,6 +47,10 @@ namespace jwldnr.VisualLinter.Linting
             {
                 OutputWindowHelper.WriteLine(exception.Message);
             }
+            finally
+            {
+                _isRunning = false;
+            }
         }
 
         private static string GetGlobalEslintPath()
@@ -148,8 +152,6 @@ namespace jwldnr.VisualLinter.Linting
                 finally
                 {
                     process.Close();
-
-                    _isRunning = false;
                 }
             });
         }
