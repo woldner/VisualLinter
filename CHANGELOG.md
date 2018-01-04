@@ -9,6 +9,12 @@ Features that have a checkmark are complete and available for download in the
 
 These are the changes to each version that has been released on the official Visual Studio extension gallery.
 
+## 1.1 (2018-01-03)
+
+#### Fix
+
+- Poorly misplaced finally-clause causing deadlock
+
 ## 1.1 (2017-12-15)
 
 ##### Fix
