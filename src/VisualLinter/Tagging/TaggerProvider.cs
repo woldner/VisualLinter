@@ -168,11 +168,11 @@ namespace jwldnr.VisualLinter.Tagging
         {
             lock (_taggers)
             {
-                if (false == _taggers.TryGetValue(filePath, out var _))
+                if (false == _taggers.Exists(filePath))
                     return;
-
-                _linter.LintAsync(this, filePath);
             }
+
+            _linter.LintAsync(this, filePath);
         }
 
         internal void RemoveSinkManager(SinkManager manager)

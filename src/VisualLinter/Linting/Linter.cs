@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        void LintAsync(ILinterProvider provider, string filePath);
+        Task LintAsync(ILinterProvider provider, string filePath);
     }
 
     [Export(typeof(ILinter))]
@@ -29,7 +29,7 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        public void LintAsync(ILinterProvider provider, string filePath)
+        public async Task LintAsync(ILinterProvider provider, string filePath)
         {
             if (_isRunning)
                 return;
@@ -41,7 +41,8 @@ namespace jwldnr.VisualLinter.Linting
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                ExecAsync(provider, filePath, eslintPath);
+                await ExecAsync(provider, filePath, eslintPath)
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -71,8 +72,16 @@ namespace jwldnr.VisualLinter.Linting
             if (null == result.NullIfEmpty())
                 return;
 
-            OutputWindowHelper.WriteLine(result);
-            provider.Accept(filePath, Enumerable.Empty<EslintMessage>());
+            try
+            {
+                OutputWindowHelper.WriteLine(result);
+
+                provider.Accept(filePath, Enumerable.Empty<EslintMessage>());
+            }
+            catch (Exception exception)
+            {
+                OutputWindowHelper.WriteLine(exception.Message);
+            }
         }
 
         private static void OnOutputDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
@@ -114,7 +123,7 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private void ExecAsync(ILinterProvider provider, string filePath, string eslintPath)
+        private Task ExecAsync(ILinterProvider provider, string filePath, string eslintPath)
         {
             var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
 
@@ -133,7 +142,7 @@ namespace jwldnr.VisualLinter.Linting
             process.ErrorDataReceived += (sender, e) => OnErrorDataReceived(e, provider, filePath);
             process.OutputDataReceived += (sender, e) => OnOutputDataReceived(e, provider, filePath);
 
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 try
                 {
