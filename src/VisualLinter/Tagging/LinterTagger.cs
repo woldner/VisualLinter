@@ -37,7 +37,6 @@ namespace jwldnr.VisualLinter.Tagging
             FilePath = document.FilePath;
             Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<MessageMarker>()));
 
-            // TODO.. async fire and forget..
             Initialize();
         }
 
@@ -109,6 +108,7 @@ namespace jwldnr.VisualLinter.Tagging
             return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
+        // TODO async fire & forget is bad..
         private async void Initialize()
         {
             _document.FileActionOccurred += OnFileActionOccurred;
