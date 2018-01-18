@@ -21,7 +21,7 @@ namespace jwldnr.VisualLinter.Tagging
 
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
-    [ContentType("any")]
+    [ContentType("text")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, ILinterProvider, IDisposable

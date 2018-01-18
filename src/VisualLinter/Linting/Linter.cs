@@ -35,8 +35,16 @@ namespace jwldnr.VisualLinter.Linting
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                await ExecuteProcessAsync(provider, filePath, eslintPath)
+                var result = await Task.Run(() => ExecuteProcessAsync(filePath, eslintPath))
                     .ConfigureAwait(false);
+
+                if (null == result.NullIfEmpty())
+                    throw new Exception("warning: linter returned empty result");
+
+                var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
+                var messages = ProcessResults(results);
+
+                provider.Accept(filePath, messages);
             }
             catch (Exception exception)
             {
@@ -54,43 +62,6 @@ namespace jwldnr.VisualLinter.Linting
         {
             return EslintHelper.GetPersonalConfigPath()
                 ?? throw new Exception("exception: no personal eslint config found");
-        }
-
-        private static void OnErrorDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
-        {
-            var result = e.Data;
-            if (null == result.NullIfEmpty())
-                return;
-
-            try
-            {
-                OutputWindowHelper.WriteLine(result);
-
-                provider.Accept(filePath, Enumerable.Empty<EslintMessage>());
-            }
-            catch (Exception exception)
-            {
-                OutputWindowHelper.WriteLine(exception.Message);
-            }
-        }
-
-        private static void OnOutputDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
-        {
-            var result = e.Data;
-            if (null == result.NullIfEmpty())
-                return;
-
-            try
-            {
-                var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
-                var messages = ProcessResults(results);
-
-                provider.Accept(filePath, messages);
-            }
-            catch (Exception exception)
-            {
-                OutputWindowHelper.WriteLine(exception.Message);
-            }
         }
 
         private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
@@ -113,7 +84,7 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private Task ExecuteProcessAsync(ILinterProvider provider, string filePath, string eslintPath)
+        private string ExecuteProcessAsync(string filePath, string eslintPath)
         {
             var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
 
@@ -121,38 +92,55 @@ namespace jwldnr.VisualLinter.Linting
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
-                RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                StandardOutputEncoding = Encoding.UTF8,
-                StandardErrorEncoding = Encoding.UTF8
+                RedirectStandardOutput = true,
+                StandardErrorEncoding = Encoding.UTF8,
+                StandardOutputEncoding = Encoding.UTF8
             };
 
             var process = new Process { StartInfo = startInfo };
 
-            process.ErrorDataReceived += (sender, e) => OnErrorDataReceived(e, provider, filePath);
-            process.OutputDataReceived += (sender, e) => OnOutputDataReceived(e, provider, filePath);
+            string error = null;
+            string output = null;
 
-            return Task.Run(() =>
+            process.ErrorDataReceived += ErrorHandler;
+            process.OutputDataReceived += OutputHandler;
+
+            void ErrorHandler(object sender, DataReceivedEventArgs e)
             {
-                try
-                {
-                    if (false == process.Start())
-                        throw new Exception("exception: unable to start eslint process");
+                if (null != e.Data)
+                    error += e.Data;
+            }
 
-                    process.BeginErrorReadLine();
-                    process.BeginOutputReadLine();
+            void OutputHandler(object sender, DataReceivedEventArgs e)
+            {
+                if (null != e.Data)
+                    output += e.Data;
+            }
 
-                    process.WaitForExit();
-                }
-                catch (Exception exception)
-                {
-                    OutputWindowHelper.WriteLine(exception.Message);
-                }
-                finally
-                {
-                    process.Close();
-                }
-            });
+            try
+            {
+                if (false == process.Start())
+                    throw new Exception("exception: unable to start eslint process");
+
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+
+                process.WaitForExit();
+
+                if (null != error.NullIfEmpty())
+                    throw new Exception(error);
+            }
+            catch (Exception exception)
+            {
+                OutputWindowHelper.WriteLine(exception.Message);
+            }
+            finally
+            {
+                process.Close();
+            }
+
+            return output;
         }
 
         private string GetArguments(string filePath)
