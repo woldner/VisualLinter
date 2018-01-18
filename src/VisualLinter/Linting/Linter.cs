@@ -7,13 +7,14 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(ILinterProvider provider, string filePath);
+        Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
@@ -28,14 +29,14 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        public async Task LintAsync(ILinterProvider provider, string filePath)
+        public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
         {
             try
             {
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                var result = await Task.Run(() => ExecuteProcessAsync(filePath, eslintPath))
+                var result = await Task.Run(() => ExecuteProcessAsync(filePath, eslintPath), token)
                     .ConfigureAwait(false);
 
                 if (null == result.NullIfEmpty())
@@ -48,6 +49,7 @@ namespace jwldnr.VisualLinter.Linting
             }
             catch (Exception exception)
             {
+                OutputWindowHelper.WriteLine("Linter.LintAsync :");
                 OutputWindowHelper.WriteLine(exception.Message);
             }
         }
@@ -133,6 +135,7 @@ namespace jwldnr.VisualLinter.Linting
             }
             catch (Exception exception)
             {
+                OutputWindowHelper.WriteLine("Linter.ExecuteProcessAsync :");
                 OutputWindowHelper.WriteLine(exception.Message);
             }
             finally

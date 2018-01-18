@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
@@ -17,6 +18,7 @@ namespace jwldnr.VisualLinter.Tagging
 
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
+        private CancellationTokenSource _source;
 
         internal SnapshotFactory Factory { get; }
         internal string FilePath { get; private set; }
@@ -96,8 +98,31 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
-            await _provider.Analyze(filePath)
+            Cancel();
+
+            _source = new CancellationTokenSource();
+            _source.Token.Register(Cancel);
+
+            await _provider.Analyze(filePath, _source.Token)
                 .ConfigureAwait(false);
+        }
+
+        private void Cancel()
+        {
+            try
+            {
+                _source?.Cancel();
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine("LinterTagger.Cancel :");
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+            finally
+            {
+                _source?.Dispose();
+                _source = null;
+            }
         }
 
         private MessageMarker CreateMarker(EslintMessage message)

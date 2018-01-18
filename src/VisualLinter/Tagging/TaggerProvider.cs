@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
@@ -165,7 +166,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal async Task Analyze(string filePath)
+        internal async Task Analyze(string filePath, CancellationToken token)
         {
             lock (_taggers)
             {
@@ -173,7 +174,7 @@ namespace jwldnr.VisualLinter.Tagging
                     return;
             }
 
-            await _linter.LintAsync(this, filePath)
+            await _linter.LintAsync(this, filePath, token)
                 .ConfigureAwait(false);
         }
 
