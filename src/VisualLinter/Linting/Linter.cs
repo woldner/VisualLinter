@@ -22,7 +22,7 @@ namespace jwldnr.VisualLinter.Linting
     internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 2);
+        private readonly SemaphoreSlim _throttle = new SemaphoreSlim(2, 2);
 
         [ImportingConstructor]
         internal Linter([Import] IVisualLinterOptions options)
@@ -32,15 +32,19 @@ namespace jwldnr.VisualLinter.Linting
 
         public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
         {
+            await _throttle.WaitAsync(token).ConfigureAwait(false);
+
+            token.ThrowIfCancellationRequested();
+
             try
             {
-                await _semaphore.WaitAsync(token).ConfigureAwait(false);
-
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
                 var result = await Task.Run(() => ExecuteProcessAsync(filePath, eslintPath), token)
                     .ConfigureAwait(false);
+
+                token.ThrowIfCancellationRequested();
 
                 if (null == result.NullIfEmpty())
                     throw new Exception("warning: linter returned empty result");
@@ -56,7 +60,7 @@ namespace jwldnr.VisualLinter.Linting
             }
             finally
             {
-                _semaphore.Release();
+                _throttle.Release();
             }
         }
 

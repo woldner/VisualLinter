@@ -171,8 +171,17 @@ namespace jwldnr.VisualLinter.Tagging
                     return;
             }
 
-            await _linter.LintAsync(this, filePath, token)
-                .ConfigureAwait(false);
+            try
+            {
+                token.ThrowIfCancellationRequested();
+
+                await _linter.LintAsync(this, filePath, token)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
         }
 
         internal void RemoveSinkManager(SinkManager manager)

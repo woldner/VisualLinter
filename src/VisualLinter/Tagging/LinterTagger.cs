@@ -101,7 +101,7 @@ namespace jwldnr.VisualLinter.Tagging
             Cancel();
 
             _source = new CancellationTokenSource();
-            _source.Token.Register(Cancel);
+            //_source.Token.Register(Cancel);
 
             await _provider.Analyze(filePath, _source.Token)
                 .ConfigureAwait(false);
@@ -147,6 +147,8 @@ namespace jwldnr.VisualLinter.Tagging
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
         {
+            Cancel();
+
             UpdateDirtySpans(e);
 
             var newSnapshot = TranslateWarningSpans();
