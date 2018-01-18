@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -164,7 +165,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void Analyze(string filePath)
+        internal async Task Analyze(string filePath)
         {
             lock (_taggers)
             {
@@ -172,7 +173,8 @@ namespace jwldnr.VisualLinter.Tagging
                     return;
             }
 
-            _linter.LintAsync(this, filePath);
+            await _linter.LintAsync(this, filePath)
+                .ConfigureAwait(false);
         }
 
         internal void RemoveSinkManager(SinkManager manager)

@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -36,6 +37,7 @@ namespace jwldnr.VisualLinter.Tagging
             FilePath = document.FilePath;
             Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<MessageMarker>()));
 
+            // TODO.. async fire and forget..
             Initialize();
         }
 
@@ -90,12 +92,13 @@ namespace jwldnr.VisualLinter.Tagging
             };
         }
 
-        private void Analyze(string filePath)
+        private async Task Analyze(string filePath)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
-            _provider.Analyze(filePath);
+            await _provider.Analyze(filePath)
+                .ConfigureAwait(false);
         }
 
         private MessageMarker CreateMarker(EslintMessage message)
@@ -106,14 +109,15 @@ namespace jwldnr.VisualLinter.Tagging
             return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
-        private void Initialize()
+        private async void Initialize()
         {
             _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
             _provider.AddTagger(this);
 
-            Analyze(FilePath);
+            await Analyze(FilePath)
+                .ConfigureAwait(false);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
@@ -125,7 +129,7 @@ namespace jwldnr.VisualLinter.Tagging
             SnapToNewSnapshot(newSnapshot);
         }
 
-        private void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
+        private async void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
         {
             if (0 != (e.FileActionType & FileActionTypes.DocumentRenamed))
             {
@@ -134,7 +138,8 @@ namespace jwldnr.VisualLinter.Tagging
             }
             else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
             {
-                Analyze(FilePath);
+                await Analyze(FilePath)
+                    .ConfigureAwait(false);
             }
         }
 
