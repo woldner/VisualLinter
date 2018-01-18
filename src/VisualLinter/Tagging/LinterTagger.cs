@@ -116,8 +116,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             _provider.AddTagger(this);
 
-            await Analyze(FilePath)
-                .ConfigureAwait(false);
+            await Analyze(FilePath).ConfigureAwait(false);
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
