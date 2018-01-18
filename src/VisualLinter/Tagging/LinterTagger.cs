@@ -129,17 +129,27 @@ namespace jwldnr.VisualLinter.Tagging
             SnapToNewSnapshot(newSnapshot);
         }
 
+        private void Rename(string oldPath, string newPath)
+        {
+            _provider.Rename(oldPath, newPath);
+
+            FilePath = newPath;
+        }
+
         private async void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
         {
-            if (0 != (e.FileActionType & FileActionTypes.DocumentRenamed))
+            switch (e.FileActionType)
             {
-                _provider.Rename(FilePath, e.FilePath);
-                FilePath = e.FilePath;
-            }
-            else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
-            {
-                await Analyze(FilePath)
-                    .ConfigureAwait(false);
+                case FileActionTypes.ContentSavedToDisk:
+                case FileActionTypes.ContentLoadedFromDisk:
+                    await Analyze(FilePath).ConfigureAwait(false);
+                    break;
+                case FileActionTypes.DocumentRenamed:
+                    Rename(FilePath, e.FilePath);
+                    break;
+                default:
+                    OutputWindowHelper.WriteLine("warning: unrecognized file action type");
+                    break;
             }
         }
 
