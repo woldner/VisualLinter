@@ -21,7 +21,6 @@ namespace jwldnr.VisualLinter.Linting
     internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
-        private bool _isRunning;
 
         [ImportingConstructor]
         internal Linter([Import] IVisualLinterOptions options)
@@ -31,26 +30,17 @@ namespace jwldnr.VisualLinter.Linting
 
         public async Task LintAsync(ILinterProvider provider, string filePath)
         {
-            if (_isRunning)
-                return;
-
-            _isRunning = true;
-
             try
             {
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                await ExecAsync(provider, filePath, eslintPath)
+                await ExecuteProcessAsync(provider, filePath, eslintPath)
                     .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
                 OutputWindowHelper.WriteLine(exception.Message);
-            }
-            finally
-            {
-                _isRunning = false;
             }
         }
 
@@ -123,7 +113,7 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private Task ExecAsync(ILinterProvider provider, string filePath, string eslintPath)
+        private Task ExecuteProcessAsync(ILinterProvider provider, string filePath, string eslintPath)
         {
             var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
 
