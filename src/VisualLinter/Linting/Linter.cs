@@ -22,6 +22,7 @@ namespace jwldnr.VisualLinter.Linting
     internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 2);
 
         [ImportingConstructor]
         internal Linter([Import] IVisualLinterOptions options)
@@ -33,6 +34,8 @@ namespace jwldnr.VisualLinter.Linting
         {
             try
             {
+                await _semaphore.WaitAsync(token).ConfigureAwait(false);
+
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
@@ -47,10 +50,13 @@ namespace jwldnr.VisualLinter.Linting
 
                 provider.Accept(filePath, messages);
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine("Linter.LintAsync :");
-                OutputWindowHelper.WriteLine(exception.Message);
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
@@ -133,10 +139,9 @@ namespace jwldnr.VisualLinter.Linting
                 if (null != error.NullIfEmpty())
                     throw new Exception(error);
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine("Linter.ExecuteProcessAsync :");
-                OutputWindowHelper.WriteLine(exception.Message);
+                OutputWindowHelper.WriteLine(e.Message);
             }
             finally
             {

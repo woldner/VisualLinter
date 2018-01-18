@@ -63,9 +63,9 @@ namespace jwldnr.VisualLinter.Tagging
                     .Where(marker => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(marker.Span)))
                     .Select(marker => new TagSpan<IErrorTag>(marker.Span, new LinterTag(marker.Message)));
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(exception.Message);
+                OutputWindowHelper.WriteLine(e.Message);
             }
 
             return Enumerable.Empty<ITagSpan<IErrorTag>>();
@@ -113,9 +113,10 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _source?.Cancel();
             }
+            //catch (OperationCanceledException)
+            //{ }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine("LinterTagger.Cancel :");
                 OutputWindowHelper.WriteLine(e.Message);
             }
             finally
@@ -133,7 +134,7 @@ namespace jwldnr.VisualLinter.Tagging
             return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
-        // TODO async fire & forget is bad..
+        // TODO async fire & forget, I know..
         private async void Initialize()
         {
             _document.FileActionOccurred += OnFileActionOccurred;

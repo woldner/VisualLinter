@@ -81,9 +81,9 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 UpdateMessages(filePath, messages);
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(exception.Message);
+                OutputWindowHelper.WriteLine(e.Message);
             }
         }
 
@@ -112,11 +112,8 @@ namespace jwldnr.VisualLinter.Tagging
 
             lock (_taggers)
             {
-                if (false == _taggers.Exists(filePath))
-                    return new LinterTagger(this, buffer, document) as ITagger<T>;
-
                 if (false == _taggers.TryGetValue(filePath, out var tagger))
-                    return null;
+                    return new LinterTagger(this, buffer, document) as ITagger<T>;
 
                 return tagger as ITagger<T>;
             }
