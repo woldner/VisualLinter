@@ -129,13 +129,6 @@ namespace jwldnr.VisualLinter.Tagging
             SnapToNewSnapshot(newSnapshot);
         }
 
-        private void Rename(string oldPath, string newPath)
-        {
-            _provider.Rename(oldPath, newPath);
-
-            FilePath = newPath;
-        }
-
         private async void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
         {
             switch (e.FileActionType)
@@ -144,9 +137,11 @@ namespace jwldnr.VisualLinter.Tagging
                 case FileActionTypes.ContentLoadedFromDisk:
                     await Analyze(FilePath).ConfigureAwait(false);
                     break;
+
                 case FileActionTypes.DocumentRenamed:
                     Rename(FilePath, e.FilePath);
                     break;
+
                 default:
                     OutputWindowHelper.WriteLine("warning: unrecognized file action type");
                     break;
@@ -187,6 +182,13 @@ namespace jwldnr.VisualLinter.Tagging
 
                 yield return message;
             }
+        }
+
+        private void Rename(string oldPath, string newPath)
+        {
+            _provider.Rename(oldPath, newPath);
+
+            FilePath = newPath;
         }
 
         private void SnapToNewSnapshot(LinterSnapshot snapshot)
