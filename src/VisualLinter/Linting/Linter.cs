@@ -34,10 +34,10 @@ namespace jwldnr.VisualLinter.Linting
         {
             await _throttle.WaitAsync(token).ConfigureAwait(false);
 
-            token.ThrowIfCancellationRequested();
-
             try
             {
+                token.ThrowIfCancellationRequested();
+
                 var eslintPath = GetEslintPath(filePath);
                 OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
