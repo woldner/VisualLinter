@@ -112,8 +112,6 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _source?.Cancel();
             }
-            catch (OperationCanceledException)
-            { }
             catch (Exception e)
             {
                 OutputWindowHelper.WriteLine(e.Message);

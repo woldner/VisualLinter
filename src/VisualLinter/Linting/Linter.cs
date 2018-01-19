@@ -54,6 +54,8 @@ namespace jwldnr.VisualLinter.Linting
 
                 provider.Accept(filePath, messages);
             }
+            catch (OperationCanceledException)
+            { }
             catch (Exception e)
             {
                 OutputWindowHelper.WriteLine(e.Message);
