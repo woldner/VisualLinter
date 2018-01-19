@@ -101,7 +101,6 @@ namespace jwldnr.VisualLinter.Tagging
             Cancel();
 
             _source = new CancellationTokenSource();
-            //_source.Token.Register(Cancel);
 
             await _provider.Analyze(filePath, _source.Token)
                 .ConfigureAwait(false);
@@ -113,8 +112,8 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _source?.Cancel();
             }
-            //catch (OperationCanceledException)
-            //{ }
+            catch (OperationCanceledException)
+            { }
             catch (Exception e)
             {
                 OutputWindowHelper.WriteLine(e.Message);
