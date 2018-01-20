@@ -163,7 +163,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal async Task Analyze(string filePath, CancellationToken token)
+        internal async Task Analyze(string filePath, string sourceText, CancellationToken token)
         {
             lock (_taggers)
             {
@@ -171,7 +171,7 @@ namespace jwldnr.VisualLinter.Tagging
                     return;
             }
 
-            await _linter.LintAsync(this, filePath, token)
+            await _linter.LintAsync(this, filePath, sourceText, token)
                 .ConfigureAwait(false);
         }
 

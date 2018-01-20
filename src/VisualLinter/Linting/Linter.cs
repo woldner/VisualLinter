@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,7 +15,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token);
+        Task LintAsync(ILinterProvider provider, string filePath, string sourceText, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
@@ -30,7 +31,7 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
+        public async Task LintAsync(ILinterProvider provider, string filePath, string sourceText, CancellationToken token)
         {
             try
             {
@@ -43,10 +44,8 @@ namespace jwldnr.VisualLinter.Linting
                     var eslintPath = GetEslintPath(filePath);
                     OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                    var result = await Task.Run(() => ExecuteProcessAsync(filePath, eslintPath), token)
+                    var result = await ExecuteProcessAsync(filePath, eslintPath, sourceText, token)
                         .ConfigureAwait(false);
-
-                    token.ThrowIfCancellationRequested();
 
                     if (null == result.NullIfEmpty())
                         throw new Exception("warning: linter returned empty result");
@@ -107,15 +106,16 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private string ExecuteProcessAsync(string filePath, string eslintPath)
+        private async Task<string> ExecuteProcessAsync(string filePath, string eslintPath, string sourceText, CancellationToken token)
         {
-            var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
+            var arguments = $"{GetArguments(filePath)} --stdin";
 
             var startInfo = new ProcessStartInfo(eslintPath, arguments)
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardError = true,
+                RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 StandardErrorEncoding = Encoding.UTF8,
                 StandardOutputEncoding = Encoding.UTF8
@@ -143,8 +143,15 @@ namespace jwldnr.VisualLinter.Linting
 
             try
             {
+                token.ThrowIfCancellationRequested();
+
                 if (false == process.Start())
                     throw new Exception("exception: unable to start eslint process");
+
+                using (var writer = new StreamWriter(process.StandardInput.BaseStream, Encoding.UTF8))
+                {
+                    await writer.WriteAsync(sourceText).ConfigureAwait(false);
+                }
 
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
@@ -154,6 +161,8 @@ namespace jwldnr.VisualLinter.Linting
                 if (null != error.NullIfEmpty())
                     throw new Exception(error);
             }
+            catch (OperationCanceledException)
+            { }
             catch (Exception e)
             {
                 OutputWindowHelper.WriteLine(e.Message);

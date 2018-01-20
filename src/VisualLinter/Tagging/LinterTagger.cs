@@ -17,6 +17,7 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly TaggerProvider _provider;
 
         private ITextSnapshot _currentSnapshot;
+        private string SourceText => _currentSnapshot.GetText();
         private NormalizedSnapshotSpanCollection _dirtySpans;
         private CancellationTokenSource _source;
 
@@ -102,7 +103,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             _source = new CancellationTokenSource();
 
-            await _provider.Analyze(filePath, _source.Token)
+            await _provider.Analyze(filePath, SourceText, _source.Token)
                 .ConfigureAwait(false);
         }
 
