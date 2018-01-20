@@ -93,7 +93,7 @@ namespace jwldnr.VisualLinter.Tagging
             };
         }
 
-        private async Task Analyze(string filePath)
+        private async Task Analyze(string filePath, string sourceText)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
@@ -102,7 +102,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             _source = new CancellationTokenSource();
 
-            await _provider.Analyze(filePath, SourceText, _source.Token)
+            await _provider.Analyze(filePath, sourceText, _source.Token)
                 .ConfigureAwait(false);
         }
 
@@ -136,7 +136,7 @@ namespace jwldnr.VisualLinter.Tagging
             _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
-            _provider.AddTagger(this, () => Analyze(FilePath));
+            _provider.AddTagger(this, () => Analyze(FilePath, SourceText));
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
@@ -156,7 +156,7 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 case FileActionTypes.ContentSavedToDisk:
                 case FileActionTypes.ContentLoadedFromDisk:
-                    await Analyze(FilePath).ConfigureAwait(false);
+                    await Analyze(FilePath, SourceText).ConfigureAwait(false);
                     break;
 
                 case FileActionTypes.DocumentRenamed:
@@ -164,7 +164,7 @@ namespace jwldnr.VisualLinter.Tagging
                     break;
 
                 default:
-                    OutputWindowHelper.WriteLine("warning: unrecognized file action type");
+                    OutputWindowHelper.WriteLine("info: unrecognized file action type");
                     break;
             }
         }
