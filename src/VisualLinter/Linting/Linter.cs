@@ -23,7 +23,7 @@ namespace jwldnr.VisualLinter.Linting
     internal class Linter : ILinter
     {
         private readonly IVisualLinterOptions _options;
-        private readonly SemaphoreSlim _throttle = new SemaphoreSlim(2, 2);
+        private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
 
         [ImportingConstructor]
         internal Linter([Import] IVisualLinterOptions options)
@@ -35,7 +35,7 @@ namespace jwldnr.VisualLinter.Linting
         {
             try
             {
-                await _throttle.WaitAsync(token).ConfigureAwait(false);
+                await _mutex.WaitAsync(token).ConfigureAwait(false);
 
                 try
                 {
@@ -53,6 +53,8 @@ namespace jwldnr.VisualLinter.Linting
                     var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
                     var messages = ProcessResults(results);
 
+                    token.ThrowIfCancellationRequested();
+
                     provider.Accept(filePath, messages);
                 }
                 catch (OperationCanceledException)
@@ -63,7 +65,7 @@ namespace jwldnr.VisualLinter.Linting
                 }
                 finally
                 {
-                    _throttle.Release();
+                    _mutex.Release();
                 }
             }
             catch (OperationCanceledException)
