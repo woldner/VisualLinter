@@ -29,7 +29,7 @@ namespace jwldnr.VisualLinter.Tagging
     {
         private readonly ILinter _linter;
         private readonly List<SinkManager> _managers = new List<SinkManager>();
-        private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>();
+        private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>(StringComparer.OrdinalIgnoreCase);
         private readonly TaggerManager _taggers = new TaggerManager();
 
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
@@ -53,10 +53,10 @@ namespace jwldnr.VisualLinter.Tagging
 
             _linter = linter;
 
-            _optionsMap.Add(".html", () => options.EnableHtmlLanguageSupport);
-            _optionsMap.Add(".js", () => options.EnableJavaScriptLanguageSupport);
-            _optionsMap.Add(".jsx", () => options.EnableReactLanguageSupport);
-            _optionsMap.Add(".vue", () => options.EnableVueLanguageSupport);
+            _optionsMap.Add(".HTML", () => options.EnableHtmlLanguageSupport);
+            _optionsMap.Add(".JS", () => options.EnableJavaScriptLanguageSupport);
+            _optionsMap.Add(".JSX", () => options.EnableReactLanguageSupport);
+            _optionsMap.Add(".VUE", () => options.EnableVueLanguageSupport);
 
             var columns = new[]
             {

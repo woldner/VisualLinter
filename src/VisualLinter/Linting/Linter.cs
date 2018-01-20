@@ -22,8 +22,8 @@ namespace jwldnr.VisualLinter.Linting
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class Linter : ILinter
     {
-        private readonly IVisualLinterOptions _options;
         private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
+        private readonly IVisualLinterOptions _options;
 
         [ImportingConstructor]
         internal Linter([Import] IVisualLinterOptions options)

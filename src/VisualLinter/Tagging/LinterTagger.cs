@@ -17,13 +17,12 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly TaggerProvider _provider;
 
         private ITextSnapshot _currentSnapshot;
-        private string SourceText => _currentSnapshot.GetText();
         private NormalizedSnapshotSpanCollection _dirtySpans;
         private CancellationTokenSource _source;
-
         internal SnapshotFactory Factory { get; }
         internal string FilePath { get; private set; }
         internal LinterSnapshot Snapshot { get; set; }
+        private string SourceText => _currentSnapshot.GetText();
 
         internal LinterTagger(
             TaggerProvider provider,
