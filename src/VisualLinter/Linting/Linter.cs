@@ -32,37 +32,46 @@ namespace jwldnr.VisualLinter.Linting
 
         public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
         {
-            await _throttle.WaitAsync(token).ConfigureAwait(false);
-
             try
             {
-                token.ThrowIfCancellationRequested();
+                await _throttle.WaitAsync(token).ConfigureAwait(false);
 
-                var eslintPath = GetEslintPath(filePath);
-                OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
+                try
+                {
+                    token.ThrowIfCancellationRequested();
 
-                var result = await Task.Run(() => ExecuteProcessAsync(filePath, eslintPath), token)
-                    .ConfigureAwait(false);
+                    var eslintPath = GetEslintPath(filePath);
+                    OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                token.ThrowIfCancellationRequested();
+                    var result = await Task.Run(() => ExecuteProcessAsync(filePath, eslintPath), token)
+                        .ConfigureAwait(false);
 
-                if (null == result.NullIfEmpty())
-                    throw new Exception("warning: linter returned empty result");
+                    token.ThrowIfCancellationRequested();
 
-                var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
-                var messages = ProcessResults(results);
+                    if (null == result.NullIfEmpty())
+                        throw new Exception("warning: linter returned empty result");
 
-                provider.Accept(filePath, messages);
+                    var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
+                    var messages = ProcessResults(results);
+
+                    provider.Accept(filePath, messages);
+                }
+                catch (OperationCanceledException)
+                { }
+                catch (Exception e)
+                {
+                    OutputWindowHelper.WriteLine(e.Message);
+                }
+                finally
+                {
+                    _throttle.Release();
+                }
             }
             catch (OperationCanceledException)
             { }
             catch (Exception e)
             {
                 OutputWindowHelper.WriteLine(e.Message);
-            }
-            finally
-            {
-                _throttle.Release();
             }
         }
 
