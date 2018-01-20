@@ -1,47 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace jwldnr.VisualLinter.Tagging
 {
     internal class TaggerManager
     {
-        private readonly IDictionary<string, LinterTagger> _taggers = new Dictionary<string, LinterTagger>();
+        private readonly IDictionary<string, LinterTagger> _taggers = new Dictionary<string, LinterTagger>(StringComparer.OrdinalIgnoreCase);
 
         internal IEnumerable<LinterTagger> Values => _taggers.Values;
 
         internal void Add(LinterTagger tagger)
         {
-            _taggers.Add(Key(tagger.FilePath), tagger);
+            _taggers.Add(tagger.FilePath, tagger);
         }
 
         internal bool Exists(string filePath)
         {
-            return _taggers.ContainsKey(Key(filePath));
+            return _taggers.ContainsKey(filePath);
         }
 
         internal void Remove(LinterTagger tagger)
         {
-            _taggers.Remove(Key(tagger.FilePath));
+            _taggers.Remove(tagger.FilePath);
         }
 
         internal void Rename(string oldPath, string newPath)
         {
-            var oldKey = Key(oldPath);
-
-            if (false == _taggers.TryGetValue(oldKey, out var tagger))
+            if (false == _taggers.TryGetValue(oldPath, out var tagger))
                 return;
 
-            _taggers.Add(Key(newPath), tagger);
-            _taggers.Remove(oldKey);
+            _taggers.Add(newPath, tagger);
+            _taggers.Remove(oldPath);
         }
 
         internal bool TryGetValue(string filePath, out LinterTagger tagger)
         {
-            return _taggers.TryGetValue(Key(filePath), out tagger);
-        }
-
-        private static string Key(string filePath)
-        {
-            return filePath.ToLowerInvariant();
+            return _taggers.TryGetValue(filePath, out tagger);
         }
     }
 }

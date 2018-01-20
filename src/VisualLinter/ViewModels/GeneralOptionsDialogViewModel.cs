@@ -135,10 +135,10 @@ namespace jwldnr.VisualLinter.ViewModels
             {
                 Process.Start(new ProcessStartInfo($"{url}"));
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
                 OutputWindowHelper.WriteLine($"exception: could not open {url}");
-                OutputWindowHelper.WriteLine(exception.Message);
+                OutputWindowHelper.WriteLine(e.Message);
             }
         }
     }

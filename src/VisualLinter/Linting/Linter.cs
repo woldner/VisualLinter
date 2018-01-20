@@ -5,23 +5,25 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(ILinterProvider provider, string filePath);
+        Task LintAsync(ILinterProvider provider, string filePath, string sourceText, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class Linter : ILinter
     {
+        private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
         private readonly IVisualLinterOptions _options;
-        private bool _isRunning;
 
         [ImportingConstructor]
         internal Linter([Import] IVisualLinterOptions options)
@@ -29,28 +31,50 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        public async Task LintAsync(ILinterProvider provider, string filePath)
+        public async Task LintAsync(ILinterProvider provider, string filePath, string sourceText, CancellationToken token)
         {
-            if (_isRunning)
-                return;
-
-            _isRunning = true;
-
             try
             {
-                var eslintPath = GetEslintPath(filePath);
-                OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
+                await _mutex.WaitAsync(token).ConfigureAwait(false);
 
-                await ExecAsync(provider, filePath, eslintPath)
-                    .ConfigureAwait(false);
+                try
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    var eslintPath = GetEslintPath(filePath);
+                    OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
+
+                    var result = await ExecuteProcessAsync(filePath, eslintPath, sourceText, token)
+                        .ConfigureAwait(false);
+
+                    token.ThrowIfCancellationRequested();
+
+                    if (null == result.NullIfEmpty())
+                        throw new Exception("warning: linter returned empty result");
+
+                    var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
+                    var messages = ProcessResults(results);
+
+                    token.ThrowIfCancellationRequested();
+
+                    provider.Accept(filePath, messages);
+                }
+                catch (OperationCanceledException)
+                { }
+                catch (Exception e)
+                {
+                    OutputWindowHelper.WriteLine(e.Message);
+                }
+                finally
+                {
+                    _mutex.Release();
+                }
             }
-            catch (Exception exception)
+            catch (OperationCanceledException)
+            { }
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(exception.Message);
-            }
-            finally
-            {
-                _isRunning = false;
+                OutputWindowHelper.WriteLine(e.Message);
             }
         }
 
@@ -64,43 +88,6 @@ namespace jwldnr.VisualLinter.Linting
         {
             return EslintHelper.GetPersonalConfigPath()
                 ?? throw new Exception("exception: no personal eslint config found");
-        }
-
-        private static void OnErrorDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
-        {
-            var result = e.Data;
-            if (null == result.NullIfEmpty())
-                return;
-
-            try
-            {
-                OutputWindowHelper.WriteLine(result);
-
-                provider.Accept(filePath, Enumerable.Empty<EslintMessage>());
-            }
-            catch (Exception exception)
-            {
-                OutputWindowHelper.WriteLine(exception.Message);
-            }
-        }
-
-        private static void OnOutputDataReceived(DataReceivedEventArgs e, ILinterProvider provider, string filePath)
-        {
-            var result = e.Data;
-            if (null == result.NullIfEmpty())
-                return;
-
-            try
-            {
-                var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
-                var messages = ProcessResults(results);
-
-                provider.Accept(filePath, messages);
-            }
-            catch (Exception exception)
-            {
-                OutputWindowHelper.WriteLine(exception.Message);
-            }
         }
 
         private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
@@ -123,46 +110,73 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private Task ExecAsync(ILinterProvider provider, string filePath, string eslintPath)
+        private async Task<string> ExecuteProcessAsync(string filePath, string eslintPath, string sourceText, CancellationToken token)
         {
-            var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
+            var arguments = $"{GetArguments(filePath)} --stdin";
 
             var startInfo = new ProcessStartInfo(eslintPath, arguments)
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
-                RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                StandardOutputEncoding = Encoding.UTF8,
-                StandardErrorEncoding = Encoding.UTF8
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                StandardErrorEncoding = Encoding.UTF8,
+                StandardOutputEncoding = Encoding.UTF8
             };
 
             var process = new Process { StartInfo = startInfo };
 
-            process.ErrorDataReceived += (sender, e) => OnErrorDataReceived(e, provider, filePath);
-            process.OutputDataReceived += (sender, e) => OnOutputDataReceived(e, provider, filePath);
+            string error = null;
+            string output = null;
 
-            return Task.Run(() =>
+            process.ErrorDataReceived += ErrorHandler;
+            process.OutputDataReceived += OutputHandler;
+
+            void ErrorHandler(object sender, DataReceivedEventArgs e)
             {
-                try
-                {
-                    if (false == process.Start())
-                        throw new Exception("exception: unable to start eslint process");
+                if (null != e.Data)
+                    error += e.Data;
+            }
 
-                    process.BeginErrorReadLine();
-                    process.BeginOutputReadLine();
+            void OutputHandler(object sender, DataReceivedEventArgs e)
+            {
+                if (null != e.Data)
+                    output += e.Data;
+            }
 
-                    process.WaitForExit();
-                }
-                catch (Exception exception)
+            try
+            {
+                token.ThrowIfCancellationRequested();
+
+                if (false == process.Start())
+                    throw new Exception("exception: unable to start eslint process");
+
+                using (var writer = new StreamWriter(process.StandardInput.BaseStream, Encoding.UTF8))
                 {
-                    OutputWindowHelper.WriteLine(exception.Message);
+                    await writer.WriteAsync(sourceText).ConfigureAwait(false);
                 }
-                finally
-                {
-                    process.Close();
-                }
-            });
+
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+
+                process.WaitForExit();
+
+                if (null != error.NullIfEmpty())
+                    throw new Exception(error);
+            }
+            catch (OperationCanceledException)
+            { }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+            finally
+            {
+                process.Close();
+            }
+
+            return output;
         }
 
         private string GetArguments(string filePath)

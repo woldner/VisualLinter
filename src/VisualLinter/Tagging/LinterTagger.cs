@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.Text.Tagging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -16,10 +18,11 @@ namespace jwldnr.VisualLinter.Tagging
 
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
-
+        private CancellationTokenSource _source;
         internal SnapshotFactory Factory { get; }
         internal string FilePath { get; private set; }
         internal LinterSnapshot Snapshot { get; set; }
+        private string SourceText => _currentSnapshot.GetText();
 
         internal LinterTagger(
             TaggerProvider provider,
@@ -60,9 +63,9 @@ namespace jwldnr.VisualLinter.Tagging
                     .Where(marker => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(marker.Span)))
                     .Select(marker => new TagSpan<IErrorTag>(marker.Span, new LinterTag(marker.Message)));
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(exception.Message);
+                OutputWindowHelper.WriteLine(e.Message);
             }
 
             return Enumerable.Empty<ITagSpan<IErrorTag>>();
@@ -90,12 +93,34 @@ namespace jwldnr.VisualLinter.Tagging
             };
         }
 
-        private void Analyze(string filePath)
+        private async Task Analyze(string filePath)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
 
-            _provider.Analyze(filePath);
+            Cancel();
+
+            _source = new CancellationTokenSource();
+
+            await _provider.Analyze(filePath, SourceText, _source.Token)
+                .ConfigureAwait(false);
+        }
+
+        private void Cancel()
+        {
+            try
+            {
+                _source?.Cancel();
+            }
+            catch (Exception e)
+            {
+                OutputWindowHelper.WriteLine(e.Message);
+            }
+            finally
+            {
+                _source?.Dispose();
+                _source = null;
+            }
         }
 
         private MessageMarker CreateMarker(EslintMessage message)
@@ -111,13 +136,13 @@ namespace jwldnr.VisualLinter.Tagging
             _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
-            _provider.AddTagger(this);
-
-            Analyze(FilePath);
+            _provider.AddTagger(this, () => Analyze(FilePath));
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
         {
+            Cancel();
+
             UpdateDirtySpans(e);
 
             var newSnapshot = TranslateWarningSpans();
@@ -125,16 +150,22 @@ namespace jwldnr.VisualLinter.Tagging
             SnapToNewSnapshot(newSnapshot);
         }
 
-        private void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
+        private async void OnFileActionOccurred(object sender, TextDocumentFileActionEventArgs e)
         {
-            if (0 != (e.FileActionType & FileActionTypes.DocumentRenamed))
+            switch (e.FileActionType)
             {
-                _provider.Rename(FilePath, e.FilePath);
-                FilePath = e.FilePath;
-            }
-            else if (0 != (e.FileActionType & FileActionTypes.ContentSavedToDisk))
-            {
-                Analyze(FilePath);
+                case FileActionTypes.ContentSavedToDisk:
+                case FileActionTypes.ContentLoadedFromDisk:
+                    await Analyze(FilePath).ConfigureAwait(false);
+                    break;
+
+                case FileActionTypes.DocumentRenamed:
+                    Rename(FilePath, e.FilePath);
+                    break;
+
+                default:
+                    OutputWindowHelper.WriteLine("warning: unrecognized file action type");
+                    break;
             }
         }
 
@@ -172,6 +203,13 @@ namespace jwldnr.VisualLinter.Tagging
 
                 yield return message;
             }
+        }
+
+        private void Rename(string oldPath, string newPath)
+        {
+            _provider.Rename(oldPath, newPath);
+
+            FilePath = newPath;
         }
 
         private void SnapToNewSnapshot(LinterSnapshot snapshot)

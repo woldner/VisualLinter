@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -20,14 +22,14 @@ namespace jwldnr.VisualLinter.Tagging
 
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
-    [ContentType("any")]
+    [ContentType("text")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, ILinterProvider, IDisposable
     {
         private readonly ILinter _linter;
         private readonly List<SinkManager> _managers = new List<SinkManager>();
-        private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>();
+        private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>(StringComparer.OrdinalIgnoreCase);
         private readonly TaggerManager _taggers = new TaggerManager();
 
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
@@ -79,9 +81,9 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 UpdateMessages(filePath, messages);
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(exception.Message);
+                OutputWindowHelper.WriteLine(e.Message);
             }
         }
 
@@ -110,13 +112,10 @@ namespace jwldnr.VisualLinter.Tagging
 
             lock (_taggers)
             {
-                if (false == _taggers.Exists(filePath))
-                    return new LinterTagger(this, buffer, document) as ITagger<T>;
+                if (_taggers.TryGetValue(filePath, out var tagger))
+                    return tagger as ITagger<T>;
 
-                if (false == _taggers.TryGetValue(filePath, out var tagger))
-                    return null;
-
-                return tagger as ITagger<T>;
+                return new LinterTagger(this, buffer, document) as ITagger<T>;
             }
         }
 
@@ -153,7 +152,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void AddTagger(LinterTagger tagger)
+        internal Task AddTagger(LinterTagger tagger, Func<Task> callback)
         {
             lock (_managers)
             {
@@ -162,9 +161,11 @@ namespace jwldnr.VisualLinter.Tagging
                 foreach (var manager in _managers)
                     manager.AddFactory(tagger.Factory);
             }
+
+            return callback();
         }
 
-        internal void Analyze(string filePath)
+        internal async Task Analyze(string filePath, string sourceText, CancellationToken token)
         {
             lock (_taggers)
             {
@@ -172,7 +173,8 @@ namespace jwldnr.VisualLinter.Tagging
                     return;
             }
 
-            _linter.LintAsync(this, filePath);
+            await _linter.LintAsync(this, filePath, sourceText, token)
+                .ConfigureAwait(false);
         }
 
         internal void RemoveSinkManager(SinkManager manager)
