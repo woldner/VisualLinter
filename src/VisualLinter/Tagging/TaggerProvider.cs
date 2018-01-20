@@ -53,10 +53,10 @@ namespace jwldnr.VisualLinter.Tagging
 
             _linter = linter;
 
-            _optionsMap.Add(".HTML", () => options.EnableHtmlLanguageSupport);
-            _optionsMap.Add(".JS", () => options.EnableJavaScriptLanguageSupport);
-            _optionsMap.Add(".JSX", () => options.EnableReactLanguageSupport);
-            _optionsMap.Add(".VUE", () => options.EnableVueLanguageSupport);
+            _optionsMap.Add(".html", () => options.EnableHtmlLanguageSupport);
+            _optionsMap.Add(".js", () => options.EnableJavaScriptLanguageSupport);
+            _optionsMap.Add(".jsx", () => options.EnableReactLanguageSupport);
+            _optionsMap.Add(".vue", () => options.EnableVueLanguageSupport);
 
             var columns = new[]
             {
@@ -112,10 +112,10 @@ namespace jwldnr.VisualLinter.Tagging
 
             lock (_taggers)
             {
-                if (false == _taggers.TryGetValue(filePath, out var tagger))
-                    return new LinterTagger(this, buffer, document) as ITagger<T>;
+                if (_taggers.TryGetValue(filePath, out var tagger))
+                    return tagger as ITagger<T>;
 
-                return tagger as ITagger<T>;
+                return new LinterTagger(this, buffer, document) as ITagger<T>;
             }
         }
 
@@ -152,7 +152,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void AddTagger(LinterTagger tagger)
+        internal Task AddTagger(LinterTagger tagger, Func<Task> callback)
         {
             lock (_managers)
             {
@@ -161,6 +161,8 @@ namespace jwldnr.VisualLinter.Tagging
                 foreach (var manager in _managers)
                     manager.AddFactory(tagger.Factory);
             }
+
+            return callback();
         }
 
         internal async Task Analyze(string filePath, string sourceText, CancellationToken token)

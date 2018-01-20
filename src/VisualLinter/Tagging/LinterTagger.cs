@@ -131,15 +131,12 @@ namespace jwldnr.VisualLinter.Tagging
             return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
-        // TODO async fire & forget, I know..
-        private async void Initialize()
+        private void Initialize()
         {
             _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
-            _provider.AddTagger(this);
-
-            await Analyze(FilePath).ConfigureAwait(false);
+            _provider.AddTagger(this, () => Analyze(FilePath));
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)

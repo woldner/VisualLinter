@@ -47,6 +47,8 @@ namespace jwldnr.VisualLinter.Linting
                     var result = await ExecuteProcessAsync(filePath, eslintPath, sourceText, token)
                         .ConfigureAwait(false);
 
+                    token.ThrowIfCancellationRequested();
+
                     if (null == result.NullIfEmpty())
                         throw new Exception("warning: linter returned empty result");
 
