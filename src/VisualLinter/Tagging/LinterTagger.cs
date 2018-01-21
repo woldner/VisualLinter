@@ -100,7 +100,8 @@ namespace jwldnr.VisualLinter.Tagging
 
             Cancel();
 
-            _source = new CancellationTokenSource();
+            var timeout = TimeSpan.FromSeconds(20);
+            _source = new CancellationTokenSource(timeout);
 
             await _provider.Analyze(filePath, sourceText, _source.Token)
                 .ConfigureAwait(false);
