@@ -94,18 +94,28 @@ namespace jwldnr.VisualLinter.Helpers
         private static string ResolveConfigPath(FileSystemInfo directory)
         {
             return SupportedConfigs
-                .Select(config => Path.Combine(directory.FullName, config))
+                .Select(config =>
+                    Path.Combine(directory.FullName, config))
                 .FirstOrDefault(File.Exists);
         }
 
         private static string ResolveEslintPath(DirectoryInfo directory)
         {
-            var directories = directory.EnumerateDirectories("node_modules", SearchOption.TopDirectoryOnly);
+            // todo optimize if this is what we want
+            var modulesPath = directory
+                .EnumerateDirectories("node_modules", SearchOption.TopDirectoryOnly);
 
-            return directories
-                .Select(subDirectory => subDirectory.EnumerateFiles(ExecutableName, SearchOption.AllDirectories))
-                .Select(executables => executables.FirstOrDefault()?.FullName)
+            var binPath = modulesPath
+                .Select(dir =>
+                    dir.EnumerateDirectories(".bin", SearchOption.TopDirectoryOnly))
                 .FirstOrDefault();
+
+            var executables = binPath?.Select(dir =>
+                dir.EnumerateFiles(ExecutableName, SearchOption.TopDirectoryOnly));
+
+            var executable = executables?.Select(file => file.FirstOrDefault()?.FullName);
+
+            return executable?.FirstOrDefault();
         }
 
         private static string ResolveIgnorePath(DirectoryInfo directory)
