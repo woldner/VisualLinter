@@ -59,7 +59,7 @@ namespace jwldnr.VisualLinter.Linting
                     }
                     catch (Exception e)
                     {
-                        OutputWindowHelper.WriteLine($"exception: there was an error trying to deserialize the result: {result}");
+                        OutputWindowHelper.WriteLine($"exception: error trying to deserialize result: {result}");
                         OutputWindowHelper.WriteLine(e.Message);
                     }
 
