@@ -22,7 +22,6 @@ namespace jwldnr.VisualLinter.Tagging
         internal SnapshotFactory Factory { get; }
         internal string FilePath { get; private set; }
         internal LinterSnapshot Snapshot { get; set; }
-        private string SourceText => _currentSnapshot.GetText();
 
         internal LinterTagger(
             TaggerProvider provider,
@@ -93,7 +92,7 @@ namespace jwldnr.VisualLinter.Tagging
             };
         }
 
-        private async Task Analyze(string filePath, string sourceText)
+        private async Task Analyze(string filePath)
         {
             if (null == VsixHelper.GetProjectItem(filePath))
                 return;
@@ -102,7 +101,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             _source = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
-            await _provider.Analyze(filePath, sourceText, _source.Token)
+            await _provider.Analyze(filePath, _source.Token)
                 .ConfigureAwait(false);
         }
 
@@ -136,7 +135,7 @@ namespace jwldnr.VisualLinter.Tagging
             _document.FileActionOccurred += OnFileActionOccurred;
             _buffer.ChangedLowPriority += OnBufferChange;
 
-            _provider.AddTagger(this, () => Analyze(FilePath, SourceText));
+            _provider.AddTagger(this, () => Analyze(FilePath));
         }
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
@@ -156,7 +155,7 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 case FileActionTypes.ContentSavedToDisk:
                 case FileActionTypes.ContentLoadedFromDisk:
-                    await Analyze(FilePath, SourceText).ConfigureAwait(false);
+                    await Analyze(FilePath).ConfigureAwait(false);
                     break;
 
                 case FileActionTypes.DocumentRenamed:

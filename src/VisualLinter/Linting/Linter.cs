@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,7 +14,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(ILinterProvider provider, string filePath, string sourceText, CancellationToken token);
+        Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
@@ -31,7 +30,7 @@ namespace jwldnr.VisualLinter.Linting
             _options = options;
         }
 
-        public async Task LintAsync(ILinterProvider provider, string filePath, string sourceText, CancellationToken token)
+        public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
         {
             try
             {
@@ -44,7 +43,7 @@ namespace jwldnr.VisualLinter.Linting
                     var eslintPath = GetEslintPath(filePath);
                     OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                    var result = await ExecuteProcessAsync(filePath, eslintPath, sourceText, token)
+                    var result = await RunAsync(filePath, eslintPath, token)
                         .ConfigureAwait(false);
 
                     token.ThrowIfCancellationRequested();
@@ -119,75 +118,6 @@ namespace jwldnr.VisualLinter.Linting
             return null != result
                 ? ProcessMessages(result.Messages)
                 : Enumerable.Empty<EslintMessage>();
-        }
-
-        private async Task<string> ExecuteProcessAsync(string filePath, string eslintPath, string sourceText, CancellationToken token)
-        {
-            var arguments = $"{GetArguments(filePath)} --stdin";
-
-            var startInfo = new ProcessStartInfo(eslintPath, arguments)
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                StandardErrorEncoding = Encoding.UTF8,
-                StandardOutputEncoding = Encoding.UTF8
-            };
-
-            var process = new Process { StartInfo = startInfo };
-
-            string error = null;
-            string output = null;
-
-            process.ErrorDataReceived += ErrorHandler;
-            process.OutputDataReceived += OutputHandler;
-
-            void ErrorHandler(object sender, DataReceivedEventArgs e)
-            {
-                if (null != e.Data)
-                    error += e.Data;
-            }
-
-            void OutputHandler(object sender, DataReceivedEventArgs e)
-            {
-                if (null != e.Data)
-                    output += e.Data;
-            }
-
-            try
-            {
-                token.ThrowIfCancellationRequested();
-
-                if (false == process.Start())
-                    throw new Exception("exception: unable to start eslint process");
-
-                using (var writer = new StreamWriter(process.StandardInput.BaseStream, Encoding.UTF8))
-                {
-                    await writer.WriteAsync(sourceText).ConfigureAwait(false);
-                }
-
-                process.BeginErrorReadLine();
-                process.BeginOutputReadLine();
-
-                process.WaitForExit();
-
-                if (false == string.IsNullOrEmpty(error))
-                    throw new Exception(error);
-            }
-            catch (OperationCanceledException)
-            { }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-            finally
-            {
-                process.Close();
-            }
-
-            return output;
         }
 
         private string GetArguments(string filePath)
@@ -278,6 +208,72 @@ namespace jwldnr.VisualLinter.Linting
                 throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
 
             return _options.EslintOverridePath;
+        }
+
+        private Task<string> RunAsync(string filePath, string eslintPath, CancellationToken token)
+        {
+            return Task.Run(() =>
+            {
+                var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
+
+                var startInfo = new ProcessStartInfo(eslintPath, arguments)
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    StandardErrorEncoding = Encoding.UTF8,
+                    StandardOutputEncoding = Encoding.UTF8
+                };
+
+                var process = new Process { StartInfo = startInfo };
+
+                string error = null;
+                string output = null;
+
+                process.ErrorDataReceived += ErrorHandler;
+                process.OutputDataReceived += OutputHandler;
+
+                void ErrorHandler(object sender, DataReceivedEventArgs e)
+                {
+                    if (null != e.Data)
+                        error += e.Data;
+                }
+
+                void OutputHandler(object sender, DataReceivedEventArgs e)
+                {
+                    if (null != e.Data)
+                        output += e.Data;
+                }
+
+                try
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    if (false == process.Start())
+                        throw new Exception("exception: unable to start eslint process");
+
+                    process.BeginErrorReadLine();
+                    process.BeginOutputReadLine();
+
+                    process.WaitForExit();
+
+                    if (false == string.IsNullOrEmpty(error))
+                        throw new Exception(error);
+                }
+                catch (OperationCanceledException)
+                { }
+                catch (Exception e)
+                {
+                    OutputWindowHelper.WriteLine(e.Message);
+                }
+                finally
+                {
+                    process.Close();
+                }
+
+                return output;
+            }, token);
         }
     }
 }

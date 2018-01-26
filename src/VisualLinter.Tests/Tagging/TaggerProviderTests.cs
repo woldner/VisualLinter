@@ -146,14 +146,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(d => d.FilePath)
                 .Returns(filePath);
 
-            var mockTextSnapshot = new Mock<ITextSnapshot>();
-            var textSnapshot = mockTextSnapshot.Object;
-
             var mockTextBuffer = new Mock<ITextBuffer>();
-            mockTextBuffer
-                .Setup(b => b.CurrentSnapshot)
-                .Returns(textSnapshot);
-
             var textBuffer = mockTextBuffer.Object;
 
             var mockTextDataModel = new Mock<ITextDataModel>();
