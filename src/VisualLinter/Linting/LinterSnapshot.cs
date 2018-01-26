@@ -96,6 +96,7 @@ namespace jwldnr.VisualLinter.Linting
                 case StandardTableKeyNames.ProjectName:
                     if (string.IsNullOrEmpty(_projectName))
                         _projectName = VsixHelper.GetProjectName(_filePath);
+
                     content = _projectName;
                     return null != content;
 

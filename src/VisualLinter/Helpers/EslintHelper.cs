@@ -110,10 +110,13 @@ namespace jwldnr.VisualLinter.Helpers
                     dir.EnumerateDirectories(".bin", SearchOption.TopDirectoryOnly))
                 .FirstOrDefault();
 
-            var executables = binPath?.Select(dir =>
-                dir.EnumerateFiles(ExecutableName, SearchOption.TopDirectoryOnly));
+            var executables = binPath?
+                .Select(dir =>
+                    dir.EnumerateFiles(ExecutableName, SearchOption.TopDirectoryOnly));
 
-            var executable = executables?.Select(file => file.FirstOrDefault()?.FullName);
+            var executable = executables?
+                .Select(file =>
+                    file.FirstOrDefault()?.FullName);
 
             return executable?.FirstOrDefault();
         }
