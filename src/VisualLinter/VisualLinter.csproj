@@ -58,7 +58,6 @@
     <Compile Include="Helpers\RegexHelper.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
-    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Linting\Linter.cs" />
     <Compile Include="Linting\EslintMessage.cs" />

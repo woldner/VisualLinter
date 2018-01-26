@@ -49,8 +49,8 @@ namespace jwldnr.VisualLinter.Linting
 
                     token.ThrowIfCancellationRequested();
 
-                    if (null == result.NullIfEmpty())
-                        throw new Exception("warning: linter returned empty result");
+                    if (string.IsNullOrEmpty(result))
+                        throw new Exception("exception: linter returned empty result");
 
                     var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
                     var messages = ProcessResults(results);
@@ -162,7 +162,7 @@ namespace jwldnr.VisualLinter.Linting
 
                 process.WaitForExit();
 
-                if (null != error.NullIfEmpty())
+                if (false == string.IsNullOrEmpty(error))
                     throw new Exception(error);
             }
             catch (OperationCanceledException)
@@ -191,7 +191,7 @@ namespace jwldnr.VisualLinter.Linting
                 return arguments;
 
             var ignorePath = GetIgnorePath(filePath);
-            if (null == ignorePath.NullIfEmpty())
+            if (string.IsNullOrEmpty(ignorePath))
                 return arguments;
 
             OutputWindowHelper.DebugLine($"using .eslintignore @ {ignorePath}");
@@ -241,26 +241,32 @@ namespace jwldnr.VisualLinter.Linting
 
         private string GetOverrideEslintConfigPath()
         {
-            OutputWindowHelper.DebugLine($"EslintConfigOverridePath: {_options.EslintConfigOverridePath.NullIfEmpty() ?? "null"}");
+            OutputWindowHelper.DebugLine($"EslintConfigOverridePath: {_options.EslintConfigOverridePath ?? "null"}");
 
-            return _options.EslintConfigOverridePath.NullIfEmpty()
-                ?? throw new Exception("exception: option 'Override .eslintignore path' is set to true-- but no path is set");
+            if (string.IsNullOrEmpty(_options.EslintConfigOverridePath))
+                throw new Exception("exception: option 'Override .eslintignore path' is set to true-- but no path is set");
+
+            return _options.EslintConfigOverridePath;
         }
 
         private string GetOverrideEslintIgnorePath()
         {
-            OutputWindowHelper.DebugLine($"EslintIgnoreOverridePath: {_options.EslintIgnoreOverridePath.NullIfEmpty() ?? "null"}");
+            OutputWindowHelper.DebugLine($"EslintIgnoreOverridePath: {_options.EslintIgnoreOverridePath ?? "null"}");
 
-            return _options.EslintIgnoreOverridePath.NullIfEmpty()
-                ?? throw new Exception("exception: option 'Override ESLint config path' is set to true-- but no path is set");
+            if (string.IsNullOrEmpty(_options.EslintIgnoreOverridePath))
+                throw new Exception("exception: option 'Override ESLint config path' is set to true-- but no path is set");
+
+            return _options.EslintIgnoreOverridePath;
         }
 
         private string GetOverrideEslintPath()
         {
-            OutputWindowHelper.DebugLine($"EslintOverridePath: {_options.EslintOverridePath.NullIfEmpty() ?? "null"}");
+            OutputWindowHelper.DebugLine($"EslintOverridePath: {_options.EslintOverridePath ?? "null"}");
 
-            return _options.EslintOverridePath.NullIfEmpty()
-                ?? throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
+            if (string.IsNullOrEmpty(_options.EslintOverridePath))
+                throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
+
+            return _options.EslintOverridePath;
         }
     }
 }
