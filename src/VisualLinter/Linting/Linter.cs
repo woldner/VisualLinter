@@ -43,23 +43,27 @@ namespace jwldnr.VisualLinter.Linting
                     var eslintPath = GetEslintPath(filePath);
                     OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
 
-                    var result = await RunAsync(filePath, eslintPath, token)
+                    var output = await RunAsync(filePath, eslintPath, token)
                         .ConfigureAwait(false);
 
                     token.ThrowIfCancellationRequested();
 
-                    if (string.IsNullOrEmpty(result))
+                    if (string.IsNullOrEmpty(output))
                         throw new Exception("exception: linter returned empty result");
 
                     IEnumerable<EslintResult> results = new List<EslintResult>();
 
                     try
                     {
-                        results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
+                        results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(output);
                     }
                     catch (Exception e)
                     {
-                        OutputWindowHelper.WriteLine($"exception: error trying to deserialize result: {result}");
+                        OutputWindowHelper.WriteLine(
+                            "exception: error trying to deserialize output:" +
+                            Environment.NewLine +
+                            output);
+
                         OutputWindowHelper.WriteLine(e.Message);
                     }
 
