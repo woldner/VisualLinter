@@ -52,7 +52,18 @@ namespace jwldnr.VisualLinter.Linting
                     if (string.IsNullOrEmpty(result))
                         throw new Exception("exception: linter returned empty result");
 
-                    var results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
+                    IEnumerable<EslintResult> results = new List<EslintResult>();
+
+                    try
+                    {
+                        results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(result);
+                    }
+                    catch (Exception e)
+                    {
+                        OutputWindowHelper.WriteLine($"exception: there was an error trying to deserialize the result: {result}");
+                        OutputWindowHelper.WriteLine(e.Message);
+                    }
+
                     var messages = ProcessResults(results);
 
                     token.ThrowIfCancellationRequested();
