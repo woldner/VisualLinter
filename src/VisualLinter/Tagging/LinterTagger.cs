@@ -99,7 +99,7 @@ namespace jwldnr.VisualLinter.Tagging
 
             Cancel();
 
-            _source = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            _source = new CancellationTokenSource(/*TimeSpan.FromSeconds(10)*/);
 
             await _provider.Analyze(filePath, _source.Token)
                 .ConfigureAwait(false);

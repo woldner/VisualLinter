@@ -15,7 +15,9 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal RelayCommand(Action execute, Func<bool> canExecute)
         {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _execute = execute ??
+                throw new ArgumentNullException(nameof(execute));
+
             _canExecute = canExecute;
         }
 
@@ -47,7 +49,9 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal RelayCommand(Action<T> execute, Func<T, bool> canExecute)
         {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _execute = execute ??
+                throw new ArgumentNullException(nameof(execute));
+
             _canExecute = canExecute;
         }
 

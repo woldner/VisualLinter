@@ -21,7 +21,8 @@ namespace jwldnr.VisualLinter.Helpers
 
         private static bool ProcessMatch(string value, string pattern)
         {
-            var result = Regex.Match(value, pattern)
+            var result = Regex
+                .Match(value, pattern)
                 .Success;
 
             if (result)

@@ -15,8 +15,8 @@ namespace jwldnr.VisualLinter.ViewModels
 
         protected ViewModelBase()
         {
-            Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("exception: unable to retrieve options");
+            Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>() ??
+                throw new Exception("exception: unable to retrieve options");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

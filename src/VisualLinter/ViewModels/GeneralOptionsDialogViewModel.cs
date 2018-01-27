@@ -61,7 +61,8 @@ namespace jwldnr.VisualLinter.ViewModels
 
         public ICommand SuggestNewFeaturesCommand
         {
-            get => _suggestNewFeaturesCommand ?? (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
+            get => _suggestNewFeaturesCommand ??
+                (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
             set => _suggestNewFeaturesCommand = value;
         }
 

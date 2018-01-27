@@ -7,8 +7,8 @@ namespace jwldnr.VisualLinter.Views
     /// </summary>
     public partial class GeneralOptionsDialogPageControl
     {
-        internal GeneralOptionsDialogViewModel ViewModel = _viewModel
-            ?? (_viewModel = new GeneralOptionsDialogViewModel());
+        internal GeneralOptionsDialogViewModel ViewModel = _viewModel ??
+            (_viewModel = new GeneralOptionsDialogViewModel());
 
         private static GeneralOptionsDialogViewModel _viewModel;
 

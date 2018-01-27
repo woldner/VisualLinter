@@ -64,22 +64,22 @@ namespace jwldnr.VisualLinter.ViewModels
 
         public ICommand BrowseEslintConfigFileCommand
         {
-            get => _browseEslintConfigFileCommand
-                ?? (_browseEslintConfigFileCommand = new RelayCommand(BrowseEslintConfigFile));
+            get => _browseEslintConfigFileCommand ??
+                (_browseEslintConfigFileCommand = new RelayCommand(BrowseEslintConfigFile));
             set => _browseEslintConfigFileCommand = value;
         }
 
         public ICommand BrowseEslintFileCommand
         {
-            get => _browseEslintFileCommand
-                ?? (_browseEslintFileCommand = new RelayCommand(BrowseEslintFile));
+            get => _browseEslintFileCommand ??
+                (_browseEslintFileCommand = new RelayCommand(BrowseEslintFile));
             set => _browseEslintFileCommand = value;
         }
 
         public ICommand BrowseEslintIgnoreFileCommand
         {
-            get => _browseEslintIgnoreConfigFileCommand
-                ?? (_browseEslintIgnoreConfigFileCommand = new RelayCommand(BrowseEslintIgnoreFile));
+            get => _browseEslintIgnoreConfigFileCommand ??
+                (_browseEslintIgnoreConfigFileCommand = new RelayCommand(BrowseEslintIgnoreFile));
             set => _browseEslintIgnoreConfigFileCommand = value;
         }
 
@@ -176,8 +176,10 @@ namespace jwldnr.VisualLinter.ViewModels
         private void BrowseEslintConfigFile()
         {
             const string filter = "(*.js, *.yaml, *.yml, *.json, *.eslintrc)|*.cmd;*.exe;*.yaml;*.yml;*.json;*.eslintrc";
-            var initialDirectory = Path.GetDirectoryName(EslintConfigOverridePath)
-                ?? EnvironmentHelper.GetUserDirectoryPath();
+
+            var initialDirectory = string.IsNullOrEmpty(EslintConfigOverridePath)
+                ? EnvironmentHelper.GetUserDirectoryPath()
+                : Path.GetDirectoryName(EslintConfigOverridePath);
 
             var value = GetDialogValue(filter, initialDirectory);
             if (null == value)
@@ -189,8 +191,10 @@ namespace jwldnr.VisualLinter.ViewModels
         private void BrowseEslintFile()
         {
             const string filter = "(*.cmd, *.exe)|*.cmd;*.exe";
-            var initialDirectory = Path.GetDirectoryName(EslintOverridePath)
-                ?? EnvironmentHelper.GetUserDirectoryPath();
+
+            var initialDirectory = string.IsNullOrEmpty(EslintOverridePath)
+                ? EnvironmentHelper.GetUserDirectoryPath()
+                : Path.GetDirectoryName(EslintOverridePath);
 
             var value = GetDialogValue(filter, initialDirectory);
             if (null == value)
@@ -202,8 +206,10 @@ namespace jwldnr.VisualLinter.ViewModels
         private void BrowseEslintIgnoreFile()
         {
             const string filter = "(*.eslintignore)|*.eslintignore";
-            var initialDirectory = Path.GetDirectoryName(EslintIgnoreOverridePath)
-                ?? EnvironmentHelper.GetUserDirectoryPath();
+
+            var initialDirectory = string.IsNullOrEmpty(EslintIgnoreOverridePath)
+                ? EnvironmentHelper.GetUserDirectoryPath()
+                : Path.GetDirectoryName(EslintIgnoreOverridePath);
 
             var value = GetDialogValue(filter, initialDirectory);
             if (null == value)
