@@ -42,6 +42,7 @@
                     Grid.Column="0"
                     Padding="2"
                     Margin="5, 0, 0, 5"
+                    IsReadOnly="True"
                     Text="{Binding EslintOverridePath}" />
 
                 <Button
@@ -70,6 +71,7 @@
                     Grid.Column="0"
                     Padding="2"
                     Margin="5, 0, 0, 5"
+                    IsReadOnly="True"
                     Text="{Binding EslintConfigOverridePath}" />
 
                 <Button
@@ -98,6 +100,7 @@
                     Grid.Column="0"
                     Padding="2"
                     Margin="5, 0, 0, 5"
+                    IsReadOnly="True"
                     Text="{Binding EslintIgnoreOverridePath}" />
 
                 <Button

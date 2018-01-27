@@ -55,7 +55,7 @@ namespace jwldnr.VisualLinter.Helpers
 
                 OutputWindowHelper.DebugLine($"using override eslint config @ {overridePath}");
 
-                return overridePath;
+                return ValidateOverridePath(overridePath);
             }
 
             OutputWindowHelper.DebugLine($"UsePersonalConfig: {Options.UsePersonalConfig}");
@@ -92,7 +92,7 @@ namespace jwldnr.VisualLinter.Helpers
 
                 OutputWindowHelper.DebugLine($"using override eslint @ {overridePath}");
 
-                return overridePath;
+                return ValidateOverridePath(overridePath);
             }
 
             OutputWindowHelper.DebugLine($"UseGlobalEslint: {Options.UseGlobalEslint}");
@@ -139,7 +139,7 @@ namespace jwldnr.VisualLinter.Helpers
 
                 OutputWindowHelper.DebugLine($"using override eslint ignore @ {overridePath}");
 
-                return overridePath;
+                return ValidateOverridePath(overridePath);
             }
 
             // resolve eslint ignore path
@@ -280,6 +280,14 @@ namespace jwldnr.VisualLinter.Helpers
                 .EnumerateFiles(".eslintignore", SearchOption.TopDirectoryOnly)
                 .FirstOrDefault()?
                 .FullName;
+        }
+
+        private static string ValidateOverridePath(string filePath)
+        {
+            if (false == File.Exists(filePath))
+                throw new FileNotFoundException($"exception: could not find file '{filePath}'");
+
+            return filePath;
         }
     }
 }
