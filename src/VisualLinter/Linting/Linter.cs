@@ -38,7 +38,7 @@ namespace jwldnr.VisualLinter.Linting
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
                     var eslintPath = EslintHelper.GetEslintPath(directoryPath);
-                    var arguments = EslintHelper.GetArguments(directoryPath);
+                    var arguments = string.Join(" ", QuoteArgument(filePath), EslintHelper.GetArguments(directoryPath));
 
                     var output = await RunAsync(eslintPath, arguments, token)
                         .ConfigureAwait(false);
@@ -109,6 +109,8 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
+        private static string QuoteArgument(string argument) => $"\"{argument}\"";
+
         private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
         {
             return Task.Run(() =>
@@ -145,7 +147,7 @@ namespace jwldnr.VisualLinter.Linting
 
                 try
                 {
-                    token.ThrowIfCancellationRequested();
+                    //token.ThrowIfCancellationRequested();
 
                     if (false == process.Start())
                         throw new Exception("exception: unable to start eslint process");

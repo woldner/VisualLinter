@@ -29,15 +29,18 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetArguments(string directoryPath)
         {
-            var args = new Dictionary<string, string> { { "format", "json" } };
+            var arguments = new Dictionary<string, string> { { "format", "json" } };
 
             var configPath = GetConfigPath(directoryPath);
-            args.Add("config", configPath);
+            arguments.Add("config", configPath);
 
             var ignorePath = GetIgnorePath(directoryPath);
-            args.Add("ignore-path", ignorePath);
+            if (string.IsNullOrEmpty(ignorePath))
+                return FormatArguments(arguments);
 
-            return string.Join(" ", args.Select(arg => $"--{arg.Key}=\"{arg.Value}\""));
+            arguments.Add("ignore-path", ignorePath);
+
+            return FormatArguments(arguments);
         }
 
         internal static string GetConfigPath(string directoryPath)
@@ -64,6 +67,8 @@ namespace jwldnr.VisualLinter.Helpers
                     throw new Exception("exception: no personal eslint config found");
 
                 OutputWindowHelper.DebugLine($"using personal eslint config @ {globalPath}");
+
+                return globalPath;
             }
 
             // resolve local eslint config
@@ -118,7 +123,11 @@ namespace jwldnr.VisualLinter.Helpers
 
             // disable eslint ignore
             if (Options.DisableIgnorePath)
-                return string.Empty;
+            {
+                OutputWindowHelper.DebugLine("not using eslint ignore");
+
+                return null;
+            }
 
             OutputWindowHelper.DebugLine($"ShouldOverrideEslintIgnore: {Options.ShouldOverrideEslintIgnore}");
 
@@ -141,7 +150,7 @@ namespace jwldnr.VisualLinter.Helpers
 
             var path = FindRecursive(workingDirectory, solutionPath, ResolveIgnorePath);
 
-            OutputWindowHelper.DebugLine($"using eslint ignore @ {path ?? "null"}");
+            OutputWindowHelper.DebugLine($"using eslint ignore @ {path ?? "not found"}");
 
             return path;
         }
@@ -162,6 +171,11 @@ namespace jwldnr.VisualLinter.Helpers
             } while (-1 != workingDirectory.FullName.IndexOf(end, StringComparison.OrdinalIgnoreCase));
 
             return null;
+        }
+
+        private static string FormatArguments(IReadOnlyDictionary<string, string> arguments)
+        {
+            return string.Join(" ", arguments.Select(arg => $"--{arg.Key}=\"{arg.Value}\""));
         }
 
         private static string GetGlobalEslintPath()
