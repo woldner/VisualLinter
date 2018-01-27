@@ -10,13 +10,13 @@ namespace jwldnr.VisualLinter.Helpers
         private static readonly IVisualLinterOptions Options;
         private static IVsOutputWindowPane _outputWindowPane;
 
-        private static IVsOutputWindowPane OutputWindowPane => _outputWindowPane
-            ?? (_outputWindowPane = GetOutputWindowPane());
+        private static IVsOutputWindowPane OutputWindowPane => _outputWindowPane ??
+            (_outputWindowPane = GetOutputWindowPane());
 
         static OutputWindowHelper()
         {
-            Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>()
-                ?? throw new Exception("exception: unable to retrieve options");
+            Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>() ??
+                throw new Exception("exception: unable to retrieve options");
         }
 
         internal static void DebugLine(object message)

@@ -7,8 +7,8 @@ namespace jwldnr.VisualLinter.Views
     /// </summary>
     public partial class AdvancedOptionsDialogPageControl
     {
-        internal AdvancedOptionsDialogViewModel ViewModel = _viewModel
-            ?? (_viewModel = new AdvancedOptionsDialogViewModel());
+        internal AdvancedOptionsDialogViewModel ViewModel = _viewModel ??
+            (_viewModel = new AdvancedOptionsDialogViewModel());
 
         private static AdvancedOptionsDialogViewModel _viewModel;
 
