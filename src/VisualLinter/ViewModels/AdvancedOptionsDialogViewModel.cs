@@ -185,9 +185,6 @@ namespace jwldnr.VisualLinter.ViewModels
             if (null == value)
                 return;
 
-            if (false == File.Exists(value))
-                throw new FileNotFoundException(value);
-
             EslintConfigOverridePath = value;
         }
 
@@ -203,9 +200,6 @@ namespace jwldnr.VisualLinter.ViewModels
             if (null == value)
                 return;
 
-            if (false == File.Exists(value))
-                throw new FileNotFoundException(value);
-
             EslintOverridePath = value;
         }
 
@@ -220,9 +214,6 @@ namespace jwldnr.VisualLinter.ViewModels
             var value = GetDialogValue(filter, initialDirectory);
             if (null == value)
                 return;
-
-            if (false == File.Exists(value))
-                throw new FileNotFoundException(value);
 
             EslintIgnoreOverridePath = value;
         }
