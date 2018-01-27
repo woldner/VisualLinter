@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,13 +23,6 @@ namespace jwldnr.VisualLinter.Linting
     internal class Linter : ILinter
     {
         private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
-        private readonly IVisualLinterOptions _options;
-
-        [ImportingConstructor]
-        internal Linter([Import] IVisualLinterOptions options)
-        {
-            _options = options;
-        }
 
         public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
         {
@@ -40,9 +34,13 @@ namespace jwldnr.VisualLinter.Linting
                 {
                     token.ThrowIfCancellationRequested();
 
-                    var eslintPath = EslintHelper.GetEslintPath(filePath);
+                    var directoryPath = Path.GetDirectoryName(filePath) ??
+                        throw new Exception($"exception: could not get directory for file {filePath}");
 
-                    var output = await RunAsync(filePath, eslintPath, token)
+                    var eslintPath = EslintHelper.GetEslintPath(directoryPath);
+                    var arguments = EslintHelper.GetArguments(directoryPath);
+
+                    var output = await RunAsync(eslintPath, arguments, token)
                         .ConfigureAwait(false);
 
                     token.ThrowIfCancellationRequested();
@@ -90,11 +88,6 @@ namespace jwldnr.VisualLinter.Linting
                 OutputWindowHelper.WriteLine(e.Message);
             }
         }
-        private static string GetPersonalConfigPath()
-        {
-            return EslintHelper.GetPersonalConfigPath() ??
-                throw new Exception("exception: no personal eslint config found");
-        }
 
         private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
         {
@@ -116,76 +109,10 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private string GetArguments(string filePath)
-        {
-            var configPath = GetConfigPath(filePath);
-            OutputWindowHelper.DebugLine($"using eslint configuration @ {configPath}");
-
-            var arguments = $"--format=\"json\" --config=\"{configPath}\"";
-
-            OutputWindowHelper.DebugLine($"DisableIgnorePath: {_options.DisableIgnorePath}");
-            if (_options.DisableIgnorePath)
-                return arguments;
-
-            var ignorePath = GetIgnorePath(filePath);
-            if (string.IsNullOrEmpty(ignorePath))
-                return arguments;
-
-            OutputWindowHelper.DebugLine($"using .eslintignore @ {ignorePath}");
-            return $"{arguments} --ignore-path=\"{ignorePath}\"";
-        }
-
-        private string GetConfigPath(string filePath)
-        {
-            OutputWindowHelper.DebugLine($"ShouldOverrideEslintConfig: {_options.ShouldOverrideEslintConfig}");
-
-            if (_options.ShouldOverrideEslintConfig)
-                return GetOverrideEslintConfigPath();
-
-            OutputWindowHelper.DebugLine($"UsePersonalConfig: {_options.UsePersonalConfig}");
-
-            if (_options.UsePersonalConfig)
-                return GetPersonalConfigPath();
-
-            return EslintHelper.GetLocalConfigPath(filePath) ??
-                throw new Exception("exception: no local eslint config found");
-        }
-
-        private string GetIgnorePath(string filePath)
-        {
-            OutputWindowHelper.DebugLine($"ShouldOverrideEslintIgnore: {_options.ShouldOverrideEslintIgnore}");
-
-            return _options.ShouldOverrideEslintIgnore
-                ? GetOverrideEslintIgnorePath()
-                : EslintHelper.GetIgnorePath(filePath);
-        }
-
-        private string GetOverrideEslintConfigPath()
-        {
-            OutputWindowHelper.DebugLine($"EslintConfigOverridePath: {_options.EslintConfigOverridePath ?? "null"}");
-
-            if (string.IsNullOrEmpty(_options.EslintConfigOverridePath))
-                throw new Exception("exception: option 'Override .eslintignore path' is set to true-- but no path is set");
-
-            return _options.EslintConfigOverridePath;
-        }
-
-        private string GetOverrideEslintIgnorePath()
-        {
-            OutputWindowHelper.DebugLine($"EslintIgnoreOverridePath: {_options.EslintIgnoreOverridePath ?? "null"}");
-
-            if (string.IsNullOrEmpty(_options.EslintIgnoreOverridePath))
-                throw new Exception("exception: option 'Override ESLint config path' is set to true-- but no path is set");
-
-            return _options.EslintIgnoreOverridePath;
-        }
-
-        private Task<string> RunAsync(string filePath, string eslintPath, CancellationToken token)
+        private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
         {
             return Task.Run(() =>
             {
-                var arguments = $"{GetArguments(filePath)} \"{filePath}\"";
-
                 var startInfo = new ProcessStartInfo(eslintPath, arguments)
                 {
                     CreateNoWindow = true,
