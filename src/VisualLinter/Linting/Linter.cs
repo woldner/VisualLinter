@@ -40,8 +40,7 @@ namespace jwldnr.VisualLinter.Linting
                 {
                     token.ThrowIfCancellationRequested();
 
-                    var eslintPath = GetEslintPath(filePath);
-                    OutputWindowHelper.DebugLine($"using eslint @ {eslintPath}");
+                    var eslintPath = EslintHelper.GetEslintPath(filePath);
 
                     var output = await RunAsync(filePath, eslintPath, token)
                         .ConfigureAwait(false);
@@ -91,13 +90,6 @@ namespace jwldnr.VisualLinter.Linting
                 OutputWindowHelper.WriteLine(e.Message);
             }
         }
-
-        private static string GetGlobalEslintPath()
-        {
-            return EslintHelper.GetGlobalEslintPath() ??
-                throw new Exception("exception: no global eslint found-- is eslint installed globally?");
-        }
-
         private static string GetPersonalConfigPath()
         {
             return EslintHelper.GetPersonalConfigPath() ??
@@ -159,22 +151,6 @@ namespace jwldnr.VisualLinter.Linting
                 throw new Exception("exception: no local eslint config found");
         }
 
-        private string GetEslintPath(string filePath)
-        {
-            OutputWindowHelper.DebugLine($"ShouldOverrideEslint: {_options.ShouldOverrideEslint}");
-
-            if (_options.ShouldOverrideEslint)
-                return GetOverrideEslintPath();
-
-            OutputWindowHelper.DebugLine($"UseGlobalEslint: {_options.UseGlobalEslint}");
-
-            if (_options.UseGlobalEslint)
-                return GetGlobalEslintPath();
-
-            return EslintHelper.GetLocalEslintPath(filePath) ??
-                throw new Exception("exception: no local eslint found-- is eslint installed locally?");
-        }
-
         private string GetIgnorePath(string filePath)
         {
             OutputWindowHelper.DebugLine($"ShouldOverrideEslintIgnore: {_options.ShouldOverrideEslintIgnore}");
@@ -202,16 +178,6 @@ namespace jwldnr.VisualLinter.Linting
                 throw new Exception("exception: option 'Override ESLint config path' is set to true-- but no path is set");
 
             return _options.EslintIgnoreOverridePath;
-        }
-
-        private string GetOverrideEslintPath()
-        {
-            OutputWindowHelper.DebugLine($"EslintOverridePath: {_options.EslintOverridePath ?? "null"}");
-
-            if (string.IsNullOrEmpty(_options.EslintOverridePath))
-                throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
-
-            return _options.EslintOverridePath;
         }
 
         private Task<string> RunAsync(string filePath, string eslintPath, CancellationToken token)

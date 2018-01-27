@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Microsoft.VisualStudio.Shell;
 
 namespace jwldnr.VisualLinter.Helpers
 {
     internal static class EslintHelper
     {
+        private static readonly IVisualLinterOptions Options;
+
         private const string ExecutableName = "eslint.cmd";
         private const string VariableName = "eslint";
 
@@ -18,10 +21,64 @@ namespace jwldnr.VisualLinter.Helpers
             ".eslintrc"
         };
 
-        internal static string GetGlobalEslintPath()
+        static EslintHelper()
+        {
+            Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>() ??
+                throw new Exception("exception: helper unable to retrieve options");
+        }
+
+        private static string GetGlobalEslintPath()
         {
             return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User) ??
                 EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
+        }
+
+        internal static string GetEslintPath(string filePath)
+        {
+            OutputWindowHelper.DebugLine($"ShouldOverrideEslint: {Options.ShouldOverrideEslint}");
+
+            // override eslint path
+            if (Options.ShouldOverrideEslint)
+            {
+                var overridePath = GetOverrideEslintPath() ??
+                    throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
+
+                OutputWindowHelper.DebugLine($"using override eslint @ {overridePath}");
+
+                return overridePath;
+            }
+
+            OutputWindowHelper.DebugLine($"UseGlobalEslint: {Options.UseGlobalEslint}");
+
+            // resolve global eslint path
+            if (Options.UseGlobalEslint)
+            {
+                var globalPath = GetGlobalEslintPath() ??
+                    throw new Exception("exception: no global eslint found-- is eslint installed globally?"); ;
+
+                OutputWindowHelper.DebugLine($"using global eslint @ {globalPath}");
+
+                return globalPath;
+            }
+
+            // resolve local eslint path
+            var localPath = GetLocalEslintPath(filePath) ??
+                throw new Exception("exception: no local eslint found-- is eslint installed locally?");
+
+            OutputWindowHelper.DebugLine($"using local eslint @ {localPath}");
+
+            return localPath;
+        }
+
+        private static string GetOverrideEslintPath()
+        {
+            var overridePath = string.IsNullOrEmpty(Options.EslintOverridePath)
+                ? null
+                : Options.EslintOverridePath;
+
+            OutputWindowHelper.DebugLine($"EslintOverridePath: {overridePath ?? "null"}");
+
+            return overridePath;
         }
 
         internal static string GetIgnorePath(string filePath)
