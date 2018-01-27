@@ -94,14 +94,14 @@ namespace jwldnr.VisualLinter.Linting
 
         private static string GetGlobalEslintPath()
         {
-            return EslintHelper.GetGlobalEslintPath()
-                ?? throw new Exception("exception: no global eslint found-- is eslint installed globally?");
+            return EslintHelper.GetGlobalEslintPath() ??
+                throw new Exception("exception: no global eslint found-- is eslint installed globally?");
         }
 
         private static string GetPersonalConfigPath()
         {
-            return EslintHelper.GetPersonalConfigPath()
-                ?? throw new Exception("exception: no personal eslint config found");
+            return EslintHelper.GetPersonalConfigPath() ??
+                throw new Exception("exception: no personal eslint config found");
         }
 
         private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
@@ -155,8 +155,8 @@ namespace jwldnr.VisualLinter.Linting
             if (_options.UsePersonalConfig)
                 return GetPersonalConfigPath();
 
-            return EslintHelper.GetLocalConfigPath(filePath)
-                ?? throw new Exception("exception: no local eslint config found");
+            return EslintHelper.GetLocalConfigPath(filePath) ??
+                throw new Exception("exception: no local eslint config found");
         }
 
         private string GetEslintPath(string filePath)
@@ -171,8 +171,8 @@ namespace jwldnr.VisualLinter.Linting
             if (_options.UseGlobalEslint)
                 return GetGlobalEslintPath();
 
-            return EslintHelper.GetLocalEslintPath(filePath)
-                ?? throw new Exception("exception: no local eslint found-- is eslint installed locally?");
+            return EslintHelper.GetLocalEslintPath(filePath) ??
+                throw new Exception("exception: no local eslint found-- is eslint installed locally?");
         }
 
         private string GetIgnorePath(string filePath)

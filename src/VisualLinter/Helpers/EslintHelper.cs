@@ -20,26 +20,17 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetGlobalEslintPath()
         {
-            try
-            {
-                return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User)
-                    ?? EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
-            }
-            catch (Exception e)
-            {
-                OutputWindowHelper.WriteLine(e.Message);
-            }
-
-            return null;
+            return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User) ??
+                EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
         }
 
         internal static string GetIgnorePath(string filePath)
         {
-            var solutionPath = VsixHelper.GetSolutionPath()
-                ?? throw new Exception("exception: could not get solution path");
+            var solutionPath = VsixHelper.GetSolutionPath() ??
+                throw new Exception("exception: could not get solution path");
 
-            var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"exception: could not get directory for file {filePath}");
+            var directoryPath = Path.GetDirectoryName(filePath) ??
+                throw new Exception($"exception: could not get directory for file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
@@ -48,8 +39,8 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetLocalConfigPath(string filePath)
         {
-            var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"exception: could not get directory for file {filePath}");
+            var directoryPath = Path.GetDirectoryName(filePath) ??
+                throw new Exception($"exception: could not get directory for file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
@@ -58,8 +49,8 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetLocalEslintPath(string filePath)
         {
-            var directoryPath = Path.GetDirectoryName(filePath)
-                ?? throw new Exception($"exception: could not get directory for file {filePath}");
+            var directoryPath = Path.GetDirectoryName(filePath) ??
+                throw new Exception($"exception: could not get directory for file {filePath}");
 
             var workingDirectory = new DirectoryInfo(directoryPath);
 
