@@ -39,7 +39,6 @@ namespace jwldnr.VisualLinter.Helpers
                 return FormatArguments(arguments);
 
             arguments.Add("ignore-path", ignorePath);
-
             return FormatArguments(arguments);
         }
 
