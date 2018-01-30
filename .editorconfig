@@ -4,12 +4,9 @@
 # top-most EditorConfig file
 root = true
 
-[*]
-end_of_line = crlf
 # Don't use tabs for indentation.
+[*]
 indent_style = space
-insert_final_newline = true
-trim_trailing_whitespace = true
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # Don't trim trailing whitespace in .md files.
@@ -19,6 +16,9 @@ trim_trailing_whitespace = false
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8-bom
 
 # Xml project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
