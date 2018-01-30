@@ -1,4 +1,4 @@
-using jwldnr.VisualLinter.Helpers;
+﻿using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;

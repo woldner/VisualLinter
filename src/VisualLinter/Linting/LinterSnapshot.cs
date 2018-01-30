@@ -1,4 +1,4 @@
-using jwldnr.VisualLinter.Enums;
+﻿using jwldnr.VisualLinter.Enums;
 using jwldnr.VisualLinter.Helpers;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
