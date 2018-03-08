@@ -52,16 +52,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Enums\LinterType.cs" />
     <Compile Include="Helpers\EnvironmentHelper.cs" />
+    <Compile Include="Helpers\StylelintHelper.cs" />
     <Compile Include="Helpers\EslintHelper.cs" />
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
+    <Compile Include="Linting\ESLint\EslintResults.cs" />
+    <Compile Include="Linting\LinterMessage.cs" />
+    <Compile Include="Linting\LinterResults.cs" />
+    <Compile Include="Linting\LinterResult.cs" />
+    <Compile Include="Linting\Stylelint\StylelintMessage.cs" />
+    <Compile Include="Linting\Stylelint\StylelintResults.cs" />
+    <Compile Include="Linting\Stylelint\StylelintResult.cs" />
     <Compile Include="Linting\Linter.cs" />
-    <Compile Include="Linting\EslintMessage.cs" />
-    <Compile Include="Linting\EslintResult.cs" />
+    <Compile Include="Linting\ESLint\EslintMessage.cs" />
+    <Compile Include="Linting\ESLint\EslintResult.cs" />
     <Compile Include="Linting\LinterSnapshot.cs" />
     <Compile Include="Linting\MessageMarker.cs" />
     <Compile Include="Linting\MessageRange.cs" />
@@ -104,7 +113,9 @@
       <Link>Resources\LICENSE</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Key.snk" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
@@ -220,9 +231,11 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -252,6 +265,7 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

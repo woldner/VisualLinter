@@ -7,19 +7,22 @@
     xmlns:model="clr-namespace:jwldnr.VisualLinter.ViewModels"
     d:DataContext="{d:DesignInstance Type=model:GeneralOptionsDialogViewModel}"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="350"
     d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
         <GroupBox
             Grid.Row="0"
             Margin="0, 0, 5, 0"
-            Header="General">
+            Header="ESLint General">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -36,7 +39,7 @@
                 <CheckBox
                     Content="Use personal ESLint config instead of local"
                     Grid.Row="1"
-                    IsChecked="{Binding UsePersonalConfig}"
+                    IsChecked="{Binding UsePersonalEslintConfig}"
                     Margin="5, 0, 0, 5" />
 
                 <CheckBox
@@ -50,8 +53,12 @@
         <GroupBox
             Grid.Row="1"
             Margin="0, 0, 5, 0"
-            Header="Language support">
+            Header="ESLint Language support">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -62,31 +69,110 @@
                 <CheckBox
                     Content="HTML (.html)"
                     Grid.Row="0"
+                    Grid.Column="0"
                     IsChecked="{Binding EnableHtmlLanguageSupport}"
                     Margin="5, 5, 0, 5" />
 
                 <CheckBox
                     Content="JavaScript (.js)"
-                    Grid.Row="1"
+                    Grid.Row="0"
+                    Grid.Column="1"
                     IsChecked="{Binding EnableJavaScriptLanguageSupport}"
-                    Margin="5, 0, 0, 5" />
+                    Margin="5, 5, 0, 5" />
 
                 <CheckBox
                     Content="React js (.jsx)"
-                    Grid.Row="2"
+                    Grid.Row="1"
+                    Grid.Column="0"
                     IsChecked="{Binding EnableReactLanguageSupport}"
                     Margin="5, 0, 0, 5" />
 
                 <CheckBox
                     Content="Vue js (.vue)"
-                    Grid.Row="3"
+                    Grid.Row="1"
+                    Grid.Column="1"
                     IsChecked="{Binding EnableVueLanguageSupport}"
                     Margin="5, 0, 0, 5" />
             </Grid>
         </GroupBox>
 
-        <Label
+        <GroupBox
             Grid.Row="2"
+            Margin="0, 0, 5, 0"
+            Header="Stylelint General">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <CheckBox
+                    Content="Use global Stylelint installation instead of local"
+                    Grid.Row="0"
+                    IsChecked="{Binding UseGlobalStylelint}"
+                    Margin="5, 5, 0, 5" />
+
+                <CheckBox
+                    Content="Use personal Stylelint config instead of local"
+                    Grid.Row="1"
+                    IsChecked="{Binding UsePersonalStylelintConfig}"
+                    Margin="5, 0, 0, 5" />
+
+                <CheckBox
+                    Content="Do not use .stylelingignore when linting files"
+                    Grid.Row="2"
+                    IsChecked="{Binding DisableStylelintIgnore}"
+                    Margin="5, 0, 0, 5" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox
+            Grid.Row="3"
+            Margin="0, 0, 5, 0"
+            Header="Stylelint Language support">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <CheckBox
+                    Content="Stylesheet (.css)"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    IsChecked="{Binding EnableCssLanguageSupport}"
+                    Margin="5, 5, 0, 5" />
+
+                <CheckBox
+                    Content="Scss (.scss)"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    IsChecked="{Binding EnableScssLanguageSupport}"
+                    Margin="5, 5, 0, 5" />
+
+                <CheckBox
+                    Content="Sass (.sass)"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    IsChecked="{Binding EnableSassLanguageSupport}"
+                    Margin="5, 5, 0, 5" />
+
+                <CheckBox
+                    Content="Less (.less)"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    IsChecked="{Binding EnableLessLanguageSupport}"
+                    Margin="5, 5, 0, 5" />
+            </Grid>
+        </GroupBox>
+
+        <Label
+            Grid.Row="5"
             Margin="0, 5, 5, 5">
 
             <Hyperlink

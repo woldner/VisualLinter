@@ -17,7 +17,7 @@ namespace jwldnr.VisualLinter.Tagging
 {
     public interface ILinterProvider
     {
-        void Accept(string filePath, IEnumerable<EslintMessage> messages);
+        void Accept(string filePath, IEnumerable<LinterMessage> messages);
     }
 
     [Export(typeof(IViewTaggerProvider))]
@@ -57,6 +57,10 @@ namespace jwldnr.VisualLinter.Tagging
             _optionsMap.Add(".js", () => options.EnableJavaScriptLanguageSupport);
             _optionsMap.Add(".jsx", () => options.EnableReactLanguageSupport);
             _optionsMap.Add(".vue", () => options.EnableVueLanguageSupport);
+            _optionsMap.Add(".css", () => options.EnableCssLanguageSupport);
+            _optionsMap.Add(".scss", () => options.EnableScssLanguageSupport);
+            _optionsMap.Add(".sass", () => options.EnableSassLanguageSupport);
+            _optionsMap.Add(".less", () => options.EnableLessLanguageSupport);
 
             var columns = new[]
             {
@@ -75,7 +79,7 @@ namespace jwldnr.VisualLinter.Tagging
             _tableManager.AddSource(this, columns);
         }
 
-        public void Accept(string filePath, IEnumerable<EslintMessage> messages)
+        public void Accept(string filePath, IEnumerable<LinterMessage> messages)
         {
             try
             {
@@ -130,7 +134,7 @@ namespace jwldnr.VisualLinter.Tagging
             return new SinkManager(this, sink);
         }
 
-        public void UpdateMessages(string filePath, IEnumerable<EslintMessage> messages)
+        public void UpdateMessages(string filePath, IEnumerable<LinterMessage> messages)
         {
             lock (_taggers)
             {

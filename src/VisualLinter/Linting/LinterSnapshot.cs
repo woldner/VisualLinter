@@ -74,7 +74,7 @@ namespace jwldnr.VisualLinter.Linting
 
                 case StandardTableKeyNames.ErrorCodeToolTip:
                 case StandardTableKeyNames.HelpLink:
-                    content = GetRuleUrl(marker.Message.IsFatal, marker.Message.RuleId, marker.Message.Message);
+                    content = GetRuleUrl(marker.Message);
                     return null != content;
 
                 case StandardTableKeyNames.ErrorCode:
@@ -126,11 +126,12 @@ namespace jwldnr.VisualLinter.Linting
                 : $"({ruleId})";
         }
 
-        private static string GetRuleUrl(bool isFatal, string ruleId, string message)
+        private static string GetRuleUrl(LinterMessage linterMessage)
         {
-            return isFatal
-                ? $"http://google.com/search?q={message}"
-                : $"http://eslint.org/docs/rules/{ruleId}";
+            if (linterMessage.IsFatal) return $"http://google.com/search?q={linterMessage.Message}";
+            if (linterMessage.LinterType == LinterType.ESLint) return $"http://eslint.org/docs/rules/{linterMessage.RuleId}";
+            if (linterMessage.LinterType == LinterType.Stylelint) return $"http://stylelint.io/user-guide/rules/{linterMessage.RuleId}";
+            return string.Empty;
         }
     }
 }

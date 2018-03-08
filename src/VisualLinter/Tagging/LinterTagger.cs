@@ -70,7 +70,7 @@ namespace jwldnr.VisualLinter.Tagging
             return Enumerable.Empty<ITagSpan<IErrorTag>>();
         }
 
-        internal void UpdateMessages(IEnumerable<EslintMessage> messages)
+        internal void UpdateMessages(IEnumerable<LinterMessage> messages)
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
@@ -122,7 +122,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        private MessageMarker CreateMarker(EslintMessage message)
+        private MessageMarker CreateMarker(LinterMessage message)
         {
             var start = new SnapshotPoint(_currentSnapshot, message.Range.Start);
             var end = new SnapshotPoint(_currentSnapshot, message.Range.End);
@@ -168,7 +168,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        private IEnumerable<EslintMessage> ProcessMessages(IEnumerable<EslintMessage> messages)
+        private IEnumerable<LinterMessage> ProcessMessages(IEnumerable<LinterMessage> messages)
         {
             foreach (var message in messages)
             {

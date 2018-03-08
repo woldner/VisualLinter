@@ -6,22 +6,22 @@ using System.Linq;
 
 namespace jwldnr.VisualLinter.Helpers
 {
-    internal static class EslintHelper
+    internal static class StylelintHelper
     {
-        private const string ExecutableName = "eslint.cmd";
-        private const string VariableName = "eslint";
+        private const string ExecutableName = "stylelint.cmd";
+        private const string VariableName = "stylelint";
         private static readonly IVisualLinterOptions Options;
 
         private static readonly string[] SupportedConfigs =
         {
-            ".eslintrc.js",
-            ".eslintrc.yaml",
-            ".eslintrc.yml",
-            ".eslintrc.json",
-            ".eslintrc"
+            ".stylelintrc.js",
+            ".stylelintrc.yaml",
+            ".stylelintrc.yml",
+            ".stylelintrc.json",
+            ".stylelintrc"
         };
 
-        static EslintHelper()
+        static StylelintHelper()
         {
             Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>() ??
                 throw new Exception("exception: helper unable to retrieve options");
@@ -29,7 +29,7 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetArguments(string directoryPath)
         {
-            var arguments = new Dictionary<string, string> { { "format", "json" } };
+            var arguments = new Dictionary<string, string> { { "formatter", "json" } };
 
             var configPath = GetConfigPath(directoryPath);
             arguments.Add("config", configPath);
@@ -44,104 +44,104 @@ namespace jwldnr.VisualLinter.Helpers
 
         internal static string GetConfigPath(string directoryPath)
         {
-            OutputWindowHelper.DebugLine($"ShouldOverrideEslintConfigPath: {Options.ShouldOverrideEslintConfigPath}");
+            OutputWindowHelper.DebugLine($"ShouldOverrideStylelintConfigPath: {Options.ShouldOverrideStylelintConfigPath}");
 
-            // resolve override eslint config path
-            if (Options.ShouldOverrideEslintConfigPath)
+            // resolve override stylelint config path
+            if (Options.ShouldOverrideStylelintConfigPath)
             {
-                var overridePath = GetOverrideEslintConfigPath() ??
-                    throw new Exception("exception: option 'Override .eslintignore path' is set to true-- but no path is set");
+                var overridePath = GetOverrideStylelintConfigPath() ??
+                    throw new Exception("exception: option 'Override .stylelintignore path' is set to true-- but no path is set");
 
-                OutputWindowHelper.DebugLine($"using override eslint config @ {overridePath}");
+                OutputWindowHelper.DebugLine($"using override stylelint config @ {overridePath}");
 
                 return ValidateOverridePath(overridePath);
             }
 
-            OutputWindowHelper.DebugLine($"UsePersonalEslintConfig: {Options.UsePersonalEslintConfig}");
+            OutputWindowHelper.DebugLine($"UsePersonalStylelintConfig: {Options.UsePersonalStylelintConfig}");
 
             // resolve personal config path
-            if (Options.UsePersonalEslintConfig)
+            if (Options.UsePersonalStylelintConfig)
             {
                 var globalPath = GetPersonalConfigPath() ??
-                    throw new Exception("exception: no personal eslint config found");
+                    throw new Exception("exception: no personal stylelint config found");
 
-                OutputWindowHelper.DebugLine($"using personal eslint config @ {globalPath}");
+                OutputWindowHelper.DebugLine($"using personal stylelint config @ {globalPath}");
 
                 return globalPath;
             }
 
-            // resolve local eslint config
+            // resolve local stylelint config
             var localPath = GetLocalConfigPath(directoryPath) ??
-                throw new Exception("exception: no local eslint config found");
+                throw new Exception("exception: no local stylelint config found");
 
-            OutputWindowHelper.DebugLine($"using local eslint config @ {localPath}");
+            OutputWindowHelper.DebugLine($"using local stylelint config @ {localPath}");
 
             return localPath;
         }
 
-        internal static string GetEslintPath(string directoryPath)
+        internal static string GetStylelintPath(string directoryPath)
         {
-            OutputWindowHelper.DebugLine($"ShouldOverrideEslintPath: {Options.ShouldOverrideEslintPath}");
+            OutputWindowHelper.DebugLine($"ShouldOverrideStylelintPath: {Options.ShouldOverrideStylelintPath}");
 
-            // resolve override eslint path
-            if (Options.ShouldOverrideEslintPath)
+            // resolve override stylelint path
+            if (Options.ShouldOverrideStylelintPath)
             {
-                var overridePath = GetOverrideEslintPath() ??
-                    throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
+                var overridePath = GetOverrideStylelintPath() ??
+                    throw new Exception("exception: option 'Override Stylelint path' set to true-- but no path is set");
 
-                OutputWindowHelper.DebugLine($"using override eslint @ {overridePath}");
+                OutputWindowHelper.DebugLine($"using override stylelint @ {overridePath}");
 
                 return ValidateOverridePath(overridePath);
             }
 
-            OutputWindowHelper.DebugLine($"UseGlobalEslint: {Options.UseGlobalEslint}");
+            OutputWindowHelper.DebugLine($"UseGlobalStylelint: {Options.UseGlobalStylelint}");
 
-            // resolve global eslint path
-            if (Options.UseGlobalEslint)
+            // resolve global stylelint path
+            if (Options.UseGlobalStylelint)
             {
-                var globalPath = GetGlobalEslintPath() ??
-                    throw new Exception("exception: no global eslint found-- is eslint installed globally?");
+                var globalPath = GetGlobalStylelintPath() ??
+                    throw new Exception("exception: no global stylelint found-- is stylelint installed globally?");
 
-                OutputWindowHelper.DebugLine($"using global eslint @ {globalPath}");
+                OutputWindowHelper.DebugLine($"using global stylelint @ {globalPath}");
 
                 return globalPath;
             }
 
-            // resolve local eslint path
-            var localPath = GetLocalEslintPath(directoryPath) ??
-                throw new Exception("exception: no local eslint found-- is eslint installed locally?");
+            // resolve local stylelint path
+            var localPath = GetLocalStylelintPath(directoryPath) ??
+                throw new Exception("exception: no local stylelint found-- is stylelint installed locally?");
 
-            OutputWindowHelper.DebugLine($"using local eslint @ {localPath}");
+            OutputWindowHelper.DebugLine($"using local stylelint @ {localPath}");
 
             return localPath;
         }
 
         internal static string GetIgnorePath(string directoryPath)
         {
-            OutputWindowHelper.DebugLine($"DisableEslintIgnore: {Options.DisableEslintIgnore}");
+            OutputWindowHelper.DebugLine($"DisableStylelintIgnore: {Options.DisableStylelintIgnore}");
 
-            // disable eslint ignore
-            if (Options.DisableEslintIgnore)
+            // disable stylelint ignore
+            if (Options.DisableStylelintIgnore)
             {
-                OutputWindowHelper.DebugLine("not using eslint ignore");
+                OutputWindowHelper.DebugLine("not using stylelint ignore");
 
                 return null;
             }
 
-            OutputWindowHelper.DebugLine($"ShouldOverrideEslintIgnorePath: {Options.ShouldOverrideEslintIgnorePath}");
+            OutputWindowHelper.DebugLine($"ShouldOverrideStylelintIgnorePath: {Options.ShouldOverrideStylelintIgnorePath}");
 
-            // resolve override eslint ignore path
-            if (Options.ShouldOverrideEslintIgnorePath)
+            // resolve override stylelint ignore path
+            if (Options.ShouldOverrideStylelintIgnorePath)
             {
-                var overridePath = GetOverrideEslintIgnorePath() ??
-                    throw new Exception("exception: option 'Override ESLint ignore path' is set to true-- but no path is set");
+                var overridePath = GetOverrideStylelintIgnore() ??
+                    throw new Exception("exception: option 'Override Stylelint ignore path' is set to true-- but no path is set");
 
-                OutputWindowHelper.DebugLine($"using override eslint ignore @ {overridePath}");
+                OutputWindowHelper.DebugLine($"using override stylelint ignore @ {overridePath}");
 
                 return ValidateOverridePath(overridePath);
             }
 
-            // resolve eslint ignore path
+            // resolve stylelint ignore path
             var solutionPath = VsixHelper.GetSolutionPath() ??
                 throw new Exception("exception: could not get solution path");
 
@@ -149,7 +149,7 @@ namespace jwldnr.VisualLinter.Helpers
 
             var path = FindRecursive(workingDirectory, solutionPath, ResolveIgnorePath);
 
-            OutputWindowHelper.DebugLine($"using eslint ignore @ {path ?? "not found"}");
+            OutputWindowHelper.DebugLine($"using stylelint ignore @ {path ?? "not found"}");
 
             return path;
         }
@@ -177,7 +177,7 @@ namespace jwldnr.VisualLinter.Helpers
             return string.Join(" ", arguments.Select(arg => $"--{arg.Key}=\"{arg.Value}\""));
         }
 
-        private static string GetGlobalEslintPath()
+        private static string GetGlobalStylelintPath()
         {
             return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User) ??
                 EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
@@ -190,48 +190,48 @@ namespace jwldnr.VisualLinter.Helpers
             return FindRecursive(workingDirectory, workingDirectory.Root.FullName, ResolveConfigPath);
         }
 
-        private static string GetLocalEslintPath(string directoryPath)
+        private static string GetLocalStylelintPath(string directoryPath)
         {
             var workingDirectory = new DirectoryInfo(directoryPath);
 
-            return FindRecursive(workingDirectory, workingDirectory.Root.FullName, ResolveEslintPath);
+            return FindRecursive(workingDirectory, workingDirectory.Root.FullName, ResolveStylelintPath);
         }
 
-        private static string GetOverrideEslintConfigPath()
+        private static string GetOverrideStylelintConfigPath()
         {
-            var overridePath = Options.EslintOverrideConfigPath;
+            var overridePath = Options.StylelintOverrideConfigPath;
 
             var path = string.IsNullOrEmpty(overridePath)
                 ? null
                 : overridePath;
 
-            OutputWindowHelper.DebugLine($"EslintOverrideConfigPath: {path ?? "null"}");
+            OutputWindowHelper.DebugLine($"StylelintOverrideConfigPath: {path ?? "null"}");
 
             return path;
         }
 
-        private static string GetOverrideEslintIgnorePath()
+        private static string GetOverrideStylelintIgnore()
         {
-            var overridePath = Options.EslintOverrideIgnorePath;
+            var overridePath = Options.StylelintOverrideIgnorePath;
 
             var path = string.IsNullOrEmpty(overridePath)
                 ? null
                 : overridePath;
 
-            OutputWindowHelper.DebugLine($"EslintOverridePath: {path ?? "null"}");
+            OutputWindowHelper.DebugLine($"StylelintOverridePath: {path ?? "null"}");
 
             return path;
         }
 
-        private static string GetOverrideEslintPath()
+        private static string GetOverrideStylelintPath()
         {
-            var overridePath = Options.EslintOverridePath;
+            var overridePath = Options.StylelintOverridePath;
 
             var path = string.IsNullOrEmpty(overridePath)
                 ? null
                 : overridePath;
 
-            OutputWindowHelper.DebugLine($"EslintOverridePath: {path ?? "null"}");
+            OutputWindowHelper.DebugLine($"StylelintOverridePath: {path ?? "null"}");
 
             return path;
         }
@@ -251,7 +251,7 @@ namespace jwldnr.VisualLinter.Helpers
                 .FirstOrDefault(File.Exists);
         }
 
-        private static string ResolveEslintPath(DirectoryInfo directory)
+        private static string ResolveStylelintPath(DirectoryInfo directory)
         {
             // todo optimize if this is what we want
             var modulesPath = directory
@@ -276,7 +276,7 @@ namespace jwldnr.VisualLinter.Helpers
         private static string ResolveIgnorePath(DirectoryInfo directory)
         {
             return directory
-                .EnumerateFiles(".eslintignore", SearchOption.TopDirectoryOnly)
+                .EnumerateFiles(".stylelintignore", SearchOption.TopDirectoryOnly)
                 .FirstOrDefault()?
                 .FullName;
         }

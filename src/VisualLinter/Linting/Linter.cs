@@ -37,34 +37,74 @@ namespace jwldnr.VisualLinter.Linting
                     var directoryPath = Path.GetDirectoryName(filePath) ??
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
-                    var eslintPath = EslintHelper.GetEslintPath(directoryPath);
-                    var arguments = string.Join(" ", QuoteArgument(filePath), EslintHelper.GetArguments(directoryPath));
+                    LinterResults linterResults = new LinterResults();
 
-                    var output = await RunAsync(eslintPath, arguments, token)
-                        .ConfigureAwait(false);
+                    string fileExtension = Path.GetExtension(filePath).ToLower();
 
-                    token.ThrowIfCancellationRequested();
-
-                    if (string.IsNullOrEmpty(output))
-                        throw new Exception("exception: linter returned empty result");
-
-                    IEnumerable<EslintResult> results = new List<EslintResult>();
-
-                    try
+                    if (fileExtension == ".html" || fileExtension == ".js" || fileExtension == ".jsx" || fileExtension == ".vue")
                     {
-                        results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(output);
+                        var eslintPath = EslintHelper.GetEslintPath(directoryPath);
+                        var arguments = string.Join(" ", QuoteArgument(filePath), EslintHelper.GetArguments(directoryPath));
+
+                        var output = await RunAsync("eslint", eslintPath, arguments, token)
+                            .ConfigureAwait(false);
+
+                        token.ThrowIfCancellationRequested();
+
+                        if (string.IsNullOrEmpty(output))
+                            throw new Exception("exception: eslint returned empty result");
+
+                        EslintResults eslintResults = new EslintResults();
+
+                        try
+                        {
+                            eslintResults = JsonConvert.DeserializeObject<EslintResults>(output);
+                        }
+                        catch (Exception e)
+                        {
+                            OutputWindowHelper.WriteLine(
+                                "exception: error trying to deserialize output:" +
+                                Environment.NewLine +
+                                output);
+
+                            OutputWindowHelper.WriteLine(e.Message);
+                        }
+
+                        linterResults = new LinterResults(eslintResults);
                     }
-                    catch (Exception e)
+                    else if (fileExtension == ".css" || fileExtension == ".scss" || fileExtension == ".sass" || fileExtension == ".less")
                     {
-                        OutputWindowHelper.WriteLine(
-                            "exception: error trying to deserialize output:" +
-                            Environment.NewLine +
-                            output);
+                        var stylelintPath = StylelintHelper.GetStylelintPath(directoryPath);
+                        var arguments = string.Join(" ", QuoteArgument(filePath), StylelintHelper.GetArguments(directoryPath));
 
-                        OutputWindowHelper.WriteLine(e.Message);
+                        var output = await RunAsync("stylelint", stylelintPath, arguments, token)
+                            .ConfigureAwait(false);
+
+                        token.ThrowIfCancellationRequested();
+
+                        if (string.IsNullOrEmpty(output))
+                            throw new Exception("exception: stylelint returned empty result");
+
+                        StylelintResults stylelintResults = new StylelintResults();
+
+                        try
+                        {
+                            stylelintResults = JsonConvert.DeserializeObject<StylelintResults>(output);
+                        }
+                        catch (Exception e)
+                        {
+                            OutputWindowHelper.WriteLine(
+                                "exception: error trying to deserialize output:" +
+                                Environment.NewLine +
+                                output);
+
+                            OutputWindowHelper.WriteLine(e.Message);
+                        }
+
+                        linterResults = new LinterResults(stylelintResults);
                     }
 
-                    var messages = ProcessResults(results);
+                    var messages = ProcessResults(linterResults);
 
                     token.ThrowIfCancellationRequested();
 
@@ -89,16 +129,16 @@ namespace jwldnr.VisualLinter.Linting
             }
         }
 
-        private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
+        private static IEnumerable<LinterMessage> ProcessMessages(IReadOnlyList<LinterMessage> messages)
         {
             // return empty messages when warning about ignored files
             if (1 == messages.Count && RegexHelper.IgnoreFileMatch(messages[0].Message))
-                return Enumerable.Empty<EslintMessage>();
+                return Enumerable.Empty<LinterMessage>();
 
             return messages;
         }
 
-        private static IEnumerable<EslintMessage> ProcessResults(IEnumerable<EslintResult> results)
+        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
         {
             // this extension only support 1-1 linting
             // therefor results count will always be 1
@@ -106,16 +146,16 @@ namespace jwldnr.VisualLinter.Linting
 
             return null != result
                 ? ProcessMessages(result.Messages)
-                : Enumerable.Empty<EslintMessage>();
+                : Enumerable.Empty<LinterMessage>();
         }
 
         private static string QuoteArgument(string argument) => $"\"{argument}\"";
 
-        private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
+        private static Task<string> RunAsync(string linterName, string linterPath, string arguments, CancellationToken token)
         {
             return Task.Run(() =>
             {
-                var startInfo = new ProcessStartInfo(eslintPath, arguments)
+                var startInfo = new ProcessStartInfo(linterPath, arguments)
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
@@ -150,7 +190,7 @@ namespace jwldnr.VisualLinter.Linting
                     //token.ThrowIfCancellationRequested();
 
                     if (false == process.Start())
-                        throw new Exception("exception: unable to start eslint process");
+                        throw new Exception("exception: unable to start " + linterName + " process");
 
                     process.BeginErrorReadLine();
                     process.BeginOutputReadLine();
