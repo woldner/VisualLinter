@@ -7,13 +7,19 @@
     xmlns:model="clr-namespace:jwldnr.VisualLinter.ViewModels"
     d:DataContext="{d:DesignInstance Type=model:AdvancedOptionsDialogViewModel}"
     mc:Ignorable="d"
-    d:DesignHeight="300"
+    d:DesignHeight="350"
     d:DesignWidth="300">
     <GroupBox
         Margin="0, 0, 5, 0"
         Header="Advanced">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -27,12 +33,12 @@
             <CheckBox
                 Content="Override ESLint path"
                 Grid.Row="0"
-                IsChecked="{Binding ShouldOverrideEslint}"
+                IsChecked="{Binding ShouldOverrideEslintPath}"
                 Margin="5, 5, 0, 5" />
 
             <Grid
                 Grid.Row="1"
-                IsEnabled="{Binding ShouldOverrideEslint}">
+                IsEnabled="{Binding ShouldOverrideEslintPath}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -56,12 +62,12 @@
             <CheckBox
                 Content="Override ESLint config path"
                 Grid.Row="2"
-                IsChecked="{Binding ShouldOverrideEslintConfig}"
+                IsChecked="{Binding ShouldOverrideEslintConfigPath}"
                 Margin="5, 0, 0, 5" />
 
             <Grid
                 Grid.Row="3"
-                IsEnabled="{Binding ShouldOverrideEslintConfig}">
+                IsEnabled="{Binding ShouldOverrideEslintConfigPath}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -72,7 +78,7 @@
                     Padding="2"
                     Margin="5, 0, 0, 5"
                     IsReadOnly="True"
-                    Text="{Binding EslintConfigOverridePath}" />
+                    Text="{Binding EslintOverrideConfigPath}" />
 
                 <Button
                     Grid.Column="1"
@@ -85,12 +91,12 @@
             <CheckBox
                 Content="Override .eslintignore path"
                 Grid.Row="4"
-                IsChecked="{Binding ShouldOverrideEslintIgnore}"
+                IsChecked="{Binding ShouldOverrideEslintIgnorePath}"
                 Margin="5, 0, 0, 5" />
 
             <Grid
                 Grid.Row="5"
-                IsEnabled="{Binding ShouldOverrideEslintIgnore}">
+                IsEnabled="{Binding ShouldOverrideEslintIgnorePath}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -101,7 +107,7 @@
                     Padding="2"
                     Margin="5, 0, 0, 5"
                     IsReadOnly="True"
-                    Text="{Binding EslintIgnoreOverridePath}" />
+                    Text="{Binding EslintOverrideIgnorePath}" />
 
                 <Button
                     Grid.Column="1"
@@ -112,8 +118,95 @@
             </Grid>
 
             <CheckBox
-                Content="Show debug information"
+                Content="Override Stylelint path"
+                Grid.Row="6"
+                IsChecked="{Binding ShouldOverrideStylelintPath}"
+                Margin="5, 5, 0, 5" />
+
+            <Grid
                 Grid.Row="7"
+                IsEnabled="{Binding ShouldOverrideStylelintPath}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Grid.Column="0"
+                    Padding="2"
+                    Margin="5, 0, 0, 5"
+                    IsReadOnly="True"
+                    Text="{Binding StylelintOverridePath}" />
+
+                <Button
+                    Grid.Column="1"
+                    Padding="2"
+                    Margin="5, 0, 5, 5"
+                    Content="Browse.."
+                    Command="{Binding BrowseStylelintFileCommand}" />
+            </Grid>
+
+            <CheckBox
+                Content="Override Stylelint config path"
+                Grid.Row="8"
+                IsChecked="{Binding ShouldOverrideStylelintConfigPath}"
+                Margin="5, 0, 0, 5" />
+
+            <Grid
+                Grid.Row="9"
+                IsEnabled="{Binding ShouldOverrideStylelintConfigPath}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Grid.Column="0"
+                    Padding="2"
+                    Margin="5, 0, 0, 5"
+                    IsReadOnly="True"
+                    Text="{Binding StylelintOverrideConfigPath}" />
+
+                <Button
+                    Grid.Column="1"
+                    Padding="2"
+                    Margin="5, 0, 5, 5"
+                    Content="Browse.."
+                    Command="{Binding BrowseStylelintConfigFileCommand}" />
+            </Grid>
+
+            <CheckBox
+                Content="Override .stylelintignore path"
+                Grid.Row="10"
+                IsChecked="{Binding ShouldOverrideStylelintIgnorePath}"
+                Margin="5, 0, 0, 5" />
+
+            <Grid
+                Grid.Row="11"
+                IsEnabled="{Binding ShouldOverrideStylelintIgnorePath}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBox
+                    Grid.Column="0"
+                    Padding="2"
+                    Margin="5, 0, 0, 5"
+                    IsReadOnly="True"
+                    Text="{Binding StylelintOverrideIgnorePath}" />
+
+                <Button
+                    Grid.Column="1"
+                    Padding="2"
+                    Margin="5, 0, 5, 5"
+                    Content="Browse.."
+                    Command="{Binding BrowseStylelintIgnoreFileCommand}" />
+            </Grid>
+
+            <CheckBox
+                Content="Show debug information"
+                Grid.Row="13"
                 IsChecked="{Binding ShowDebugInformation}"
                 Margin="5, 0, 0, 5" />
         </Grid>

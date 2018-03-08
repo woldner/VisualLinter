@@ -36,6 +36,22 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(o => o.EnableVueLanguageSupport)
                 .Returns(true);
 
+            _mockOptions
+                .Setup(o => o.EnableCssLanguageSupport)
+                .Returns(true);
+
+            _mockOptions
+                .Setup(o => o.EnableScssLanguageSupport)
+                .Returns(true);
+
+            _mockOptions
+                .Setup(o => o.EnableSassLanguageSupport)
+                .Returns(true);
+
+            _mockOptions
+                .Setup(o => o.EnableLessLanguageSupport)
+                .Returns(true);
+
             var tagger1 = CreateTagger("foo.html");
             Assert.IsNotNull(tagger1);
 
@@ -47,6 +63,18 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             var tagger4 = CreateTagger("foo.vue");
             Assert.IsNotNull(tagger4);
+
+            var tagger5 = CreateTagger("foo.css");
+            Assert.IsNotNull(tagger5);
+
+            var tagger6 = CreateTagger("foo.scss");
+            Assert.IsNotNull(tagger6);
+
+            var tagger7 = CreateTagger("foo.sass");
+            Assert.IsNotNull(tagger7);
+
+            var tagger8 = CreateTagger("foo.less");
+            Assert.IsNotNull(tagger8);
         }
 
         [TestMethod]
@@ -75,6 +103,22 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(o => o.EnableVueLanguageSupport)
                 .Returns(false);
 
+            _mockOptions
+                .Setup(o => o.EnableCssLanguageSupport)
+                .Returns(false);
+
+            _mockOptions
+                .Setup(o => o.EnableScssLanguageSupport)
+                .Returns(false);
+
+            _mockOptions
+                .Setup(o => o.EnableSassLanguageSupport)
+                .Returns(false);
+
+            _mockOptions
+                .Setup(o => o.EnableLessLanguageSupport)
+                .Returns(false);
+
             var tagger1 = CreateTagger("foo.html");
             Assert.IsNull(tagger1);
 
@@ -86,6 +130,18 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             var tagger4 = CreateTagger("foo.vue");
             Assert.IsNull(tagger4);
+
+            var tagger5 = CreateTagger("foo.css");
+            Assert.IsNull(tagger5);
+
+            var tagger6 = CreateTagger("foo.scss");
+            Assert.IsNull(tagger6);
+
+            var tagger7 = CreateTagger("foo.sass");
+            Assert.IsNull(tagger7);
+
+            var tagger8 = CreateTagger("foo.less");
+            Assert.IsNull(tagger8);
         }
 
         [TestMethod]
