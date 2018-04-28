@@ -31,8 +31,9 @@ namespace jwldnr.VisualLinter.Helpers
         {
             var arguments = new Dictionary<string, string> { { "format", "json" } };
 
-            var configPath = GetConfigPath(directoryPath);
-            arguments.Add("config", configPath);
+            var configPath = GetConfigPath();
+            if (null != configPath)
+                arguments.Add("config", configPath);
 
             var ignorePath = GetIgnorePath(directoryPath);
             if (string.IsNullOrEmpty(ignorePath))
@@ -42,7 +43,7 @@ namespace jwldnr.VisualLinter.Helpers
             return FormatArguments(arguments);
         }
 
-        internal static string GetConfigPath(string directoryPath)
+        internal static string GetConfigPath()
         {
             OutputWindowHelper.DebugLine($"ShouldOverrideEslintConfig: {Options.ShouldOverrideEslintConfig}");
 
@@ -70,13 +71,8 @@ namespace jwldnr.VisualLinter.Helpers
                 return globalPath;
             }
 
-            // resolve local eslint config
-            var localPath = GetLocalConfigPath(directoryPath) ??
-                throw new Exception("exception: no local eslint config found");
-
-            OutputWindowHelper.DebugLine($"using local eslint config @ {localPath}");
-
-            return localPath;
+            // let eslint handle configs
+            return null;
         }
 
         internal static string GetEslintPath(string directoryPath)
@@ -167,6 +163,7 @@ namespace jwldnr.VisualLinter.Helpers
 
                 if (null == workingDirectory)
                     return null;
+
             } while (-1 != workingDirectory.FullName.IndexOf(end, StringComparison.OrdinalIgnoreCase));
 
             return null;
@@ -181,13 +178,6 @@ namespace jwldnr.VisualLinter.Helpers
         {
             return EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.User) ??
                 EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
-        }
-
-        private static string GetLocalConfigPath(string directoryPath)
-        {
-            var workingDirectory = new DirectoryInfo(directoryPath);
-
-            return FindRecursive(workingDirectory, workingDirectory.Root.FullName, ResolveConfigPath);
         }
 
         private static string GetLocalEslintPath(string directoryPath)
