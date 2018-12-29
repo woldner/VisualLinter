@@ -7,14 +7,14 @@ namespace jwldnr.VisualLinter.Tagging
 {
     internal class LinterTag : IErrorTag
     {
-        public string ErrorType { get; }
-        public object ToolTipContent { get; }
-
         internal LinterTag(EslintMessage message)
         {
             ErrorType = GetErrorType(message);
             ToolTipContent = GetToolTipContent(message.IsFatal, message.Message, message.RuleId);
         }
+
+        public string ErrorType { get; }
+        public object ToolTipContent { get; }
 
         private static string GetErrorType(EslintMessage message)
         {

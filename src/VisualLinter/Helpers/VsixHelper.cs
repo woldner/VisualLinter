@@ -1,6 +1,6 @@
-﻿using EnvDTE;
+﻿using System.IO;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
-using System.IO;
 
 namespace jwldnr.VisualLinter.Helpers
 {

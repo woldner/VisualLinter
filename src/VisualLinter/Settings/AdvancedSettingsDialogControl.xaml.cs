@@ -83,21 +83,21 @@ namespace jwldnr.VisualLinter.Settings
         public ICommand BrowseEslintConfigFileCommand
         {
             get => _browseEslintConfigFileCommand ??
-                   (_browseEslintConfigFileCommand = new RelayCommand(BrowseEslintConfigFile));
+                (_browseEslintConfigFileCommand = new RelayCommand(BrowseEslintConfigFile));
             set => _browseEslintConfigFileCommand = value;
         }
 
         public ICommand BrowseEslintFileCommand
         {
             get => _browseEslintFileCommand ??
-                   (_browseEslintFileCommand = new RelayCommand(BrowseEslintFile));
+                (_browseEslintFileCommand = new RelayCommand(BrowseEslintFile));
             set => _browseEslintFileCommand = value;
         }
 
         public ICommand BrowseEslintIgnoreFileCommand
         {
             get => _browseEslintIgnoreConfigFileCommand ??
-                   (_browseEslintIgnoreConfigFileCommand = new RelayCommand(BrowseEslintIgnoreFile));
+                (_browseEslintIgnoreConfigFileCommand = new RelayCommand(BrowseEslintIgnoreFile));
             set => _browseEslintIgnoreConfigFileCommand = value;
         }
 

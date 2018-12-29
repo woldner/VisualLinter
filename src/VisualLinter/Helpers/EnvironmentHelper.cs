@@ -17,7 +17,7 @@ namespace jwldnr.VisualLinter.Helpers
             var variables = GetVariableInfo("PATH", target);
 
             return variables
-                .Select(value => new { value, files = GetFiles(value) })
+                .Select(value => new {value, files = GetFiles(value)})
                 .Where(info => null != info.files)
                 .Where(info => info.files.Any(file => -1 != file.IndexOf(name, StringComparison.OrdinalIgnoreCase)))
                 .Select(info => GetExecutable(Path.Combine(Environment.ExpandEnvironmentVariables(info.value), name)))
@@ -30,7 +30,7 @@ namespace jwldnr.VisualLinter.Helpers
 
             return variables
                 .Where(value => null != value)
-                .Select(value => new { value, file = name + value })
+                .Select(value => new {value, file = name + value})
                 .Where(info => File.Exists(info.file))
                 .Select(info => info.file)
                 .FirstOrDefault();

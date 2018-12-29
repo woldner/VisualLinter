@@ -5,7 +5,8 @@ namespace jwldnr.VisualLinter.Tagging
 {
     internal class TaggerManager
     {
-        private readonly IDictionary<string, LinterTagger> _taggers = new Dictionary<string, LinterTagger>(StringComparer.OrdinalIgnoreCase);
+        private readonly IDictionary<string, LinterTagger> _taggers =
+            new Dictionary<string, LinterTagger>(StringComparer.OrdinalIgnoreCase);
 
         internal IEnumerable<LinterTagger> Values => _taggers.Values;
 

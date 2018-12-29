@@ -1,27 +1,21 @@
-﻿using jwldnr.VisualLinter.Enums;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using jwldnr.VisualLinter.Enums;
 using jwldnr.VisualLinter.Helpers;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace jwldnr.VisualLinter.Linting
 {
     internal class LinterSnapshot : WpfTableEntriesSnapshotBase
     {
-        internal LinterSnapshot NextSnapshot;
-
         private readonly string _filePath;
         private readonly IList<MessageMarker> _markers;
         private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
 
         private string _projectName;
-
-        public override int Count => _markers.Count;
-        public override int VersionNumber { get; }
-
-        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
+        internal LinterSnapshot NextSnapshot;
 
         internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<MessageMarker> markers)
         {
@@ -31,6 +25,11 @@ namespace jwldnr.VisualLinter.Linting
             _markers = new List<MessageMarker>(markers);
             _readonlyMarkers = new ReadOnlyCollection<MessageMarker>(_markers);
         }
+
+        public override int Count => _markers.Count;
+        public override int VersionNumber { get; }
+
+        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
 
         public override bool CanCreateDetailsContent(int index)
         {

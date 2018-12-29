@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Diagnostics;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -11,20 +10,14 @@ namespace jwldnr.VisualLinter.Helpers
         internal static void WriteLine(IServiceProvider serviceProvider, string message)
         {
             if (null == serviceProvider)
-            {
                 throw new ArgumentNullException(nameof(serviceProvider));
-            }
 
             if (null == message)
-            {
                 throw new ArgumentNullException(nameof(message));
-            }
 
             var outputWindowPane = GetOutputWindowPane(serviceProvider);
             if (null != outputWindowPane)
-            {
                 WriteLineToPane(outputWindowPane, message);
-            }
         }
 
         private static void WriteLineToPane(IVsOutputWindowPane outputWindowPane, string message)
@@ -45,10 +38,7 @@ namespace jwldnr.VisualLinter.Helpers
             var outputPaneGuid = PackageGuids.GuidVisualLinterPackageOutputPane;
 
             var hrGetPane = outputWindow.GetPane(ref outputPaneGuid, out var windowPane);
-            if (ErrorHandler.Succeeded(hrGetPane))
-            {
-                return windowPane;
-            }
+            if (ErrorHandler.Succeeded(hrGetPane)) return windowPane;
 
             var hrCreatePane = outputWindow.CreatePane(ref outputPaneGuid, Vsix.Name, 1, 1);
             Debug.Assert(ErrorHandler.Succeeded(hrCreatePane), $"outputWindow.CreatePane failed: {hrCreatePane}");

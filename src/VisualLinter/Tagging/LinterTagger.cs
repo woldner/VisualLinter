@@ -1,12 +1,12 @@
-﻿using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Linting;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Tagging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Linting;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -21,9 +21,6 @@ namespace jwldnr.VisualLinter.Tagging
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
         private CancellationTokenSource _source;
-        internal SnapshotFactory Factory { get; }
-        internal string FilePath { get; private set; }
-        internal LinterSnapshot Snapshot { get; set; }
 
         internal LinterTagger(
             ITextBuffer buffer,
@@ -46,7 +43,9 @@ namespace jwldnr.VisualLinter.Tagging
             Initialize();
         }
 
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+        internal SnapshotFactory Factory { get; }
+        internal string FilePath { get; private set; }
+        internal LinterSnapshot Snapshot { get; set; }
 
         public void Dispose()
         {
@@ -55,6 +54,8 @@ namespace jwldnr.VisualLinter.Tagging
 
             _provider.RemoveTagger(this);
         }
+
+        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
@@ -88,7 +89,8 @@ namespace jwldnr.VisualLinter.Tagging
         private static MessageRange GetRange(SnapshotPoint start, SnapshotPoint end, int line)
         {
             if (start > end)
-                throw new ArgumentOutOfRangeException($"start ({start.Position}) greater than end ({end.Position}) for line {line}");
+                throw new ArgumentOutOfRangeException(
+                    $"start ({start.Position}) greater than end ({end.Position}) for line {line}");
 
             return new MessageRange
             {

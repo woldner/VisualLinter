@@ -80,7 +80,7 @@ namespace jwldnr.VisualLinter.Settings
         public ICommand SuggestNewFeaturesCommand
         {
             get => _suggestNewFeaturesCommand ??
-                   (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
+                (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
             set => _suggestNewFeaturesCommand = value;
         }
 

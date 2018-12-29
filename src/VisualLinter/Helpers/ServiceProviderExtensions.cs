@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.ComponentModelHost;
-using System;
+﻿using System;
+using Microsoft.VisualStudio.ComponentModelHost;
 
 namespace jwldnr.VisualLinter.Helpers
 {
@@ -18,9 +18,7 @@ namespace jwldnr.VisualLinter.Helpers
             where TU : class
         {
             if (serviceProvider == null)
-            {
                 throw new ArgumentNullException(nameof(serviceProvider));
-            }
 
             return serviceProvider.GetService(typeof(T)) as TU;
         }

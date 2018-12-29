@@ -1,7 +1,4 @@
-﻿using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Tagging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -10,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Tagging;
+using Newtonsoft.Json;
 
 namespace jwldnr.VisualLinter.Linting
 {
@@ -22,8 +22,8 @@ namespace jwldnr.VisualLinter.Linting
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class Linter : ILinter
     {
-        private readonly ILogger _logger;
         private readonly IEslintHelper _eslintHelper;
+        private readonly ILogger _logger;
 
         private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
 
@@ -50,7 +50,8 @@ namespace jwldnr.VisualLinter.Linting
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
                     var eslintPath = _eslintHelper.GetPath(directoryPath);
-                    var arguments = string.Join(" ", QuoteArgument(filePath), _eslintHelper.GetArguments(directoryPath));
+                    var arguments = string.Join(" ", QuoteArgument(filePath),
+                        _eslintHelper.GetArguments(directoryPath));
 
                     var output = await RunAsync(eslintPath, arguments, token)
                         .ConfigureAwait(false);
@@ -83,7 +84,8 @@ namespace jwldnr.VisualLinter.Linting
                     provider.Accept(filePath, messages);
                 }
                 catch (OperationCanceledException)
-                { }
+                {
+                }
                 catch (Exception e)
                 {
                     _logger.WriteLine(e.Message);
@@ -94,7 +96,8 @@ namespace jwldnr.VisualLinter.Linting
                 }
             }
             catch (OperationCanceledException)
-            { }
+            {
+            }
             catch (Exception e)
             {
                 _logger.WriteLine(e.Message);
@@ -121,7 +124,10 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private static string QuoteArgument(string argument) => $"\"{argument}\"";
+        private static string QuoteArgument(string argument)
+        {
+            return $"\"{argument}\"";
+        }
 
         private Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
         {
@@ -137,7 +143,7 @@ namespace jwldnr.VisualLinter.Linting
                     StandardOutputEncoding = Encoding.UTF8
                 };
 
-                var process = new Process { StartInfo = startInfo };
+                var process = new Process {StartInfo = startInfo};
 
                 string error = null;
                 string output = null;
@@ -173,7 +179,8 @@ namespace jwldnr.VisualLinter.Linting
                         throw new Exception(error);
                 }
                 catch (OperationCanceledException)
-                { }
+                {
+                }
                 catch (Exception e)
                 {
                     _logger.WriteLine(e.Message);

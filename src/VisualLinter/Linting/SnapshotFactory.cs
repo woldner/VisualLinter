@@ -4,14 +4,14 @@ namespace jwldnr.VisualLinter.Linting
 {
     internal class SnapshotFactory : TableEntriesSnapshotFactoryBase
     {
-        public override int CurrentVersionNumber => CurrentSnapshot.VersionNumber;
-
-        internal LinterSnapshot CurrentSnapshot { get; private set; }
-
         internal SnapshotFactory(LinterSnapshot snapshot)
         {
             CurrentSnapshot = snapshot;
         }
+
+        public override int CurrentVersionNumber => CurrentSnapshot.VersionNumber;
+
+        internal LinterSnapshot CurrentSnapshot { get; private set; }
 
         public override ITableEntriesSnapshot GetCurrentSnapshot()
         {

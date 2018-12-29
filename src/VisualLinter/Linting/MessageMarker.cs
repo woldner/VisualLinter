@@ -4,14 +4,14 @@ namespace jwldnr.VisualLinter.Linting
 {
     internal class MessageMarker
     {
-        internal EslintMessage Message { get; }
-        internal SnapshotSpan Span { get; }
-
         internal MessageMarker(EslintMessage message, SnapshotSpan span)
         {
             Message = message;
             Span = span;
         }
+
+        internal EslintMessage Message { get; }
+        internal SnapshotSpan Span { get; }
 
         internal MessageMarker Clone()
         {

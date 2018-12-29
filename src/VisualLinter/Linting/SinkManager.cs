@@ -1,6 +1,6 @@
-﻿using jwldnr.VisualLinter.Tagging;
+﻿using System;
+using jwldnr.VisualLinter.Tagging;
 using Microsoft.VisualStudio.Shell.TableManager;
-using System;
 
 namespace jwldnr.VisualLinter.Linting
 {

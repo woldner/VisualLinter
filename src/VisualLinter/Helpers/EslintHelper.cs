@@ -17,8 +17,6 @@ namespace jwldnr.VisualLinter.Helpers
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class EslintHelper : IEslintHelper
     {
-        private readonly IVisualLinterSettings _settings;
-
         private const string ExecutableName = "eslint.cmd";
         private const string VariableName = "eslint";
 
@@ -30,6 +28,8 @@ namespace jwldnr.VisualLinter.Helpers
             ".eslintrc.json",
             ".eslintrc"
         };
+
+        private readonly IVisualLinterSettings _settings;
 
         [ImportingConstructor]
         internal EslintHelper(IVisualLinterSettings settings)
@@ -76,7 +76,7 @@ namespace jwldnr.VisualLinter.Helpers
 
         public string GetArguments(string directoryPath)
         {
-            var arguments = new Dictionary<string, string> { { "format", "json" } };
+            var arguments = new Dictionary<string, string> {{"format", "json"}};
 
             var configPath = GetConfigPath();
             if (null != configPath)
@@ -98,7 +98,8 @@ namespace jwldnr.VisualLinter.Helpers
             if (_settings.ShouldOverrideEslintConfig)
             {
                 var overridePath = GetOverrideEslintConfigPath() ??
-                    throw new Exception("exception: option 'Override .eslintignore path' is set to true-- but no path is set");
+                    throw new Exception(
+                        "exception: option 'Override .eslintignore path' is set to true-- but no path is set");
 
                 //OutputWindowHelper.DebugLine($"using override eslint config @ {overridePath}");
 
@@ -127,12 +128,7 @@ namespace jwldnr.VisualLinter.Helpers
             //OutputWindowHelper.DebugLine($"DisableIgnorePath: {Settings.DisableIgnorePath}");
 
             // disable eslint ignore
-            if (_settings.DisableIgnorePath)
-            {
-                //OutputWindowHelper.DebugLine("not using eslint ignore");
-
-                return null;
-            }
+            if (_settings.DisableIgnorePath) return null;
 
             //OutputWindowHelper.DebugLine($"ShouldOverrideEslintIgnore: {Settings.ShouldOverrideEslintIgnore}");
 
@@ -140,7 +136,8 @@ namespace jwldnr.VisualLinter.Helpers
             if (_settings.ShouldOverrideEslintIgnore)
             {
                 var overridePath = GetOverrideEslintIgnorePath() ??
-                    throw new Exception("exception: option 'Override ESLint ignore path' is set to true-- but no path is set");
+                    throw new Exception(
+                        "exception: option 'Override ESLint ignore path' is set to true-- but no path is set");
 
                 //OutputWindowHelper.DebugLine($"using override eslint ignore @ {overridePath}");
 
@@ -173,7 +170,6 @@ namespace jwldnr.VisualLinter.Helpers
 
                 if (null == workingDirectory)
                     return null;
-
             } while (-1 != workingDirectory.FullName.IndexOf(end, StringComparison.OrdinalIgnoreCase));
 
             return null;

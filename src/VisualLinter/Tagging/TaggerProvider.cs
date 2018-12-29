@@ -1,4 +1,10 @@
-﻿using jwldnr.VisualLinter.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
@@ -6,12 +12,6 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace jwldnr.VisualLinter.Tagging
 {
@@ -28,19 +28,17 @@ namespace jwldnr.VisualLinter.Tagging
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, ILinterProvider, IDisposable
     {
-        private readonly ILogger _logger;
+        private readonly Dictionary<string, Func<bool>> _extensions =
+            new Dictionary<string, Func<bool>>(StringComparer.OrdinalIgnoreCase);
+
         private readonly ILinter _linter;
+        private readonly ILogger _logger;
 
         private readonly List<SinkManager> _managers = new List<SinkManager>();
-        private readonly Dictionary<string, Func<bool>> _extensions = new Dictionary<string, Func<bool>>(StringComparer.OrdinalIgnoreCase);
         private readonly TaggerManager _taggers = new TaggerManager();
 
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
         private ITableManager _tableManager;
-
-        public string DisplayName => "VisualLinter";
-        public string Identifier => "VisualLinter";
-        public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
 
         [ImportingConstructor]
         public TaggerProvider(
@@ -80,6 +78,12 @@ namespace jwldnr.VisualLinter.Tagging
             _tableManager.AddSource(this, columns);
         }
 
+        public void Dispose()
+        {
+            _tableManager.RemoveSource(this);
+            _tableManager = null;
+        }
+
         public void Accept(string filePath, IEnumerable<EslintMessage> messages)
         {
             try
@@ -90,6 +94,15 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _logger.WriteLine(e.Message);
             }
+        }
+
+        public string DisplayName => "VisualLinter";
+        public string Identifier => "VisualLinter";
+        public string SourceTypeIdentifier => StandardTableDataSources.ErrorTableDataSource;
+
+        public IDisposable Subscribe(ITableDataSink sink)
+        {
+            return new SinkManager(this, sink);
         }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
@@ -122,17 +135,6 @@ namespace jwldnr.VisualLinter.Tagging
 
                 return new LinterTagger(buffer, document, _logger, this) as ITagger<T>;
             }
-        }
-
-        public void Dispose()
-        {
-            _tableManager.RemoveSource(this);
-            _tableManager = null;
-        }
-
-        public IDisposable Subscribe(ITableDataSink sink)
-        {
-            return new SinkManager(this, sink);
         }
 
         public void UpdateMessages(string filePath, IEnumerable<EslintMessage> messages)
