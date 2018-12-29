@@ -14,6 +14,8 @@ namespace jwldnr.VisualLinter.Tagging
     {
         private readonly ITextBuffer _buffer;
         private readonly ITextDocument _document;
+
+        private readonly ILogger _logger;
         private readonly TaggerProvider _provider;
 
         private ITextSnapshot _currentSnapshot;
@@ -24,13 +26,16 @@ namespace jwldnr.VisualLinter.Tagging
         internal LinterSnapshot Snapshot { get; set; }
 
         internal LinterTagger(
-            TaggerProvider provider,
             ITextBuffer buffer,
-            ITextDocument document)
+            ITextDocument document,
+            ILogger logger,
+            TaggerProvider provider)
         {
-            _provider = provider;
             _buffer = buffer;
             _document = document;
+
+            _logger = logger;
+            _provider = provider;
 
             _currentSnapshot = buffer.CurrentSnapshot;
             _dirtySpans = new NormalizedSnapshotSpanCollection();
@@ -64,7 +69,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                _logger.WriteLine(e.Message);
             }
 
             return Enumerable.Empty<ITagSpan<IErrorTag>>();
@@ -113,7 +118,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                _logger.WriteLine(e.Message);
             }
             finally
             {
@@ -163,7 +168,7 @@ namespace jwldnr.VisualLinter.Tagging
                     break;
 
                 default:
-                    OutputWindowHelper.WriteLine("info: unrecognized file action type");
+                    _logger.WriteLine("info: unrecognized file action type");
                     break;
             }
         }

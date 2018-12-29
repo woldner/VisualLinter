@@ -1,12 +1,14 @@
-﻿using Microsoft.VisualStudio.Settings;
+﻿using System;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Settings;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace jwldnr.VisualLinter
 {
-    public interface IVisualLinterOptions
+    public interface IVisualLinterOptions : IProfileManager
     {
         bool DisableIgnorePath { get; set; }
         bool EnableHtmlLanguageSupport { get; set; }
@@ -119,15 +121,44 @@ namespace jwldnr.VisualLinter
         [ImportingConstructor]
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
         internal VisualLinterOptions([Import] SVsServiceProvider serviceProvider)
+            : this(new ShellSettingsManager(serviceProvider))
         {
-            var settingsManager = new ShellSettingsManager(serviceProvider);
+        }
+
+        internal VisualLinterOptions(SettingsManager settingsManager)
+        {
+            if (null == settingsManager)
+                throw new ArgumentNullException(nameof(settingsManager));
 
             _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
 
-            if (null == _writableSettingsStore || _writableSettingsStore.CollectionExists(CollectionPath))
-                return;
+            if (null != _writableSettingsStore && !_writableSettingsStore.CollectionExists(CollectionPath))
+                _writableSettingsStore.CreateCollection(CollectionPath);
+        }
 
-            _writableSettingsStore.CreateCollection(CollectionPath);
+        public void SaveSettingsToXml(IVsSettingsWriter writer)
+        {
+            // noop
+        }
+
+        public void LoadSettingsFromXml(IVsSettingsReader reader)
+        {
+            // noop
+        }
+
+        public void SaveSettingsToStorage()
+        {
+            // noop
+        }
+
+        public void LoadSettingsFromStorage()
+        {
+            // noop
+        }
+
+        public void ResetSettings()
+        {
+            // noop
         }
     }
 }

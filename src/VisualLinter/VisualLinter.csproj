@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Helpers\EnvironmentHelper.cs" />
     <Compile Include="Helpers\EslintHelper.cs" />
+    <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\OutputWindowHelper.cs" />
     <Compile Include="Helpers\RegexHelper.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Linting\Linter.cs" />
     <Compile Include="Linting\EslintMessage.cs" />
     <Compile Include="Linting\EslintResult.cs" />
+    <Compile Include="Linting\LinterDaemon.cs" />
     <Compile Include="Linting\LinterSnapshot.cs" />
     <Compile Include="Linting\MessageMarker.cs" />
     <Compile Include="Linting\MessageRange.cs" />

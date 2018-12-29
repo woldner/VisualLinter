@@ -22,7 +22,19 @@ namespace jwldnr.VisualLinter.Linting
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class Linter : ILinter
     {
+        private readonly ILogger _logger;
+        private readonly IEslintHelper _eslintHelper;
+
         private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
+
+        [ImportingConstructor]
+        internal Linter(
+            ILogger logger,
+            IEslintHelper eslintHelper)
+        {
+            _logger = logger;
+            _eslintHelper = eslintHelper;
+        }
 
         public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
         {
@@ -37,8 +49,8 @@ namespace jwldnr.VisualLinter.Linting
                     var directoryPath = Path.GetDirectoryName(filePath) ??
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
-                    var eslintPath = EslintHelper.GetEslintPath(directoryPath);
-                    var arguments = string.Join(" ", QuoteArgument(filePath), EslintHelper.GetArguments(directoryPath));
+                    var eslintPath = _eslintHelper.GetPath(directoryPath);
+                    var arguments = string.Join(" ", QuoteArgument(filePath), _eslintHelper.GetArguments(directoryPath));
 
                     var output = await RunAsync(eslintPath, arguments, token)
                         .ConfigureAwait(false);
@@ -56,12 +68,12 @@ namespace jwldnr.VisualLinter.Linting
                     }
                     catch (Exception e)
                     {
-                        OutputWindowHelper.WriteLine(
+                        _logger.WriteLine(
                             "exception: error trying to deserialize output:" +
                             Environment.NewLine +
                             output);
 
-                        OutputWindowHelper.WriteLine(e.Message);
+                        _logger.WriteLine(e.Message);
                     }
 
                     var messages = ProcessResults(results);
@@ -74,7 +86,7 @@ namespace jwldnr.VisualLinter.Linting
                 { }
                 catch (Exception e)
                 {
-                    OutputWindowHelper.WriteLine(e.Message);
+                    _logger.WriteLine(e.Message);
                 }
                 finally
                 {
@@ -85,7 +97,7 @@ namespace jwldnr.VisualLinter.Linting
             { }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                _logger.WriteLine(e.Message);
             }
         }
 
@@ -111,7 +123,7 @@ namespace jwldnr.VisualLinter.Linting
 
         private static string QuoteArgument(string argument) => $"\"{argument}\"";
 
-        private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
+        private Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
         {
             return Task.Run(() =>
             {
@@ -164,7 +176,7 @@ namespace jwldnr.VisualLinter.Linting
                 { }
                 catch (Exception e)
                 {
-                    OutputWindowHelper.WriteLine(e.Message);
+                    _logger.WriteLine(e.Message);
                 }
                 finally
                 {

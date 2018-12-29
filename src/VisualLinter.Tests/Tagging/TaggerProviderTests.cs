@@ -1,4 +1,5 @@
-﻿using jwldnr.VisualLinter.Linting;
+﻿using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Linting;
 using jwldnr.VisualLinter.Tagging;
 using Microsoft.VisualStudio.Shell.TableManager;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -130,6 +131,9 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             var visualLinterOptions = _mockOptions.Object;
 
+            var mockLogger = new Mock<ILogger>();
+            var logger = mockLogger.Object;
+
             var mockLinter = new Mock<ILinter>();
             var linter = mockLinter.Object;
 
@@ -137,6 +141,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 tableManagerProvider,
                 textDocumentFactoryService,
                 visualLinterOptions,
+                logger,
                 linter);
         }
 

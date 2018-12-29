@@ -28,9 +28,11 @@ namespace jwldnr.VisualLinter.Tagging
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
     public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, ILinterProvider, IDisposable
     {
+        private readonly ILogger _logger;
         private readonly ILinter _linter;
+
         private readonly List<SinkManager> _managers = new List<SinkManager>();
-        private readonly Dictionary<string, Func<bool>> _optionsMap = new Dictionary<string, Func<bool>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Func<bool>> _extensions = new Dictionary<string, Func<bool>>(StringComparer.OrdinalIgnoreCase);
         private readonly TaggerManager _taggers = new TaggerManager();
 
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
@@ -45,6 +47,7 @@ namespace jwldnr.VisualLinter.Tagging
             [Import] ITableManagerProvider tableManagerProvider,
             [Import] ITextDocumentFactoryService textDocumentFactoryService,
             [Import] IVisualLinterOptions options,
+            [Import] ILogger logger,
             [Import] ILinter linter)
         {
             _tableManager = tableManagerProvider
@@ -52,12 +55,13 @@ namespace jwldnr.VisualLinter.Tagging
 
             _textDocumentFactoryService = textDocumentFactoryService;
 
+            _logger = logger;
             _linter = linter;
 
-            _optionsMap.Add(".html", () => options.EnableHtmlLanguageSupport);
-            _optionsMap.Add(".js", () => options.EnableJavaScriptLanguageSupport);
-            _optionsMap.Add(".jsx", () => options.EnableReactLanguageSupport);
-            _optionsMap.Add(".vue", () => options.EnableVueLanguageSupport);
+            _extensions.Add(".html", () => options.EnableHtmlLanguageSupport);
+            _extensions.Add(".js", () => options.EnableJavaScriptLanguageSupport);
+            _extensions.Add(".jsx", () => options.EnableReactLanguageSupport);
+            _extensions.Add(".vue", () => options.EnableVueLanguageSupport);
 
             var columns = new[]
             {
@@ -84,7 +88,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                _logger.WriteLine(e.Message);
             }
         }
 
@@ -102,13 +106,13 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == extension)
                 return null;
 
-            if (false == _optionsMap.ContainsKey(extension))
+            if (false == _extensions.ContainsKey(extension))
                 return null;
 
-            if (false == _optionsMap.TryGetValue(extension, out var optionValue))
+            if (false == _extensions.TryGetValue(extension, out var enabled))
                 return null;
 
-            if (false == optionValue())
+            if (false == enabled())
                 return null;
 
             lock (_taggers)
@@ -116,7 +120,7 @@ namespace jwldnr.VisualLinter.Tagging
                 if (_taggers.TryGetValue(filePath, out var tagger))
                     return tagger as ITagger<T>;
 
-                return new LinterTagger(this, buffer, document) as ITagger<T>;
+                return new LinterTagger(buffer, document, _logger, this) as ITagger<T>;
             }
         }
 
