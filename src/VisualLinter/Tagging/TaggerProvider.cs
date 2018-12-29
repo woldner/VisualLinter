@@ -46,7 +46,7 @@ namespace jwldnr.VisualLinter.Tagging
         public TaggerProvider(
             [Import] ITableManagerProvider tableManagerProvider,
             [Import] ITextDocumentFactoryService textDocumentFactoryService,
-            [Import] IVisualLinterOptions options,
+            [Import] IVisualLinterSettings settings,
             [Import] ILogger logger,
             [Import] ILinter linter)
         {
@@ -58,10 +58,10 @@ namespace jwldnr.VisualLinter.Tagging
             _logger = logger;
             _linter = linter;
 
-            _extensions.Add(".html", () => options.EnableHtmlLanguageSupport);
-            _extensions.Add(".js", () => options.EnableJavaScriptLanguageSupport);
-            _extensions.Add(".jsx", () => options.EnableReactLanguageSupport);
-            _extensions.Add(".vue", () => options.EnableVueLanguageSupport);
+            _extensions.Add(".html", () => settings.EnableHtmlLanguageSupport);
+            _extensions.Add(".js", () => settings.EnableJavaScriptLanguageSupport);
+            _extensions.Add(".jsx", () => settings.EnableReactLanguageSupport);
+            _extensions.Add(".vue", () => settings.EnableVueLanguageSupport);
 
             var columns = new[]
             {

@@ -71,6 +71,19 @@
     <Compile Include="Linting\SinkManager.cs" />
     <Compile Include="Linting\SnapshotFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\AdvancedSettingsDialogControl.xaml.cs">
+      <DependentUpon>AdvancedSettingsDialogControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\GeneralSettingsDialogControl.xaml.cs">
+      <DependentUpon>GeneralSettingsDialogControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\AdvancedSettingsDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Settings\GeneralSettingsDialogPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Settings\SettingsBase.cs" />
     <Compile Include="source.extension.cs">
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
@@ -78,27 +91,12 @@
     <Compile Include="Tagging\LinterTagger.cs" />
     <Compile Include="Tagging\TaggerManager.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
-    <Compile Include="ViewModels\AdvancedOptionsDialogViewModel.cs" />
-    <Compile Include="ViewModels\GeneralOptionsDialogViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Views\AdvancedOptionsDialogPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Views\AdvancedOptionsDialogPageControl.xaml.cs">
-      <DependentUpon>AdvancedOptionsDialogPageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\GeneralOptionsDialogPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Views\GeneralOptionsDialogPageControl.xaml.cs">
-      <DependentUpon>GeneralOptionsDialogPageControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>VisualLinter.vsct</DependentUpon>
     </Compile>
-    <Compile Include="VisualLinterOptions.cs" />
+    <Compile Include="Settings\VisualLinterSettings.cs" />
     <Compile Include="VisualLinterPackage.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -258,11 +256,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Page Include="Views\AdvancedOptionsDialogPageControl.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Settings\AdvancedSettingsDialogControl.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\GeneralOptionsDialogPageControl.xaml">
+    <Page Include="Settings\GeneralSettingsDialogControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

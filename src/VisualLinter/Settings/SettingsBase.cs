@@ -1,29 +1,18 @@
-﻿using jwldnr.VisualLinter.Helpers;
-using Microsoft.VisualStudio.Shell;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace jwldnr.VisualLinter.ViewModels
+namespace jwldnr.VisualLinter.Settings
 {
-    internal abstract class ViewModelBase : UserControl, INotifyPropertyChanged
+    public abstract class SettingsBase : UserControl, INotifyPropertyChanged
     {
-        protected readonly IVisualLinterOptions Options;
-
-        protected ViewModelBase()
-        {
-            Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>() ??
-                throw new Exception("exception: unable to retrieve options");
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected T GetPropertyValue<T>(DependencyProperty property)
         {
-            var value = (T)GetValue(property);
+            var value = (T) GetValue(property);
 
             return value;
         }
@@ -34,7 +23,8 @@ namespace jwldnr.VisualLinter.ViewModels
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetPropertyValue<T>(DependencyProperty property, T newValue, [CallerMemberName] string propertyName = null)
+        protected bool SetPropertyValue<T>(DependencyProperty property, T newValue,
+            [CallerMemberName] string propertyName = null)
         {
             var oldValue = GetPropertyValue<T>(property);
 

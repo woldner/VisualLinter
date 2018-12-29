@@ -17,7 +17,7 @@ namespace jwldnr.VisualLinter.Helpers
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class EslintHelper : IEslintHelper
     {
-        private readonly IVisualLinterOptions _options;
+        private readonly IVisualLinterSettings _settings;
 
         private const string ExecutableName = "eslint.cmd";
         private const string VariableName = "eslint";
@@ -32,17 +32,17 @@ namespace jwldnr.VisualLinter.Helpers
         };
 
         [ImportingConstructor]
-        internal EslintHelper(IVisualLinterOptions options)
+        internal EslintHelper(IVisualLinterSettings settings)
         {
-            _options = options;
+            _settings = settings;
         }
 
         public string GetPath(string directoryPath)
         {
-            //OutputWindowHelper.DebugLine($"ShouldOverrideEslint: {Options.ShouldOverrideEslint}");
+            //OutputWindowHelper.DebugLine($"ShouldOverrideEslint: {Settings.ShouldOverrideEslint}");
 
             // resolve override eslint path
-            if (_options.ShouldOverrideEslint)
+            if (_settings.ShouldOverrideEslint)
             {
                 var overridePath = GetOverrideEslintPath() ??
                     throw new Exception("exception: option 'Override ESLint path' set to true-- but no path is set");
@@ -52,10 +52,10 @@ namespace jwldnr.VisualLinter.Helpers
                 return ValidateOverridePath(overridePath);
             }
 
-            //OutputWindowHelper.DebugLine($"UseGlobalEslint: {Options.UseGlobalEslint}");
+            //OutputWindowHelper.DebugLine($"UseGlobalEslint: {Settings.UseGlobalEslint}");
 
             // resolve global eslint path
-            if (_options.UseGlobalEslint)
+            if (_settings.UseGlobalEslint)
             {
                 var globalPath = GetGlobalEslintPath() ??
                     throw new Exception("exception: no global eslint found-- is eslint installed globally?");
@@ -92,10 +92,10 @@ namespace jwldnr.VisualLinter.Helpers
 
         private string GetConfigPath()
         {
-            //OutputWindowHelper.DebugLine($"[DEBUG] ShouldOverrideEslintConfig: {_options.ShouldOverrideEslintConfig}");
+            //OutputWindowHelper.DebugLine($"[DEBUG] ShouldOverrideEslintConfig: {_settings.ShouldOverrideEslintConfig}");
 
             // resolve override eslint config path
-            if (_options.ShouldOverrideEslintConfig)
+            if (_settings.ShouldOverrideEslintConfig)
             {
                 var overridePath = GetOverrideEslintConfigPath() ??
                     throw new Exception("exception: option 'Override .eslintignore path' is set to true-- but no path is set");
@@ -105,10 +105,10 @@ namespace jwldnr.VisualLinter.Helpers
                 return ValidateOverridePath(overridePath);
             }
 
-            //OutputWindowHelper.DebugLine($"UsePersonalConfig: {_options.UsePersonalConfig}");
+            //OutputWindowHelper.DebugLine($"UsePersonalConfig: {_settings.UsePersonalConfig}");
 
             // resolve personal config path
-            if (_options.UsePersonalConfig)
+            if (_settings.UsePersonalConfig)
             {
                 var globalPath = GetPersonalConfigPath() ??
                     throw new Exception("exception: no personal eslint config found");
@@ -124,20 +124,20 @@ namespace jwldnr.VisualLinter.Helpers
 
         private string GetIgnorePath(string directoryPath)
         {
-            //OutputWindowHelper.DebugLine($"DisableIgnorePath: {Options.DisableIgnorePath}");
+            //OutputWindowHelper.DebugLine($"DisableIgnorePath: {Settings.DisableIgnorePath}");
 
             // disable eslint ignore
-            if (_options.DisableIgnorePath)
+            if (_settings.DisableIgnorePath)
             {
                 //OutputWindowHelper.DebugLine("not using eslint ignore");
 
                 return null;
             }
 
-            //OutputWindowHelper.DebugLine($"ShouldOverrideEslintIgnore: {Options.ShouldOverrideEslintIgnore}");
+            //OutputWindowHelper.DebugLine($"ShouldOverrideEslintIgnore: {Settings.ShouldOverrideEslintIgnore}");
 
             // resolve override eslint ignore path
-            if (_options.ShouldOverrideEslintIgnore)
+            if (_settings.ShouldOverrideEslintIgnore)
             {
                 var overridePath = GetOverrideEslintIgnorePath() ??
                     throw new Exception("exception: option 'Override ESLint ignore path' is set to true-- but no path is set");
@@ -199,7 +199,7 @@ namespace jwldnr.VisualLinter.Helpers
 
         private string GetOverrideEslintConfigPath()
         {
-            var overridePath = _options.EslintConfigOverridePath;
+            var overridePath = _settings.EslintConfigOverridePath;
 
             var path = string.IsNullOrEmpty(overridePath)
                 ? null
@@ -212,7 +212,7 @@ namespace jwldnr.VisualLinter.Helpers
 
         private string GetOverrideEslintIgnorePath()
         {
-            var overridePath = _options.EslintIgnoreOverridePath;
+            var overridePath = _settings.EslintIgnoreOverridePath;
 
             var path = string.IsNullOrEmpty(overridePath)
                 ? null
@@ -225,7 +225,7 @@ namespace jwldnr.VisualLinter.Helpers
 
         private string GetOverrideEslintPath()
         {
-            var overridePath = _options.EslintOverridePath;
+            var overridePath = _settings.EslintOverridePath;
 
             var path = string.IsNullOrEmpty(overridePath)
                 ? null

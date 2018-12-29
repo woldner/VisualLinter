@@ -1,68 +1,86 @@
-﻿using jwldnr.VisualLinter.Helpers;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using jwldnr.VisualLinter.Helpers;
 
-namespace jwldnr.VisualLinter.ViewModels
+namespace jwldnr.VisualLinter.Settings
 {
-    internal class GeneralOptionsDialogViewModel : ViewModelBase
+    /// <summary>
+    ///     Interaction logic for GeneralSettingsDialogControl.xaml
+    /// </summary>
+    public partial class GeneralSettingsDialogControl
     {
         internal static readonly DependencyProperty DisableEslintIgnoreProperty =
             DependencyProperty.Register(
                 nameof(DisableEslintIgnore),
                 typeof(bool),
-                typeof(GeneralOptionsDialogViewModel),
+                typeof(GeneralSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty EnableHtmlLanguageSupportProperty =
             DependencyProperty.Register(
                 nameof(EnableHtmlLanguageSupport),
                 typeof(bool),
-                typeof(GeneralOptionsDialogViewModel),
+                typeof(GeneralSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty EnableJavaScriptLanguageSupportProperty =
             DependencyProperty.Register(
                 nameof(EnableJavaScriptLanguageSupport),
                 typeof(bool),
-                typeof(GeneralOptionsDialogViewModel),
+                typeof(GeneralSettingsDialogControl),
                 new PropertyMetadata(true));
 
         internal static readonly DependencyProperty EnableReactLanguageSupportProperty =
             DependencyProperty.Register(
                 nameof(EnableReactLanguageSupport),
                 typeof(bool),
-                typeof(GeneralOptionsDialogViewModel),
+                typeof(GeneralSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty EnableVueLanguageSupportProperty =
             DependencyProperty.Register(
                 nameof(EnableVueLanguageSupport),
                 typeof(bool),
-                typeof(GeneralOptionsDialogViewModel),
+                typeof(GeneralSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty UseGlobalEslintProperty =
             DependencyProperty.Register(
                 nameof(UseGlobalEslint),
                 typeof(bool),
-                typeof(GeneralOptionsDialogViewModel),
+                typeof(GeneralSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty UsePersonalConfigProperty =
             DependencyProperty.Register(
                 nameof(UsePersonalConfig),
                 typeof(bool),
-                typeof(GeneralOptionsDialogViewModel),
+                typeof(GeneralSettingsDialogControl),
                 new PropertyMetadata(false));
 
+        private readonly ILogger _logger;
+        private readonly IVisualLinterSettings _settings;
+
         private ICommand _suggestNewFeaturesCommand;
+
+        internal GeneralSettingsDialogControl(
+            IVisualLinterSettings settings,
+            ILogger logger)
+        {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            InitializeComponent();
+
+            DataContext = this;
+        }
 
         public ICommand SuggestNewFeaturesCommand
         {
             get => _suggestNewFeaturesCommand ??
-                (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
+                   (_suggestNewFeaturesCommand = new RelayCommand<string>(SuggestNewFeatures));
             set => _suggestNewFeaturesCommand = value;
         }
 
@@ -110,36 +128,36 @@ namespace jwldnr.VisualLinter.ViewModels
 
         internal void Load()
         {
-            UseGlobalEslint = Options.UseGlobalEslint;
-            EnableHtmlLanguageSupport = Options.EnableHtmlLanguageSupport;
-            EnableJavaScriptLanguageSupport = Options.EnableJavaScriptLanguageSupport;
-            EnableReactLanguageSupport = Options.EnableReactLanguageSupport;
-            EnableVueLanguageSupport = Options.EnableVueLanguageSupport;
-            UsePersonalConfig = Options.UsePersonalConfig;
-            DisableEslintIgnore = Options.DisableIgnorePath;
+            UseGlobalEslint = _settings.UseGlobalEslint;
+            EnableHtmlLanguageSupport = _settings.EnableHtmlLanguageSupport;
+            EnableJavaScriptLanguageSupport = _settings.EnableJavaScriptLanguageSupport;
+            EnableReactLanguageSupport = _settings.EnableReactLanguageSupport;
+            EnableVueLanguageSupport = _settings.EnableVueLanguageSupport;
+            UsePersonalConfig = _settings.UsePersonalConfig;
+            DisableEslintIgnore = _settings.DisableIgnorePath;
         }
 
         internal void Save()
         {
-            Options.DisableIgnorePath = DisableEslintIgnore;
-            Options.EnableHtmlLanguageSupport = EnableHtmlLanguageSupport;
-            Options.EnableJavaScriptLanguageSupport = EnableJavaScriptLanguageSupport;
-            Options.EnableReactLanguageSupport = EnableReactLanguageSupport;
-            Options.EnableVueLanguageSupport = EnableVueLanguageSupport;
-            Options.UseGlobalEslint = UseGlobalEslint;
-            Options.UsePersonalConfig = UsePersonalConfig;
+            _settings.DisableIgnorePath = DisableEslintIgnore;
+            _settings.EnableHtmlLanguageSupport = EnableHtmlLanguageSupport;
+            _settings.EnableJavaScriptLanguageSupport = EnableJavaScriptLanguageSupport;
+            _settings.EnableReactLanguageSupport = EnableReactLanguageSupport;
+            _settings.EnableVueLanguageSupport = EnableVueLanguageSupport;
+            _settings.UseGlobalEslint = UseGlobalEslint;
+            _settings.UsePersonalConfig = UsePersonalConfig;
         }
 
-        private static void SuggestNewFeatures(object url)
+        private void SuggestNewFeatures(object url)
         {
             try
             {
                 Process.Start(new ProcessStartInfo($"{url}"));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //OutputWindowHelper.WriteLine($"exception: could not open {url}");
-                //OutputWindowHelper.WriteLine(e.Message);
+                _logger.WriteLine($"exception: could not open {url}");
+                _logger.WriteLine(e.Message);
             }
         }
     }

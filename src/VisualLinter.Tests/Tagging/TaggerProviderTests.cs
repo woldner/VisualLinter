@@ -13,7 +13,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
     [TestClass]
     public class TaggerProviderTests
     {
-        private Mock<IVisualLinterOptions> _mockOptions;
+        private Mock<IVisualLinterSettings> _mockOptions;
         private Mock<ITextDocument> _mockTextDocument;
 
         private TaggerProvider _provider;
@@ -124,7 +124,7 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(t => t.TryGetTextDocument(It.IsAny<ITextBuffer>(), out textDocument))
                 .Returns(true);
 
-            _mockOptions = new Mock<IVisualLinterOptions>();
+            _mockOptions = new Mock<IVisualLinterSettings>();
             _mockOptions
                 .Setup(o => o.EnableJavaScriptLanguageSupport)
                 .Returns(true);
