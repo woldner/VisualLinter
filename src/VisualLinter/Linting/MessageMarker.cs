@@ -13,11 +13,6 @@ namespace jwldnr.VisualLinter.Linting
         internal EslintMessage Message { get; }
         internal SnapshotSpan Span { get; }
 
-        internal MessageMarker Clone()
-        {
-            return new MessageMarker(Message, Span);
-        }
-
         internal MessageMarker CloneAndTranslateTo(ITextSnapshot newSnapshot)
         {
             var newSpan = Span.TranslateTo(newSnapshot, SpanTrackingMode.EdgeExclusive);

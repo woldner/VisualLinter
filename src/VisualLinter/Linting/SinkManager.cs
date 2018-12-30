@@ -22,19 +22,19 @@ namespace jwldnr.VisualLinter.Linting
             _provider.RemoveSinkManager(this);
         }
 
-        internal void AddFactory(ITableEntriesSnapshotFactory factory)
+        internal void AddFactory(SnapshotFactory factory)
         {
             _sink.AddFactory(factory);
         }
 
-        internal void RemoveFactory(ITableEntriesSnapshotFactory factory)
+        internal void RemoveFactory(SnapshotFactory factory)
         {
             _sink.RemoveFactory(factory);
         }
 
-        internal void UpdateSink(ITableEntriesSnapshotFactory factory)
+        internal void UpdateSink()
         {
-            _sink.FactorySnapshotChanged(factory);
+            _sink.FactorySnapshotChanged(null);
         }
     }
 }

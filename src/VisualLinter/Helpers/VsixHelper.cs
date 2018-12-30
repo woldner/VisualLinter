@@ -17,7 +17,7 @@ namespace jwldnr.VisualLinter.Helpers
         {
             var project = GetProject(filePath);
 
-            return project?.Name;
+            return project?.Name ?? "{none}";
         }
 
         internal static string GetSolutionPath()

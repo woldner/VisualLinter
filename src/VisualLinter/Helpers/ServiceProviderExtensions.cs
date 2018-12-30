@@ -13,11 +13,20 @@ namespace jwldnr.VisualLinter.Helpers
             return componentModel?.GetService<T>();
         }
 
+        internal static T GetService<T>(this IServiceProvider serviceProvider)
+            where T : class
+        {
+            if (null == serviceProvider)
+                throw new ArgumentNullException(nameof(serviceProvider));
+
+            return serviceProvider.GetService(typeof(T)) as T;
+        }
+
         internal static TU GetService<T, TU>(this IServiceProvider serviceProvider)
             where T : class
             where TU : class
         {
-            if (serviceProvider == null)
+            if (null == serviceProvider)
                 throw new ArgumentNullException(nameof(serviceProvider));
 
             return serviceProvider.GetService(typeof(T)) as TU;

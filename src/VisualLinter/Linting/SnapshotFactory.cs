@@ -13,6 +13,11 @@ namespace jwldnr.VisualLinter.Linting
 
         internal LinterSnapshot CurrentSnapshot { get; private set; }
 
+        internal void UpdateSnapshot(LinterSnapshot snapshot)
+        {
+            CurrentSnapshot = snapshot;
+        }
+
         public override ITableEntriesSnapshot GetCurrentSnapshot()
         {
             return CurrentSnapshot;
@@ -25,12 +30,6 @@ namespace jwldnr.VisualLinter.Linting
             return versionNumber == snapshot.VersionNumber
                 ? snapshot
                 : null;
-        }
-
-        internal void UpdateMarkers(LinterSnapshot snapshot)
-        {
-            CurrentSnapshot.NextSnapshot = snapshot;
-            CurrentSnapshot = snapshot;
         }
     }
 }

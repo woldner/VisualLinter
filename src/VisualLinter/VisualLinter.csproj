@@ -89,7 +89,7 @@
     </Compile>
     <Compile Include="Tagging\LinterTag.cs" />
     <Compile Include="Tagging\LinterTagger.cs" />
-    <Compile Include="Tagging\TaggerManager.cs" />
+    <Compile Include="Tagging\LinterTracker.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>

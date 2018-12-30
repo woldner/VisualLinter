@@ -15,7 +15,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token);
+        Task LintAsync(string filePath, ILinterTracker tracker, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
@@ -29,14 +29,14 @@ namespace jwldnr.VisualLinter.Linting
 
         [ImportingConstructor]
         internal Linter(
-            ILogger logger,
-            IEslintHelper eslintHelper)
+            [Import] ILogger logger,
+            [Import] IEslintHelper eslintHelper)
         {
-            _logger = logger;
+            _logger = logger; // todo move to outer scope??
             _eslintHelper = eslintHelper;
         }
 
-        public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
+        public async Task LintAsync(string filePath, ILinterTracker tracker, CancellationToken token)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace jwldnr.VisualLinter.Linting
 
                     token.ThrowIfCancellationRequested();
 
-                    provider.Accept(filePath, messages);
+                    tracker.Accept(filePath, messages);
                 }
                 catch (OperationCanceledException)
                 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Shell.TableControl;
@@ -15,18 +14,13 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    public interface ILinterProvider
-    {
-        void Accept(string filePath, IEnumerable<EslintMessage> messages);
-    }
-
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
     [ContentType("text")]
     [ContentType("projection")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [TextViewRole(PredefinedTextViewRoles.Analyzable)]
-    public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource, ILinterProvider, IDisposable
+    public sealed class TaggerProvider : IViewTaggerProvider, ITableDataSource
     {
         private readonly Dictionary<string, Func<bool>> _extensions =
             new Dictionary<string, Func<bool>>(StringComparer.OrdinalIgnoreCase);
@@ -34,11 +28,11 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly ILinter _linter;
         private readonly ILogger _logger;
 
-        private readonly List<SinkManager> _managers = new List<SinkManager>();
-        private readonly TaggerManager _taggers = new TaggerManager();
+        private readonly ISet<SinkManager> _managers = new HashSet<SinkManager>();
+        private readonly ITableManager _tableManager;
 
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
-        private ITableManager _tableManager;
+        private readonly ISet<LinterTracker> _trackers = new HashSet<LinterTracker>();
 
         [ImportingConstructor]
         public TaggerProvider(
@@ -72,28 +66,11 @@ namespace jwldnr.VisualLinter.Tagging
                 StandardTableColumnDefinitions.ErrorSeverity,
                 StandardTableColumnDefinitions.ErrorSource,
                 StandardTableColumnDefinitions.Line,
+                StandardTableColumnDefinitions.ProjectName,
                 StandardTableColumnDefinitions.Text
             };
 
             _tableManager.AddSource(this, columns);
-        }
-
-        public void Dispose()
-        {
-            _tableManager.RemoveSource(this);
-            _tableManager = null;
-        }
-
-        public void Accept(string filePath, IEnumerable<EslintMessage> messages)
-        {
-            try
-            {
-                UpdateMessages(filePath, messages);
-            }
-            catch (Exception e)
-            {
-                _logger.WriteLine(e.Message);
-            }
         }
 
         public string DisplayName => "VisualLinter";
@@ -128,24 +105,10 @@ namespace jwldnr.VisualLinter.Tagging
             if (false == enabled())
                 return null;
 
-            lock (_taggers)
-            {
-                if (_taggers.TryGetValue(filePath, out var tagger))
-                    return tagger as ITagger<T>;
+            var tracker = buffer.Properties.GetOrCreateSingletonProperty(typeof(LinterTracker),
+                () => new LinterTracker(document, this));
 
-                return new LinterTagger(buffer, document, _logger, this) as ITagger<T>;
-            }
-        }
-
-        public void UpdateMessages(string filePath, IEnumerable<EslintMessage> messages)
-        {
-            lock (_taggers)
-            {
-                if (false == _taggers.TryGetValue(filePath, out var tagger))
-                    return;
-
-                tagger.UpdateMessages(messages);
-            }
+            return new LinterTagger(tracker, _logger) as ITagger<T>;
         }
 
         internal void AddSinkManager(SinkManager manager)
@@ -154,34 +117,8 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _managers.Add(manager);
 
-                foreach (var tagger in _taggers.Values)
-                    manager.AddFactory(tagger.Factory);
+                foreach (var tracker in _trackers) manager.AddFactory(tracker.Factory);
             }
-        }
-
-        internal Task AddTagger(LinterTagger tagger, Func<Task> callback)
-        {
-            lock (_managers)
-            {
-                _taggers.Add(tagger);
-
-                foreach (var manager in _managers)
-                    manager.AddFactory(tagger.Factory);
-            }
-
-            return callback();
-        }
-
-        internal async Task Analyze(string filePath, CancellationToken token)
-        {
-            lock (_taggers)
-            {
-                if (false == _taggers.Exists(filePath))
-                    return;
-            }
-
-            await _linter.LintAsync(this, filePath, token)
-                .ConfigureAwait(false);
         }
 
         internal void RemoveSinkManager(SinkManager manager)
@@ -192,31 +129,39 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void RemoveTagger(LinterTagger tagger)
-        {
-            lock (_managers)
-            {
-                _taggers.Remove(tagger);
-
-                foreach (var manager in _managers)
-                    manager.RemoveFactory(tagger.Factory);
-            }
-        }
-
-        internal void Rename(string oldPath, string newPath)
-        {
-            lock (_taggers)
-            {
-                _taggers.Rename(oldPath, newPath);
-            }
-        }
-
-        internal void UpdateAllSinks(ITableEntriesSnapshotFactory factory)
+        internal void UpdateAllSinks()
         {
             lock (_managers)
             {
                 foreach (var manager in _managers)
-                    manager.UpdateSink(factory);
+                    manager.UpdateSink();
+            }
+        }
+
+        internal void Analyze(string filePath, ILinterTracker tracker)
+        {
+            var token = new CancellationToken(); // todo
+
+            _linter.LintAsync(filePath, tracker, token);
+        }
+
+        internal void AddTracker(LinterTracker tracker)
+        {
+            lock (_managers)
+            {
+                _trackers.Add(tracker);
+
+                foreach (var manager in _managers) manager.AddFactory(tracker.Factory);
+            }
+        }
+
+        internal void RemoveTracker(LinterTracker tracker)
+        {
+            lock (_managers)
+            {
+                _trackers.Remove(tracker);
+
+                foreach (var manager in _managers) manager.RemoveFactory(tracker.Factory);
             }
         }
 

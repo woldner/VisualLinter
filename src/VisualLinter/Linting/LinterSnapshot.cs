@@ -10,16 +10,21 @@ namespace jwldnr.VisualLinter.Linting
 {
     internal class LinterSnapshot : WpfTableEntriesSnapshotBase
     {
+        private readonly string _projectName;
         private readonly string _filePath;
         private readonly IList<MessageMarker> _markers;
         private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
 
-        private string _projectName;
         internal LinterSnapshot NextSnapshot;
 
-        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<MessageMarker> markers)
+        internal LinterSnapshot(
+            string filePath,
+            int versionNumber,
+            IEnumerable<MessageMarker> markers)
         {
+            _projectName = VsixHelper.GetProjectName(filePath);
             _filePath = filePath;
+
             VersionNumber = versionNumber;
 
             _markers = new List<MessageMarker>(markers);
@@ -93,9 +98,6 @@ namespace jwldnr.VisualLinter.Linting
                     return true;
 
                 case StandardTableKeyNames.ProjectName:
-                    if (string.IsNullOrEmpty(_projectName))
-                        _projectName = VsixHelper.GetProjectName(_filePath);
-
                     content = _projectName;
                     return null != content;
 
