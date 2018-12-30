@@ -15,7 +15,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(string filePath, ILinterTracker tracker, CancellationToken token);
+        Task LintAsync(string filePath, IMessageTracker tracker, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
@@ -36,7 +36,7 @@ namespace jwldnr.VisualLinter.Linting
             _eslintHelper = eslintHelper;
         }
 
-        public async Task LintAsync(string filePath, ILinterTracker tracker, CancellationToken token)
+        public async Task LintAsync(string filePath, IMessageTracker tracker, CancellationToken token)
         {
             try
             {
@@ -61,11 +61,11 @@ namespace jwldnr.VisualLinter.Linting
                     if (string.IsNullOrEmpty(output))
                         throw new Exception("exception: linter returned empty result");
 
-                    IEnumerable<EslintResult> results = new List<EslintResult>();
+                    IEnumerable<LinterResult> results = new List<LinterResult>();
 
                     try
                     {
-                        results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(output);
+                        results = JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
                     }
                     catch (Exception e)
                     {
@@ -104,16 +104,16 @@ namespace jwldnr.VisualLinter.Linting
             }
         }
 
-        private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
+        private static IEnumerable<LinterMessage> ProcessMessages(IReadOnlyList<LinterMessage> messages)
         {
             // return empty messages when warning about ignored files
             if (1 == messages.Count && RegexHelper.IgnoreFileMatch(messages[0].Message))
-                return Enumerable.Empty<EslintMessage>();
+                return Enumerable.Empty<LinterMessage>();
 
             return messages;
         }
 
-        private static IEnumerable<EslintMessage> ProcessResults(IEnumerable<EslintResult> results)
+        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
         {
             // this extension only support 1-1 linting
             // therefor results count will always be 1
@@ -121,7 +121,7 @@ namespace jwldnr.VisualLinter.Linting
 
             return null != result
                 ? ProcessMessages(result.Messages)
-                : Enumerable.Empty<EslintMessage>();
+                : Enumerable.Empty<LinterMessage>();
         }
 
         private static string QuoteArgument(string argument)

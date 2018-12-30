@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EnvDTE;
 using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Text;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    public interface ILinterTracker
+    public interface IMessageTracker
     {
-        void Accept(string filePath, IEnumerable<EslintMessage> messages);
+        void Accept(string filePath, IEnumerable<LinterMessage> messages);
     }
 
-    internal sealed class LinterTracker : ILinterTracker
+    internal sealed class MessageTracker : IMessageTracker
     {
         private readonly ITextDocument _document;
 
-        private readonly ISet<LinterTagger> _taggers = new HashSet<LinterTagger>();
+        private readonly ISet<MessageTagger> _taggers = new HashSet<MessageTagger>();
         private readonly ITextBuffer _textBuffer;
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
 
         private readonly TaggerProvider _provider;
 
-        internal LinterTracker(
+        internal MessageTracker(
             ITextDocument document,
             TaggerProvider provider)
         {
@@ -35,7 +34,7 @@ namespace jwldnr.VisualLinter.Tagging
             _textBuffer = document.TextBuffer;
             _currentSnapshot = document.TextBuffer.CurrentSnapshot;
 
-            Factory = new SnapshotFactory(new LinterSnapshot(FilePath, 0, new List<MessageMarker>()));
+            Factory = new SnapshotFactory(new MessagesSnapshot(FilePath, 0, new List<MessageMarker>()));
 
             document.FileActionOccurred += FileActionOccurred;
         }
@@ -43,9 +42,9 @@ namespace jwldnr.VisualLinter.Tagging
         internal string FilePath { get; private set; }
 
         internal SnapshotFactory Factory { get; }
-        internal LinterSnapshot LastSnapshot { get; private set; }
+        internal MessagesSnapshot LastSnapshot { get; private set; }
 
-        public void Accept(string filePath, IEnumerable<EslintMessage> messages)
+        public void Accept(string filePath, IEnumerable<LinterMessage> messages)
         {
             if (filePath != FilePath)
                 return;
@@ -54,7 +53,7 @@ namespace jwldnr.VisualLinter.Tagging
             UpdateMessages(markers);
         }
 
-        private MessageMarker CreateMarker(EslintMessage message)
+        private MessageMarker CreateMarker(LinterMessage message)
         {
             var start = new SnapshotPoint(_currentSnapshot, message.Range.Start);
             var end = new SnapshotPoint(_currentSnapshot, message.Range.End);
@@ -82,7 +81,7 @@ namespace jwldnr.VisualLinter.Tagging
             };
         }
 
-        private IEnumerable<EslintMessage> ProcessMessages(IEnumerable<EslintMessage> messages)
+        private IEnumerable<LinterMessage> ProcessMessages(IEnumerable<LinterMessage> messages)
         {
             foreach (var message in messages)
             {
@@ -118,7 +117,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        public void AddTagger(LinterTagger tagger)
+        public void AddTagger(MessageTagger tagger)
         {
             _taggers.Add(tagger);
 
@@ -135,7 +134,7 @@ namespace jwldnr.VisualLinter.Tagging
             Analyze(FilePath);
         }
 
-        public void RemoveTagger(LinterTagger tagger)
+        public void RemoveTagger(MessageTagger tagger)
         {
             _taggers.Remove(tagger);
 
@@ -145,7 +144,7 @@ namespace jwldnr.VisualLinter.Tagging
             _document.FileActionOccurred -= FileActionOccurred;
 
             _textBuffer.ChangedLowPriority -= OnBufferChange;
-            _textBuffer.Properties.RemoveProperty(typeof(LinterTracker));
+            _textBuffer.Properties.RemoveProperty(typeof(MessageTracker));
 
             _provider.RemoveTracker(this);
         }
@@ -177,7 +176,7 @@ namespace jwldnr.VisualLinter.Tagging
         private void UpdateMessages(IEnumerable<MessageMarker> markers)
         {
             var oldSnapshot = Factory.CurrentSnapshot;
-            var newSnapshot = new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, markers);
+            var newSnapshot = new MessagesSnapshot(FilePath, oldSnapshot.VersionNumber + 1, markers);
 
             SnapToNewSnapshot(newSnapshot);
         }
@@ -204,7 +203,7 @@ namespace jwldnr.VisualLinter.Tagging
             _dirtySpans = newDirtySpans;
         }
 
-        private LinterSnapshot TranslateMarkerSpans()
+        private MessagesSnapshot TranslateMarkerSpans()
         {
             var oldSnapshot = Factory.CurrentSnapshot;
 
@@ -212,10 +211,10 @@ namespace jwldnr.VisualLinter.Tagging
                 .Select(marker => marker.CloneAndTranslateTo(_currentSnapshot))
                 .Where(clone => clone != null);
 
-            return new LinterSnapshot(FilePath, oldSnapshot.VersionNumber + 1, markers);
+            return new MessagesSnapshot(FilePath, oldSnapshot.VersionNumber + 1, markers);
         }
 
-        private void SnapToNewSnapshot(LinterSnapshot snapshot)
+        private void SnapToNewSnapshot(MessagesSnapshot snapshot)
         {
             Factory.UpdateSnapshot(snapshot);
 
@@ -230,7 +229,7 @@ namespace jwldnr.VisualLinter.Tagging
             LastSnapshot = snapshot;
         }
 
-        private SnapshotSpan? GetAffectedSpan(LinterSnapshot oldSnapshot, LinterSnapshot newSnapshot)
+        private SnapshotSpan? GetAffectedSpan(MessagesSnapshot oldSnapshot, MessagesSnapshot newSnapshot)
         {
             var start = int.MaxValue;
             var end = int.MinValue;

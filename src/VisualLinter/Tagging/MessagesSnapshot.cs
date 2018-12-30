@@ -6,18 +6,17 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 
-namespace jwldnr.VisualLinter.Linting
+namespace jwldnr.VisualLinter.Tagging
 {
-    internal class LinterSnapshot : WpfTableEntriesSnapshotBase
+    internal class MessagesSnapshot : WpfTableEntriesSnapshotBase
     {
-        private readonly string _projectName;
         private readonly string _filePath;
+
         private readonly IList<MessageMarker> _markers;
+        private readonly string _projectName;
         private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
 
-        internal LinterSnapshot NextSnapshot;
-
-        internal LinterSnapshot(
+        internal MessagesSnapshot(
             string filePath,
             int versionNumber,
             IEnumerable<MessageMarker> markers)

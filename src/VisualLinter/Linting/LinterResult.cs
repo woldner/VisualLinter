@@ -3,13 +3,13 @@
 namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    public class EslintResult
+    public class LinterResult
     {
         [JsonProperty("errorCount")] public int ErrorCount { get; set; }
 
         [JsonProperty("filePath")] public string FilePath { get; set; }
 
-        [JsonProperty("messages")] public EslintMessage[] Messages { get; set; }
+        [JsonProperty("messages")] public LinterMessage[] Messages { get; set; }
 
         [JsonProperty("source")] public string Source { get; set; }
 

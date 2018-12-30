@@ -1,8 +1,7 @@
 ﻿using System;
-using jwldnr.VisualLinter.Tagging;
 using Microsoft.VisualStudio.Shell.TableManager;
 
-namespace jwldnr.VisualLinter.Linting
+namespace jwldnr.VisualLinter.Tagging
 {
     internal class SinkManager : IDisposable
     {

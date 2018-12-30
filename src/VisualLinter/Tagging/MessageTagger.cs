@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    internal class LinterTagger : ITagger<IErrorTag>, IDisposable
+    internal class MessageTagger : ITagger<IErrorTag>, IDisposable
     {
-        private LinterSnapshot _snapshot;
+        private MessagesSnapshot _snapshot;
 
-        private readonly LinterTracker _tracker;
+        private readonly MessageTracker _tracker;
         private readonly ILogger _logger;
 
-        internal LinterTagger(
-            LinterTracker tracker,
+        internal MessageTagger(
+            MessageTracker tracker,
             ILogger logger)
         {
             _snapshot = tracker.LastSnapshot;
@@ -42,7 +41,7 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 return _snapshot.Markers
                     .Where(marker => spans.IntersectsWith(marker.Span))
-                    .Select(marker => new TagSpan<IErrorTag>(marker.Span, new LinterTag(marker.Message)));
+                    .Select(marker => new TagSpan<IErrorTag>(marker.Span, new MessageTag(marker.Message)));
             }
             catch (Exception e)
             {
@@ -52,7 +51,7 @@ namespace jwldnr.VisualLinter.Tagging
             return Enumerable.Empty<ITagSpan<IErrorTag>>();
         }
 
-        public void UpdateMarkers(LinterSnapshot snapshot, SnapshotSpan? span)
+        public void UpdateMarkers(MessagesSnapshot snapshot, SnapshotSpan? span)
         {
             _snapshot = snapshot;
 

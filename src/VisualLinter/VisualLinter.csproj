@@ -61,15 +61,14 @@
     <Compile Include="Helpers\ServiceProviderExtensions.cs" />
     <Compile Include="Helpers\VsixHelper.cs" />
     <Compile Include="Linting\Linter.cs" />
-    <Compile Include="Linting\EslintMessage.cs" />
-    <Compile Include="Linting\EslintResult.cs" />
-    <Compile Include="Linting\LinterDaemon.cs" />
-    <Compile Include="Linting\LinterSnapshot.cs" />
-    <Compile Include="Linting\MessageMarker.cs" />
+    <Compile Include="Linting\LinterMessage.cs" />
+    <Compile Include="Linting\LinterResult.cs" />
+    <Compile Include="Tagging\MessagesSnapshot.cs" />
+    <Compile Include="Tagging\MessageMarker.cs" />
     <Compile Include="Linting\MessageRange.cs" />
     <Compile Include="Enums\RuleSeverity.cs" />
-    <Compile Include="Linting\SinkManager.cs" />
-    <Compile Include="Linting\SnapshotFactory.cs" />
+    <Compile Include="Tagging\SinkManager.cs" />
+    <Compile Include="Tagging\SnapshotFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AdvancedSettingsDialogControl.xaml.cs">
       <DependentUpon>AdvancedSettingsDialogControl.xaml</DependentUpon>
@@ -87,9 +86,9 @@
     <Compile Include="source.extension.cs">
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
-    <Compile Include="Tagging\LinterTag.cs" />
-    <Compile Include="Tagging\LinterTagger.cs" />
-    <Compile Include="Tagging\LinterTracker.cs" />
+    <Compile Include="Tagging\MessageTag.cs" />
+    <Compile Include="Tagging\MessageTagger.cs" />
+    <Compile Include="Tagging\WarningTracker.cs" />
     <Compile Include="Tagging\TaggerProvider.cs" />
     <Compile Include="VisualLinter.cs">
       <AutoGen>True</AutoGen>

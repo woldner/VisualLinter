@@ -32,7 +32,7 @@ namespace jwldnr.VisualLinter.Tagging
         private readonly ITableManager _tableManager;
 
         private readonly ITextDocumentFactoryService _textDocumentFactoryService;
-        private readonly ISet<LinterTracker> _trackers = new HashSet<LinterTracker>();
+        private readonly ISet<MessageTracker> _trackers = new HashSet<MessageTracker>();
 
         [ImportingConstructor]
         public TaggerProvider(
@@ -105,10 +105,10 @@ namespace jwldnr.VisualLinter.Tagging
             if (false == enabled())
                 return null;
 
-            var tracker = buffer.Properties.GetOrCreateSingletonProperty(typeof(LinterTracker),
-                () => new LinterTracker(document, this));
+            var tracker = buffer.Properties.GetOrCreateSingletonProperty(typeof(MessageTracker),
+                () => new MessageTracker(document, this));
 
-            return new LinterTagger(tracker, _logger) as ITagger<T>;
+            return new MessageTagger(tracker, _logger) as ITagger<T>;
         }
 
         internal void AddSinkManager(SinkManager manager)
@@ -138,14 +138,14 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void Analyze(string filePath, ILinterTracker tracker)
+        internal void Analyze(string filePath, IMessageTracker tracker)
         {
             var token = new CancellationToken(); // todo
 
             _linter.LintAsync(filePath, tracker, token);
         }
 
-        internal void AddTracker(LinterTracker tracker)
+        internal void AddTracker(MessageTracker tracker)
         {
             lock (_managers)
             {
@@ -155,7 +155,7 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void RemoveTracker(LinterTracker tracker)
+        internal void RemoveTracker(MessageTracker tracker)
         {
             lock (_managers)
             {
