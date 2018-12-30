@@ -15,7 +15,7 @@ namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(string filePath, IMessageTracker tracker, CancellationToken token);
+        Task LintAsync(IMessageTracker tracker, string filePath, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
@@ -32,20 +32,20 @@ namespace jwldnr.VisualLinter.Linting
             [Import] ILogger logger,
             [Import] IEslintHelper eslintHelper)
         {
-            _logger = logger; // todo move to outer scope??
+            _logger = logger;
             _eslintHelper = eslintHelper;
         }
 
-        public async Task LintAsync(string filePath, IMessageTracker tracker, CancellationToken token)
+        public async Task LintAsync(IMessageTracker tracker, string filePath, CancellationToken token)
         {
             try
             {
                 await _mutex.WaitAsync(token).ConfigureAwait(false);
 
+                token.ThrowIfCancellationRequested();
+
                 try
                 {
-                    token.ThrowIfCancellationRequested();
-
                     var directoryPath = Path.GetDirectoryName(filePath) ??
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
@@ -69,26 +69,17 @@ namespace jwldnr.VisualLinter.Linting
                     }
                     catch (Exception e)
                     {
-                        _logger.WriteLine(
-                            "exception: error trying to deserialize output:" +
-                            Environment.NewLine +
-                            output);
-
+                        _logger.WriteLine("exception: error trying to deserialize output:");
                         _logger.WriteLine(e.Message);
                     }
 
-                    var messages = ProcessResults(results);
-
                     token.ThrowIfCancellationRequested();
 
+                    var messages = ProcessResults(results);
                     tracker.Accept(filePath, messages);
                 }
                 catch (OperationCanceledException)
                 {
-                }
-                catch (Exception e)
-                {
-                    _logger.WriteLine(e.Message);
                 }
                 finally
                 {
@@ -143,7 +134,7 @@ namespace jwldnr.VisualLinter.Linting
                     StandardOutputEncoding = Encoding.UTF8
                 };
 
-                var process = new Process {StartInfo = startInfo};
+                var process = new Process { StartInfo = startInfo };
 
                 string error = null;
                 string output = null;
@@ -165,8 +156,6 @@ namespace jwldnr.VisualLinter.Linting
 
                 try
                 {
-                    //token.ThrowIfCancellationRequested();
-
                     if (false == process.Start())
                         throw new Exception("exception: unable to start eslint process");
 
@@ -177,9 +166,6 @@ namespace jwldnr.VisualLinter.Linting
 
                     if (false == string.IsNullOrEmpty(error))
                         throw new Exception(error);
-                }
-                catch (OperationCanceledException)
-                {
                 }
                 catch (Exception e)
                 {

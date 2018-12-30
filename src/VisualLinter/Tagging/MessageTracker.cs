@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using jwldnr.VisualLinter.Helpers;
 using jwldnr.VisualLinter.Linting;
 using Microsoft.VisualStudio.Text;
@@ -15,19 +16,22 @@ namespace jwldnr.VisualLinter.Tagging
     internal sealed class MessageTracker : IMessageTracker
     {
         private readonly ITextDocument _document;
-
+        private readonly ILogger _logger;
+        private readonly TaggerProvider _provider;
         private readonly ISet<MessageTagger> _taggers = new HashSet<MessageTagger>();
         private readonly ITextBuffer _textBuffer;
+
         private ITextSnapshot _currentSnapshot;
         private NormalizedSnapshotSpanCollection _dirtySpans;
-
-        private readonly TaggerProvider _provider;
+        private CancellationTokenSource _source;
 
         internal MessageTracker(
             ITextDocument document,
+            ILogger logger,
             TaggerProvider provider)
         {
             _document = document;
+            _logger = logger;
             _provider = provider;
 
             FilePath = document.FilePath;
@@ -72,7 +76,8 @@ namespace jwldnr.VisualLinter.Tagging
         private static MessageRange GetRange(SnapshotPoint start, SnapshotPoint end, int line)
         {
             if (start > end)
-                throw new ArgumentOutOfRangeException($"start ({start.Position}) greater than end ({end.Position}) for line {line}");
+                throw new ArgumentOutOfRangeException(
+                    $"start ({start.Position}) greater than end ({end.Position}) for line {line}");
 
             return new MessageRange
             {
@@ -168,9 +173,34 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
+        private void Cancel()
+        {
+            try
+            {
+                _source?.Cancel();
+            }
+            catch (Exception e)
+            {
+                _logger.WriteLine(e.Message);
+            }
+            finally
+            {
+                _source?.Dispose();
+                _source = null;
+            }
+        }
+
         private void Analyze(string filePath)
         {
-            _provider.Analyze(filePath, this);
+            if (null == VsixHelper.GetProjectItem(filePath))
+                return;
+
+            Cancel();
+
+            _source = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            var token = _source.Token;
+
+            _provider.Analyze(this, filePath, token);
         }
 
         private void UpdateMessages(IEnumerable<MessageMarker> markers)
@@ -183,6 +213,8 @@ namespace jwldnr.VisualLinter.Tagging
 
         private void OnBufferChange(object sender, TextContentChangedEventArgs e)
         {
+            Cancel();
+
             UpdateDirtySpans(e);
 
             var snapshot = TranslateMarkerSpans();
@@ -221,10 +253,7 @@ namespace jwldnr.VisualLinter.Tagging
             _provider.UpdateAllSinks();
 
             var span = GetAffectedSpan(LastSnapshot, snapshot);
-            foreach (var tagger in _taggers)
-            {
-                tagger.UpdateMarkers(snapshot, span);
-            }
+            foreach (var tagger in _taggers) tagger.UpdateMarkers(snapshot, span);
 
             LastSnapshot = snapshot;
         }
@@ -236,8 +265,10 @@ namespace jwldnr.VisualLinter.Tagging
 
             if (null != oldSnapshot && 0 < oldSnapshot.Count)
             {
-                start = oldSnapshot.Markers.Select(marker => marker.Span.Start.TranslateTo(_currentSnapshot, PointTrackingMode.Negative)).Min();
-                end = oldSnapshot.Markers.Select(marker => marker.Span.End.TranslateTo(_currentSnapshot, PointTrackingMode.Positive)).Max();
+                start = oldSnapshot.Markers.Select(marker =>
+                    marker.Span.Start.TranslateTo(_currentSnapshot, PointTrackingMode.Negative)).Min();
+                end = oldSnapshot.Markers.Select(marker =>
+                    marker.Span.End.TranslateTo(_currentSnapshot, PointTrackingMode.Positive)).Max();
             }
 
             if (null != newSnapshot && 0 < newSnapshot.Count)

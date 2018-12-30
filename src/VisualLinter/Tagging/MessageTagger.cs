@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using jwldnr.VisualLinter.Helpers;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
@@ -9,18 +8,14 @@ namespace jwldnr.VisualLinter.Tagging
 {
     internal class MessageTagger : ITagger<IErrorTag>, IDisposable
     {
+        private readonly MessageTracker _tracker;
+
         private MessagesSnapshot _snapshot;
 
-        private readonly MessageTracker _tracker;
-        private readonly ILogger _logger;
-
-        internal MessageTagger(
-            MessageTracker tracker,
-            ILogger logger)
+        internal MessageTagger(MessageTracker tracker)
         {
             _snapshot = tracker.LastSnapshot;
             _tracker = tracker;
-            _logger = logger;
 
             tracker.AddTagger(this);
         }
@@ -37,18 +32,9 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == _snapshot)
                 return Enumerable.Empty<ITagSpan<IErrorTag>>();
 
-            try
-            {
-                return _snapshot.Markers
-                    .Where(marker => spans.IntersectsWith(marker.Span))
-                    .Select(marker => new TagSpan<IErrorTag>(marker.Span, new MessageTag(marker.Message)));
-            }
-            catch (Exception e)
-            {
-                _logger.WriteLine(e.Message);
-            }
-
-            return Enumerable.Empty<ITagSpan<IErrorTag>>();
+            return _snapshot.Markers
+                .Where(marker => spans.IntersectsWith(marker.Span))
+                .Select(marker => new TagSpan<IErrorTag>(marker.Span, new MessageTag(marker.Message)));
         }
 
         public void UpdateMarkers(MessagesSnapshot snapshot, SnapshotSpan? span)
@@ -59,55 +45,5 @@ namespace jwldnr.VisualLinter.Tagging
             if (null != handler && span.HasValue)
                 handler(this, new SnapshotSpanEventArgs(span.Value));
         }
-
-        //private async Task Analyze(string filePath)
-        //{
-        //    if (null == VsixHelper.GetProjectItem(filePath))
-        //        return;
-
-        //    Cancel();
-
-        //    _source = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-
-        //    await _provider.Analyze(filePath, _source.Token)
-        //        .ConfigureAwait(false);
-        //}
-
-        //private void Cancel()
-        //{
-        //    try
-        //    {
-        //        _source?.Cancel();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.WriteLine(e.Message);
-        //    }
-        //    finally
-        //    {
-        //        _source?.Dispose();
-        //        _source = null;
-        //    }
-        //}
-        
-
-        //private void Initialize()
-        //{
-        //    _document.FileActionOccurred += OnFileActionOccurred;
-        //    _buffer.ChangedLowPriority += OnBufferChange;
-
-        //    _provider.AddTagger(this, () => Analyze(FilePath));
-        //}
-
-        //private void OnBufferChange(object sender, TextContentChangedEventArgs e)
-        //{
-        //    Cancel();
-
-        //    UpdateDirtySpans(e);
-
-        //    var newSnapshot = TranslateWarningSpans();
-
-        //    SnapToNewSnapshot(newSnapshot);
-        //}
     }
 }

@@ -106,9 +106,9 @@ namespace jwldnr.VisualLinter.Tagging
                 return null;
 
             var tracker = buffer.Properties.GetOrCreateSingletonProperty(typeof(MessageTracker),
-                () => new MessageTracker(document, this));
+                () => new MessageTracker(document, _logger, this));
 
-            return new MessageTagger(tracker, _logger) as ITagger<T>;
+            return new MessageTagger(tracker) as ITagger<T>;
         }
 
         internal void AddSinkManager(SinkManager manager)
@@ -117,7 +117,8 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _managers.Add(manager);
 
-                foreach (var tracker in _trackers) manager.AddFactory(tracker.Factory);
+                foreach (var tracker in _trackers)
+                    manager.AddFactory(tracker.Factory);
             }
         }
 
@@ -138,11 +139,16 @@ namespace jwldnr.VisualLinter.Tagging
             }
         }
 
-        internal void Analyze(string filePath, IMessageTracker tracker)
+        internal void Analyze(IMessageTracker tracker, string filePath, CancellationToken token)
         {
-            var token = new CancellationToken(); // todo
-
-            _linter.LintAsync(filePath, tracker, token);
+            try
+            {
+                _linter.LintAsync(tracker, filePath, token);
+            }
+            catch (Exception e)
+            {
+                _logger.WriteLine(e.Message);
+            }
         }
 
         internal void AddTracker(MessageTracker tracker)
@@ -151,7 +157,8 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _trackers.Add(tracker);
 
-                foreach (var manager in _managers) manager.AddFactory(tracker.Factory);
+                foreach (var manager in _managers)
+                    manager.AddFactory(tracker.Factory);
             }
         }
 
@@ -161,7 +168,8 @@ namespace jwldnr.VisualLinter.Tagging
             {
                 _trackers.Remove(tracker);
 
-                foreach (var manager in _managers) manager.RemoveFactory(tracker.Factory);
+                foreach (var manager in _managers)
+                    manager.RemoveFactory(tracker.Factory);
             }
         }
 
