@@ -63,14 +63,6 @@ namespace jwldnr.VisualLinter.Tagging
             var end = new SnapshotPoint(_currentSnapshot, message.Range.End);
 
             return new MessageMarker(message, new SnapshotSpan(start, end));
-
-            //var startPos = _currentSnapshot.GetLineFromLineNumber(message.Range.Start).Start.Position;
-            //var start = new SnapshotPoint(_currentSnapshot, startPos);
-
-            //var endPos = _currentSnapshot.GetLineFromLineNumber(message.Range.Start).Start.Position;
-            //var end = new SnapshotPoint(_currentSnapshot, endPos);
-
-            //return new MessageMarker(message, new SnapshotSpan(start, end));
         }
 
         private static MessageRange GetRange(SnapshotPoint start, SnapshotPoint end, int line)
