@@ -134,7 +134,7 @@ namespace jwldnr.VisualLinter.Linting
                     StandardOutputEncoding = Encoding.UTF8
                 };
 
-                var process = new Process { StartInfo = startInfo };
+                var process = new Process {StartInfo = startInfo};
 
                 string error = null;
                 string output = null;
