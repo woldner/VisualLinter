@@ -1,36 +1,39 @@
-﻿using jwldnr.VisualLinter.Enums;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using jwldnr.VisualLinter.Enums;
 using jwldnr.VisualLinter.Helpers;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
-namespace jwldnr.VisualLinter.Linting
+namespace jwldnr.VisualLinter.Tagging
 {
-    internal class LinterSnapshot : WpfTableEntriesSnapshotBase
+    internal class MessagesSnapshot : WpfTableEntriesSnapshotBase
     {
-        internal LinterSnapshot NextSnapshot;
-
         private readonly string _filePath;
+
         private readonly IList<MessageMarker> _markers;
+        private readonly string _projectName;
         private readonly IReadOnlyCollection<MessageMarker> _readonlyMarkers;
 
-        private string _projectName;
-
-        public override int Count => _markers.Count;
-        public override int VersionNumber { get; }
-
-        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
-
-        internal LinterSnapshot(string filePath, int versionNumber, IEnumerable<MessageMarker> markers)
+        internal MessagesSnapshot(
+            string filePath,
+            int versionNumber,
+            IEnumerable<MessageMarker> markers)
         {
+            _projectName = VsixHelper.GetProjectName(filePath);
             _filePath = filePath;
+
             VersionNumber = versionNumber;
 
             _markers = new List<MessageMarker>(markers);
             _readonlyMarkers = new ReadOnlyCollection<MessageMarker>(_markers);
         }
+
+        public override int Count => _markers.Count;
+        public override int VersionNumber { get; }
+
+        internal IEnumerable<MessageMarker> Markers => _readonlyMarkers;
 
         public override bool CanCreateDetailsContent(int index)
         {
@@ -94,9 +97,6 @@ namespace jwldnr.VisualLinter.Linting
                     return true;
 
                 case StandardTableKeyNames.ProjectName:
-                    if (string.IsNullOrEmpty(_projectName))
-                        _projectName = VsixHelper.GetProjectName(_filePath);
-
                     content = _projectName;
                     return null != content;
 

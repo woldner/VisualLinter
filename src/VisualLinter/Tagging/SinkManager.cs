@@ -1,8 +1,7 @@
-﻿using jwldnr.VisualLinter.Tagging;
+﻿using System;
 using Microsoft.VisualStudio.Shell.TableManager;
-using System;
 
-namespace jwldnr.VisualLinter.Linting
+namespace jwldnr.VisualLinter.Tagging
 {
     internal class SinkManager : IDisposable
     {
@@ -22,19 +21,19 @@ namespace jwldnr.VisualLinter.Linting
             _provider.RemoveSinkManager(this);
         }
 
-        internal void AddFactory(ITableEntriesSnapshotFactory factory)
+        internal void AddFactory(SnapshotFactory factory)
         {
             _sink.AddFactory(factory);
         }
 
-        internal void RemoveFactory(ITableEntriesSnapshotFactory factory)
+        internal void RemoveFactory(SnapshotFactory factory)
         {
             _sink.RemoveFactory(factory);
         }
 
-        internal void UpdateSink(ITableEntriesSnapshotFactory factory)
+        internal void UpdateSink()
         {
-            _sink.FactorySnapshotChanged(factory);
+            _sink.FactorySnapshotChanged(null);
         }
     }
 }

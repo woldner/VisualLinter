@@ -1,7 +1,4 @@
-﻿using jwldnr.VisualLinter.Helpers;
-using jwldnr.VisualLinter.Tagging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -10,35 +7,51 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using jwldnr.VisualLinter.Helpers;
+using jwldnr.VisualLinter.Tagging;
+using Newtonsoft.Json;
 
 namespace jwldnr.VisualLinter.Linting
 {
     public interface ILinter
     {
-        Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token);
+        Task LintAsync(IMessageTracker tracker, string filePath, CancellationToken token);
     }
 
     [Export(typeof(ILinter))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     internal class Linter : ILinter
     {
+        private readonly IEslintHelper _eslintHelper;
+        private readonly ILogger _logger;
+
         private readonly SemaphoreSlim _mutex = new SemaphoreSlim(1, 1);
 
-        public async Task LintAsync(ILinterProvider provider, string filePath, CancellationToken token)
+        [ImportingConstructor]
+        internal Linter(
+            [Import] ILogger logger,
+            [Import] IEslintHelper eslintHelper)
+        {
+            _logger = logger;
+            _eslintHelper = eslintHelper;
+        }
+
+        public async Task LintAsync(IMessageTracker tracker, string filePath, CancellationToken token)
         {
             try
             {
                 await _mutex.WaitAsync(token).ConfigureAwait(false);
 
+                token.ThrowIfCancellationRequested();
+
                 try
                 {
-                    token.ThrowIfCancellationRequested();
-
                     var directoryPath = Path.GetDirectoryName(filePath) ??
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
-                    var eslintPath = EslintHelper.GetEslintPath(directoryPath);
-                    var arguments = string.Join(" ", QuoteArgument(filePath), EslintHelper.GetArguments(directoryPath));
+                    var eslintPath = _eslintHelper.GetPath(directoryPath);
+                    var arguments = string.Join(" ", QuoteArgument(filePath),
+                        _eslintHelper.GetArguments(directoryPath));
 
                     var output = await RunAsync(eslintPath, arguments, token)
                         .ConfigureAwait(false);
@@ -48,33 +61,25 @@ namespace jwldnr.VisualLinter.Linting
                     if (string.IsNullOrEmpty(output))
                         throw new Exception("exception: linter returned empty result");
 
-                    IEnumerable<EslintResult> results = new List<EslintResult>();
+                    IEnumerable<LinterResult> results = new List<LinterResult>();
 
                     try
                     {
-                        results = JsonConvert.DeserializeObject<IEnumerable<EslintResult>>(output);
+                        results = JsonConvert.DeserializeObject<IEnumerable<LinterResult>>(output);
                     }
                     catch (Exception e)
                     {
-                        OutputWindowHelper.WriteLine(
-                            "exception: error trying to deserialize output:" +
-                            Environment.NewLine +
-                            output);
-
-                        OutputWindowHelper.WriteLine(e.Message);
+                        _logger.WriteLine("exception: error trying to deserialize output:");
+                        _logger.WriteLine(e.Message);
                     }
-
-                    var messages = ProcessResults(results);
 
                     token.ThrowIfCancellationRequested();
 
-                    provider.Accept(filePath, messages);
+                    var messages = ProcessResults(results);
+                    tracker.Accept(filePath, messages);
                 }
                 catch (OperationCanceledException)
-                { }
-                catch (Exception e)
                 {
-                    OutputWindowHelper.WriteLine(e.Message);
                 }
                 finally
                 {
@@ -82,23 +87,24 @@ namespace jwldnr.VisualLinter.Linting
                 }
             }
             catch (OperationCanceledException)
-            { }
+            {
+            }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine(e.Message);
+                _logger.WriteLine(e.Message);
             }
         }
 
-        private static IEnumerable<EslintMessage> ProcessMessages(IReadOnlyList<EslintMessage> messages)
+        private static IEnumerable<LinterMessage> ProcessMessages(IReadOnlyList<LinterMessage> messages)
         {
             // return empty messages when warning about ignored files
             if (1 == messages.Count && RegexHelper.IgnoreFileMatch(messages[0].Message))
-                return Enumerable.Empty<EslintMessage>();
+                return Enumerable.Empty<LinterMessage>();
 
             return messages;
         }
 
-        private static IEnumerable<EslintMessage> ProcessResults(IEnumerable<EslintResult> results)
+        private static IEnumerable<LinterMessage> ProcessResults(IEnumerable<LinterResult> results)
         {
             // this extension only support 1-1 linting
             // therefor results count will always be 1
@@ -106,12 +112,15 @@ namespace jwldnr.VisualLinter.Linting
 
             return null != result
                 ? ProcessMessages(result.Messages)
-                : Enumerable.Empty<EslintMessage>();
+                : Enumerable.Empty<LinterMessage>();
         }
 
-        private static string QuoteArgument(string argument) => $"\"{argument}\"";
+        private static string QuoteArgument(string argument)
+        {
+            return $"\"{argument}\"";
+        }
 
-        private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
+        private Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
         {
             return Task.Run(() =>
             {
@@ -125,7 +134,7 @@ namespace jwldnr.VisualLinter.Linting
                     StandardOutputEncoding = Encoding.UTF8
                 };
 
-                var process = new Process { StartInfo = startInfo };
+                var process = new Process {StartInfo = startInfo};
 
                 string error = null;
                 string output = null;
@@ -147,8 +156,6 @@ namespace jwldnr.VisualLinter.Linting
 
                 try
                 {
-                    //token.ThrowIfCancellationRequested();
-
                     if (false == process.Start())
                         throw new Exception("exception: unable to start eslint process");
 
@@ -160,11 +167,9 @@ namespace jwldnr.VisualLinter.Linting
                     if (false == string.IsNullOrEmpty(error))
                         throw new Exception(error);
                 }
-                catch (OperationCanceledException)
-                { }
                 catch (Exception e)
                 {
-                    OutputWindowHelper.WriteLine(e.Message);
+                    _logger.WriteLine(e.Message);
                 }
                 finally
                 {

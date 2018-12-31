@@ -28,7 +28,10 @@ namespace jwldnr.VisualLinter.Helpers
             return _canExecute == null || _canExecute();
         }
 
-        public void Execute(object parameter) => _execute();
+        public void Execute(object parameter)
+        {
+            _execute();
+        }
 
         internal void RaiseCanExecuteChanged()
         {
@@ -59,10 +62,13 @@ namespace jwldnr.VisualLinter.Helpers
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null || _canExecute((T)parameter);
+            return _canExecute == null || _canExecute((T) parameter);
         }
 
-        public void Execute(object parameter) => _execute((T)parameter);
+        public void Execute(object parameter)
+        {
+            _execute((T) parameter);
+        }
 
         internal void RaiseCanExecuteChanged()
         {

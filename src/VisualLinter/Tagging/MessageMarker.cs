@@ -1,22 +1,18 @@
-﻿using Microsoft.VisualStudio.Text;
+﻿using jwldnr.VisualLinter.Linting;
+using Microsoft.VisualStudio.Text;
 
-namespace jwldnr.VisualLinter.Linting
+namespace jwldnr.VisualLinter.Tagging
 {
     internal class MessageMarker
     {
-        internal EslintMessage Message { get; }
-        internal SnapshotSpan Span { get; }
-
-        internal MessageMarker(EslintMessage message, SnapshotSpan span)
+        internal MessageMarker(LinterMessage message, SnapshotSpan span)
         {
             Message = message;
             Span = span;
         }
 
-        internal MessageMarker Clone()
-        {
-            return new MessageMarker(Message, Span);
-        }
+        internal LinterMessage Message { get; }
+        internal SnapshotSpan Span { get; }
 
         internal MessageMarker CloneAndTranslateTo(ITextSnapshot newSnapshot)
         {

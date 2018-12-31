@@ -5,18 +5,18 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace jwldnr.VisualLinter.Tagging
 {
-    internal class LinterTag : IErrorTag
+    internal class MessageTag : IErrorTag
     {
-        public string ErrorType { get; }
-        public object ToolTipContent { get; }
-
-        internal LinterTag(EslintMessage message)
+        internal MessageTag(LinterMessage message)
         {
             ErrorType = GetErrorType(message);
             ToolTipContent = GetToolTipContent(message.IsFatal, message.Message, message.RuleId);
         }
 
-        private static string GetErrorType(EslintMessage message)
+        public string ErrorType { get; }
+        public object ToolTipContent { get; }
+
+        private static string GetErrorType(LinterMessage message)
         {
             if (message.IsFatal)
                 return PredefinedErrorTypeNames.SyntaxError;

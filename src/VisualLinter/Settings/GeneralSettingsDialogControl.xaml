@@ -1,19 +1,19 @@
-﻿<UserControl
-    x:Class="jwldnr.VisualLinter.Views.GeneralOptionsDialogPageControl"
+﻿<local:SettingsBase
+    x:Class="jwldnr.VisualLinter.Settings.GeneralSettingsDialogControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:model="clr-namespace:jwldnr.VisualLinter.ViewModels"
-    d:DataContext="{d:DesignInstance Type=model:GeneralOptionsDialogViewModel}"
+    xmlns:local="clr-namespace:jwldnr.VisualLinter.Settings"
+    d:DataContext="{d:DesignInstance Type=local:GeneralSettingsDialogControl}"
     mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="300">
+    d:DesignHeight="450" d:DesignWidth="800">
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <GroupBox
@@ -22,9 +22,9 @@
             Header="General">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <CheckBox
@@ -53,10 +53,10 @@
             Header="Language support">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <CheckBox
@@ -96,4 +96,4 @@
             </Hyperlink>
         </Label>
     </Grid>
-</UserControl>
+</local:SettingsBase>

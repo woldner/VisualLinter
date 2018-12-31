@@ -1,66 +1,84 @@
-﻿using jwldnr.VisualLinter.Helpers;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using jwldnr.VisualLinter.Helpers;
+using Microsoft.Win32;
 
-namespace jwldnr.VisualLinter.ViewModels
+namespace jwldnr.VisualLinter.Settings
 {
-    internal class AdvancedOptionsDialogViewModel : ViewModelBase
+    /// <summary>
+    ///     Interaction logic for AdvancedSettingsDialogControl.xaml
+    /// </summary>
+    public partial class AdvancedSettingsDialogControl
     {
         internal static readonly DependencyProperty EslintConfigOverridePathProperty =
             DependencyProperty.Register(
                 nameof(EslintConfigOverridePath),
                 typeof(string),
-                typeof(AdvancedOptionsDialogViewModel),
+                typeof(AdvancedSettingsDialogControl),
                 new PropertyMetadata(string.Empty));
 
         internal static readonly DependencyProperty EslintIgnoreOverridePathProperty =
             DependencyProperty.Register(
                 nameof(EslintIgnoreOverridePath),
                 typeof(string),
-                typeof(AdvancedOptionsDialogViewModel),
+                typeof(AdvancedSettingsDialogControl),
                 new PropertyMetadata(string.Empty));
 
         internal static readonly DependencyProperty EslintOverridePathProperty =
             DependencyProperty.Register(
                 nameof(EslintOverridePath),
                 typeof(string),
-                typeof(AdvancedOptionsDialogViewModel),
+                typeof(AdvancedSettingsDialogControl),
                 new PropertyMetadata(string.Empty));
 
         internal static readonly DependencyProperty ShouldOverrideEslintConfigProperty =
             DependencyProperty.Register(
                 nameof(ShouldOverrideEslintConfig),
                 typeof(bool),
-                typeof(AdvancedOptionsDialogViewModel),
+                typeof(AdvancedSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty ShouldOverrideEslintIgnoreProperty =
             DependencyProperty.Register(
                 nameof(ShouldOverrideEslintIgnore),
                 typeof(bool),
-                typeof(AdvancedOptionsDialogViewModel),
+                typeof(AdvancedSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty ShouldOverrideEslintProperty =
             DependencyProperty.Register(
                 nameof(ShouldOverrideEslint),
                 typeof(bool),
-                typeof(AdvancedOptionsDialogViewModel),
+                typeof(AdvancedSettingsDialogControl),
                 new PropertyMetadata(false));
 
         internal static readonly DependencyProperty ShowDebugInformationProperty =
             DependencyProperty.Register(
                 nameof(ShowDebugInformation),
                 typeof(bool),
-                typeof(AdvancedOptionsDialogViewModel),
+                typeof(AdvancedSettingsDialogControl),
                 new PropertyMetadata(false));
+
+        private readonly ILogger _logger;
+        private readonly IVisualLinterSettings _settings;
 
         private ICommand _browseEslintConfigFileCommand;
         private ICommand _browseEslintFileCommand;
         private ICommand _browseEslintIgnoreConfigFileCommand;
+
+        internal AdvancedSettingsDialogControl(
+            IVisualLinterSettings settings,
+            ILogger logger)
+        {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            InitializeComponent();
+
+            DataContext = this;
+        }
 
         public ICommand BrowseEslintConfigFileCommand
         {
@@ -127,27 +145,27 @@ namespace jwldnr.VisualLinter.ViewModels
 
         internal void Load()
         {
-            ShouldOverrideEslint = Options.ShouldOverrideEslint;
-            EslintOverridePath = Options.EslintOverridePath;
-            ShouldOverrideEslintConfig = Options.ShouldOverrideEslintConfig;
-            EslintConfigOverridePath = Options.EslintConfigOverridePath;
-            ShouldOverrideEslintIgnore = Options.ShouldOverrideEslintIgnore;
-            EslintIgnoreOverridePath = Options.EslintIgnoreOverridePath;
-            ShowDebugInformation = Options.ShowDebugInformation;
+            ShouldOverrideEslint = _settings.ShouldOverrideEslint;
+            EslintOverridePath = _settings.EslintOverridePath;
+            ShouldOverrideEslintConfig = _settings.ShouldOverrideEslintConfig;
+            EslintConfigOverridePath = _settings.EslintConfigOverridePath;
+            ShouldOverrideEslintIgnore = _settings.ShouldOverrideEslintIgnore;
+            EslintIgnoreOverridePath = _settings.EslintIgnoreOverridePath;
+            ShowDebugInformation = _settings.ShowDebugInformation;
         }
 
         internal void Save()
         {
-            Options.ShouldOverrideEslint = ShouldOverrideEslint;
-            Options.EslintOverridePath = EslintOverridePath;
-            Options.ShouldOverrideEslintConfig = ShouldOverrideEslintConfig;
-            Options.EslintConfigOverridePath = EslintConfigOverridePath;
-            Options.ShouldOverrideEslintIgnore = ShouldOverrideEslintIgnore;
-            Options.EslintIgnoreOverridePath = EslintIgnoreOverridePath;
-            Options.ShowDebugInformation = ShowDebugInformation;
+            _settings.ShouldOverrideEslint = ShouldOverrideEslint;
+            _settings.EslintOverridePath = EslintOverridePath;
+            _settings.ShouldOverrideEslintConfig = ShouldOverrideEslintConfig;
+            _settings.EslintConfigOverridePath = EslintConfigOverridePath;
+            _settings.ShouldOverrideEslintIgnore = ShouldOverrideEslintIgnore;
+            _settings.EslintIgnoreOverridePath = EslintIgnoreOverridePath;
+            _settings.ShowDebugInformation = ShowDebugInformation;
         }
 
-        private static string GetDialogValue(string filter, string initialDirectory)
+        private string GetDialogValue(string filter, string initialDirectory)
         {
             try
             {
@@ -166,8 +184,8 @@ namespace jwldnr.VisualLinter.ViewModels
             }
             catch (Exception e)
             {
-                OutputWindowHelper.WriteLine("exception: unable to open file browse dialog");
-                OutputWindowHelper.WriteLine(e.Message);
+                _logger.WriteLine("exception: unable to open file browse dialog");
+                _logger.WriteLine(e.Message);
             }
 
             return null;
@@ -175,7 +193,8 @@ namespace jwldnr.VisualLinter.ViewModels
 
         private void BrowseEslintConfigFile()
         {
-            const string filter = "(*.js, *.yaml, *.yml, *.json, *.eslintrc)|*.cmd;*.exe;*.yaml;*.yml;*.json;*.eslintrc";
+            const string filter =
+                "(*.js, *.yaml, *.yml, *.json, *.eslintrc)|*.cmd;*.exe;*.yaml;*.yml;*.json;*.eslintrc";
 
             var initialDirectory = string.IsNullOrEmpty(EslintConfigOverridePath)
                 ? EnvironmentHelper.GetUserDirectoryPath()

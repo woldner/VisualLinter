@@ -1,14 +1,19 @@
 ﻿using Microsoft.VisualStudio.Shell.TableManager;
 
-namespace jwldnr.VisualLinter.Linting
+namespace jwldnr.VisualLinter.Tagging
 {
     internal class SnapshotFactory : TableEntriesSnapshotFactoryBase
     {
+        internal SnapshotFactory(MessagesSnapshot snapshot)
+        {
+            CurrentSnapshot = snapshot;
+        }
+
         public override int CurrentVersionNumber => CurrentSnapshot.VersionNumber;
 
-        internal LinterSnapshot CurrentSnapshot { get; private set; }
+        internal MessagesSnapshot CurrentSnapshot { get; private set; }
 
-        internal SnapshotFactory(LinterSnapshot snapshot)
+        internal void UpdateSnapshot(MessagesSnapshot snapshot)
         {
             CurrentSnapshot = snapshot;
         }
@@ -25,12 +30,6 @@ namespace jwldnr.VisualLinter.Linting
             return versionNumber == snapshot.VersionNumber
                 ? snapshot
                 : null;
-        }
-
-        internal void UpdateMarkers(LinterSnapshot snapshot)
-        {
-            CurrentSnapshot.NextSnapshot = snapshot;
-            CurrentSnapshot = snapshot;
         }
     }
 }

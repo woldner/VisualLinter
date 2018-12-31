@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace jwldnr.VisualLinter.Linting
 {
     [JsonObject]
-    public class EslintMessage
+    public class LinterMessage
     {
         private int _column;
 
@@ -35,8 +35,7 @@ namespace jwldnr.VisualLinter.Linting
             set => _endLine = value;
         }
 
-        [JsonProperty("fatal")]
-        public bool IsFatal { get; set; }
+        [JsonProperty("fatal")] public bool IsFatal { get; set; }
 
         [JsonProperty("line")]
         public int Line
@@ -45,19 +44,14 @@ namespace jwldnr.VisualLinter.Linting
             set => _line = value;
         }
 
-        [JsonProperty("message")]
-        public string Message { get; set; }
+        [JsonProperty("message")] public string Message { get; set; }
 
-        [JsonIgnore]
-        public MessageRange Range { get; set; }
+        [JsonIgnore] public MessageRange Range { get; set; }
 
-        [JsonProperty("ruleId")]
-        public string RuleId { get; set; }
+        [JsonProperty("ruleId")] public string RuleId { get; set; }
 
-        [JsonProperty("severity")]
-        public RuleSeverity Severity { get; set; }
+        [JsonProperty("severity")] public RuleSeverity Severity { get; set; }
 
-        [JsonProperty("source")]
-        public string Source { get; set; }
+        [JsonProperty("source")] public string Source { get; set; }
     }
 }
