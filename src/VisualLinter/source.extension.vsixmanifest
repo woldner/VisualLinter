@@ -12,7 +12,7 @@
         <PreviewImage>Resources\preview.png</PreviewImage>
         <Tags>Visual Studio, Visual Studio 2015, Visual Studio 2017, Lint, Linter, Linting, ESLint, JavaScript, Vue, React, Angular</Tags>
     </Metadata>
-    <Installation InstalledByMsi="true">
+    <Installation>
         <InstallationTarget Version="[14.0,17.0)" Id="Microsoft.VisualStudio.Community" />
         <InstallationTarget Version="[14.0,17.0)" Id="Microsoft.VisualStudio.Pro" />
         <InstallationTarget Version="[14.0,17.0)" Id="Microsoft.VisualStudio.Enterprise" />
