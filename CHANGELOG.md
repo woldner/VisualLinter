@@ -9,6 +9,12 @@ Features that have a checkmark are complete and available for download in the
 
 These are the changes to each version that has been released on the official Visual Studio extension gallery.
 
+## 1.1 (2018-12-31)
+
+### Fix
+
+- Adjusted tagger logic
+
 ## 1.1 (2018-01-09)
 
 #### Fix
