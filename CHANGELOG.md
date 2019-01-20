@@ -3,11 +3,23 @@
 - Automatically fix errors (provided by `ESLint`)
 
 Features that have a checkmark are complete and available for download in the
-[CI build](http://vsixgallery.com/extension/832aee43-88e1-4e51-ac31-d412d356dfdf/).
+[CI build](http://vsixgallery.com/extension/21d9f99b-ec42-4df4-8b16-2a62db5392a5/).
 
 # Change log
 
 These are the changes to each version that has been released on the official Visual Studio extension gallery.
+
+## 1.1 (2019-01-20)
+
+### Fix
+
+- Add support for Visual Studio 2019
+
+## 1.1 (2018-12-31)
+
+### Change
+
+- Improve tagger logic
 
 ## 1.1 (2018-01-09)
 
