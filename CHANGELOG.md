@@ -19,7 +19,7 @@ These are the changes to each version that has been released on the official Vis
 
 ### Change
 
-- Improved tagger logic
+- Improve tagger logic
 
 ## 1.1 (2018-01-09)
 
