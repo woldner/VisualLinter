@@ -3,7 +3,7 @@
 - Automatically fix errors (provided by `ESLint`)
 
 Features that have a checkmark are complete and available for download in the
-[CI build](http://vsixgallery.com/extension/832aee43-88e1-4e51-ac31-d412d356dfdf/).
+[CI build](http://vsixgallery.com/extension/21d9f99b-ec42-4df4-8b16-2a62db5392a5/).
 
 # Change log
 
