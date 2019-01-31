@@ -5,7 +5,7 @@
 Visual Studio JavaScript linter using [ESLint](https://github.com/eslint/eslint).
 
 Download this extension from the [VS Gallery](https://marketplace.visualstudio.com/vsgallery/a71a5b0d-9f75-4cd2-b1f1-c4afb79a0638)
-or get the [CI build](https://vsixgallery.com/extension/21d9f99b-ec42-4df4-8b16-2a62db5392a5/).
+or get the [CI build](http://vsixgallery.com/extension/21d9f99b-ec42-4df4-8b16-2a62db5392a5/).
 
 ---------------------------------------
 
