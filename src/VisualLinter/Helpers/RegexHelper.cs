@@ -25,6 +25,9 @@ namespace jwldnr.VisualLinter.Helpers
                 .Match(value, pattern)
                 .Success;
 
+            if (result)
+                OutputWindowHelper.WriteLine(value);
+
             return result;
         }
     }

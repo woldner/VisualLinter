@@ -10,7 +10,7 @@
         <ReleaseNotes>https://github.com/jwldnr/VisualLinter/blob/master/CHANGELOG.md</ReleaseNotes>
         <Icon>Resources\icon.png</Icon>
         <PreviewImage>Resources\preview.png</PreviewImage>
-        <Tags>Visual Studio, Visual Studio 2015, Visual Studio 2017, Lint, Linter, Linting, ESLint, JavaScript, Vue, React, Angular</Tags>
+        <Tags>Visual Studio, visual studio 2017, lint, linter, Linting, ESLint, Javascript</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Version="[14.0,17.0)" Id="Microsoft.VisualStudio.Community" />

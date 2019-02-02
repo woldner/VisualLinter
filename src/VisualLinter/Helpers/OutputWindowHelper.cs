@@ -1,50 +1,53 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.VisualStudio;
+﻿using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using System;
+using System.Diagnostics;
 
 namespace jwldnr.VisualLinter.Helpers
 {
     internal static class OutputWindowHelper
     {
-        internal static void WriteLine(IServiceProvider serviceProvider, string message)
+        private static readonly IVisualLinterOptions Options;
+        private static IVsOutputWindowPane _outputWindowPane;
+
+        private static IVsOutputWindowPane OutputWindowPane => _outputWindowPane ??
+            (_outputWindowPane = GetOutputWindowPane());
+
+        static OutputWindowHelper()
         {
-            if (null == serviceProvider)
-                throw new ArgumentNullException(nameof(serviceProvider));
-
-            if (null == message)
-                throw new ArgumentNullException(nameof(message));
-
-            var outputWindowPane = GetOutputWindowPane(serviceProvider);
-            if (null != outputWindowPane)
-                WriteLineToPane(outputWindowPane, message);
+            Options = ServiceProvider.GlobalProvider.GetMefService<IVisualLinterOptions>() ??
+                throw new Exception("exception: logger unable to retrieve options");
         }
 
-        private static void WriteLineToPane(IVsOutputWindowPane outputWindowPane, string message)
+        internal static void DebugLine(object message)
         {
-            var hr = outputWindowPane.OutputStringThreadSafe(message + Environment.NewLine);
-            Debug.Assert(ErrorHandler.Succeeded(hr), $"OutputStringThreadSafe failed: {hr}");
+            Debug.WriteLine(message);
+
+            if (false == Options.ShowDebugInformation)
+                return;
+
+            WriteLine(message);
         }
 
-        private static IVsOutputWindowPane GetOutputWindowPane(IServiceProvider serviceProvider)
+        internal static void WriteLine(object message)
         {
-            var outputWindow = serviceProvider.GetService<SVsOutputWindow, IVsOutputWindow>();
-            if (null == outputWindow)
-            {
-                Debug.Fail("could not get IVsOutputWindow");
+            var outputWindowPane = OutputWindowPane;
+            if (null == outputWindowPane)
+                return;
+
+            outputWindowPane.OutputStringThreadSafe($"{message + Environment.NewLine}");
+            outputWindowPane.Activate();
+        }
+
+        private static IVsOutputWindowPane GetOutputWindowPane()
+        {
+            if (!(Package.GetGlobalService(typeof(SVsOutputWindow)) is IVsOutputWindow outputWindow))
                 return null;
-            }
 
-            var outputPaneGuid = PackageGuids.GuidVisualLinterPackageOutputPane;
+            var outputPaneGuid = new Guid(PackageGuids.GuidVisualLinterPackageOutputPane.ToByteArray());
 
-            var hrGetPane = outputWindow.GetPane(ref outputPaneGuid, out var windowPane);
-            if (ErrorHandler.Succeeded(hrGetPane)) return windowPane;
-
-            var hrCreatePane = outputWindow.CreatePane(ref outputPaneGuid, Vsix.Name, 1, 1);
-            Debug.Assert(ErrorHandler.Succeeded(hrCreatePane), $"outputWindow.CreatePane failed: {hrCreatePane}");
-
-            hrGetPane = outputWindow.GetPane(ref outputPaneGuid, out windowPane);
-            Debug.Assert(ErrorHandler.Succeeded(hrGetPane), $"outputWindow.GetPane failed: {hrGetPane}");
+            outputWindow.CreatePane(ref outputPaneGuid, Vsix.Name, 1, 1);
+            outputWindow.GetPane(ref outputPaneGuid, out var windowPane);
 
             return windowPane;
         }

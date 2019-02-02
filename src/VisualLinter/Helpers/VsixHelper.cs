@@ -1,6 +1,6 @@
-﻿using System.IO;
-using EnvDTE;
+﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell;
+using System.IO;
 
 namespace jwldnr.VisualLinter.Helpers
 {
@@ -17,7 +17,7 @@ namespace jwldnr.VisualLinter.Helpers
         {
             var project = GetProject(filePath);
 
-            return project?.Name ?? "{none}";
+            return project?.Name;
         }
 
         internal static string GetSolutionPath()

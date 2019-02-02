@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Settings;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.VisualStudio.Settings;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell.Settings;
 
 namespace jwldnr.VisualLinter
 {
-    public interface IVisualLinterSettings : IProfileManager
+    public interface IVisualLinterOptions
     {
         bool DisableIgnorePath { get; set; }
         bool EnableHtmlLanguageSupport { get; set; }
@@ -26,31 +24,13 @@ namespace jwldnr.VisualLinter
         bool UsePersonalConfig { get; set; }
     }
 
-    [Export(typeof(IVisualLinterSettings))]
+    [Export(typeof(IVisualLinterOptions))]
     [PartCreationPolicy(CreationPolicy.Shared)]
-    internal class VisualLinterSettings : IVisualLinterSettings
+    internal class VisualLinterOptions : IVisualLinterOptions
     {
         private const string CollectionPath = "jwldnr.VisualLinter";
 
         private readonly WritableSettingsStore _writableSettingsStore;
-
-        [ImportingConstructor]
-        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        internal VisualLinterSettings([Import] SVsServiceProvider serviceProvider)
-            : this(new ShellSettingsManager(serviceProvider))
-        {
-        }
-
-        internal VisualLinterSettings(SettingsManager settingsManager)
-        {
-            if (null == settingsManager)
-                throw new ArgumentNullException(nameof(settingsManager));
-
-            _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-
-            if (null != _writableSettingsStore && !_writableSettingsStore.CollectionExists(CollectionPath))
-                _writableSettingsStore.CreateCollection(CollectionPath);
-        }
 
         public bool DisableIgnorePath
         {
@@ -136,29 +116,18 @@ namespace jwldnr.VisualLinter
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(UsePersonalConfig), value);
         }
 
-        public void SaveSettingsToXml(IVsSettingsWriter writer)
+        [ImportingConstructor]
+        [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
+        internal VisualLinterOptions([Import] SVsServiceProvider serviceProvider)
         {
-            // noop
-        }
+            var settingsManager = new ShellSettingsManager(serviceProvider);
 
-        public void LoadSettingsFromXml(IVsSettingsReader reader)
-        {
-            // noop
-        }
+            _writableSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
 
-        public void SaveSettingsToStorage()
-        {
-            // noop
-        }
+            if (null == _writableSettingsStore || _writableSettingsStore.CollectionExists(CollectionPath))
+                return;
 
-        public void LoadSettingsFromStorage()
-        {
-            // noop
-        }
-
-        public void ResetSettings()
-        {
-            // noop
+            _writableSettingsStore.CreateCollection(CollectionPath);
         }
     }
 }
