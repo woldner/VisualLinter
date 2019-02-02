@@ -33,7 +33,7 @@ namespace jwldnr.VisualLinter.Tagging
                 return Enumerable.Empty<ITagSpan<IErrorTag>>();
 
             return _snapshot.Markers
-                .Where(marker => spans.IntersectsWith(new NormalizedSnapshotSpanCollection(marker.Span)))
+                .Where(marker => spans.IntersectsWith(marker.Span))
                 .Select(marker => new TagSpan<IErrorTag>(marker.Span, new MessageTag(marker.Message)));
         }
 
