@@ -136,13 +136,13 @@ namespace jwldnr.VisualLinter.Linting
                 void ErrorHandler(object sender, DataReceivedEventArgs e)
                 {
                     if (null != e.Data)
-                        error += e.Data;
+                        error += Environment.NewLine + e.Data;
                 }
 
                 void OutputHandler(object sender, DataReceivedEventArgs e)
                 {
                     if (null != e.Data)
-                        output += e.Data;
+                        output += Environment.NewLine + e.Data;
                 }
 
                 try
