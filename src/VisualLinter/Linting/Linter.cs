@@ -95,6 +95,10 @@ namespace jwldnr.VisualLinter.Linting
             if (1 == messages.Count && RegexHelper.IgnoreFileMatch(messages[0].Message))
                 return Enumerable.Empty<EslintMessage>();
 
+            var fatal = messages.SingleOrDefault(message => message.IsFatal);
+            if (null != fatal)
+                throw new Exception(fatal.Message);
+
             return messages;
         }
 
