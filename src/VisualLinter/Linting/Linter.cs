@@ -34,11 +34,12 @@ namespace jwldnr.VisualLinter.Linting
                 {
                     token.ThrowIfCancellationRequested();
 
-                    var directoryPath = Path.GetDirectoryName(filePath) ??
+                    var relativePath = Path.GetDirectoryName(filePath) ??
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
-                    var eslintPath = EslintHelper.GetEslintPath(directoryPath);
-                    var arguments = string.Join(" ", QuoteArgument(filePath), EslintHelper.GetArguments(directoryPath));
+                    var eslintPath = EslintHelper.GetEslintPath(relativePath);
+                    var configPath = EslintHelper.GetConfigPath(relativePath);
+                    var arguments = string.Join(" ", QuoteArgument(filePath), GetArguments(relativePath));
 
                     var output = await RunAsync(eslintPath, arguments, token)
                         .ConfigureAwait(false);
@@ -113,7 +114,31 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private static string QuoteArgument(string argument) => $"\"{argument}\"";
+        private static string GetArguments(string relativePath)
+        {
+            var arguments = new Dictionary<string, string> { { "format", "json" } };
+
+            var configPath = EslintHelper.GetConfigPath(relativePath);
+            if (null != configPath)
+                arguments.Add("config", configPath);
+
+            var ignorePath = EslintHelper.GetIgnorePath(relativePath);
+            if (string.IsNullOrEmpty(ignorePath))
+                return FormatArguments(arguments);
+
+            arguments.Add("ignore-path", ignorePath);
+            return FormatArguments(arguments);
+        }
+
+        private static string FormatArguments(IReadOnlyDictionary<string, string> arguments)
+        {
+            return string.Join(" ", arguments.Select(arg => $"--{arg.Key}=\"{arg.Value}\""));
+        }
+
+        private static string QuoteArgument(string argument)
+        {
+            return $"\"{argument}\"";
+        }
 
         private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
         {
