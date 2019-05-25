@@ -43,13 +43,13 @@ namespace jwldnr.VisualLinter.Linting
 
                     var arguments = GetArguments(filePath, config?.FullName, ignore?.FullName);
 
-                    var output = await RunAsync(config.DirectoryName, executable.FullName, arguments, token)
+                    var output = await RunAsync(config?.DirectoryName, executable.FullName, arguments, token)
                         .ConfigureAwait(false);
 
                     token.ThrowIfCancellationRequested();
 
                     if (string.IsNullOrEmpty(output))
-                        throw new Exception("exception: linter returned empty result");
+                        throw new Exception("linter returned empty result~ please read output for detailed information ^");
 
                     IEnumerable<EslintResult> results = new List<EslintResult>();
 
@@ -150,9 +150,11 @@ namespace jwldnr.VisualLinter.Linting
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
                     StandardErrorEncoding = Encoding.UTF8,
-                    StandardOutputEncoding = Encoding.UTF8,
-                    WorkingDirectory = cwd
+                    StandardOutputEncoding = Encoding.UTF8
                 };
+
+                if (false == string.IsNullOrEmpty(cwd))
+                    startInfo.WorkingDirectory = cwd;
 
                 var process = new Process { StartInfo = startInfo };
 
@@ -165,13 +167,13 @@ namespace jwldnr.VisualLinter.Linting
                 void ErrorHandler(object sender, DataReceivedEventArgs e)
                 {
                     if (null != e.Data)
-                        error += e.Data;
+                        error += e.Data + Environment.NewLine;
                 }
 
                 void OutputHandler(object sender, DataReceivedEventArgs e)
                 {
                     if (null != e.Data)
-                        output += e.Data;
+                        output += e.Data + Environment.NewLine;
                 }
 
                 try

@@ -149,7 +149,7 @@ namespace jwldnr.VisualLinter.Helpers
 
             var info = FindRecursive(cwd, end, ResolveIgnorePath);
 
-            OutputWindowHelper.DebugLine($"using eslint ignore @ {info.FullName ?? "not found"}");
+            OutputWindowHelper.DebugLine($"using eslint ignore @ {info?.FullName ?? "not found"}");
 
             return info;
         }
@@ -239,6 +239,10 @@ namespace jwldnr.VisualLinter.Helpers
                 .Select(config =>
                     Path.Combine(directory.FullName, config))
                 .FirstOrDefault(File.Exists);
+
+            // let eslint handle config
+            if (null == fileName)
+                return null;
 
             return new FileInfo(fileName);
         }
