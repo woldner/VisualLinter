@@ -58,6 +58,7 @@ namespace jwldnr.VisualLinter.Tagging
             _optionsMap.Add(".js", () => options.EnableJavaScriptLanguageSupport);
             _optionsMap.Add(".jsx", () => options.EnableReactLanguageSupport);
             _optionsMap.Add(".vue", () => options.EnableVueLanguageSupport);
+            _optionsMap.Add(".ts", () => options.EnableTypeScriptLanguageSupport);
 
             var columns = new[]
             {
@@ -102,6 +103,7 @@ namespace jwldnr.VisualLinter.Tagging
             if (null == extension)
                 return null;
 
+            // todo match content type instead of file extension
             if (false == _optionsMap.ContainsKey(extension))
                 return null;
 

@@ -9,6 +9,17 @@ Features that have a checkmark are complete and available for download in the
 
 These are the changes to each version that has been released on the official Visual Studio extension gallery.
 
+## 1.1 (2019-05-25)
+
+### Change
+
+- Add TypeScript support
+  - `.ts` file extension support
+
+### Fix
+
+- Format ESLint information in output window
+
 ## 1.1 (2019-01-20)
 
 ### Fix

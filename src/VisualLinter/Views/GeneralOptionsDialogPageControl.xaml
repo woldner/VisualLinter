@@ -57,6 +57,7 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <CheckBox
@@ -81,6 +82,12 @@
                     Content="Vue js (.vue)"
                     Grid.Row="3"
                     IsChecked="{Binding EnableVueLanguageSupport}"
+                    Margin="5, 0, 0, 5" />
+
+                <CheckBox
+                    Content="TypeScript (.ts)"
+                    Grid.Row="4"
+                    IsChecked="{Binding EnableTypeScriptLanguageSupport}"
                     Margin="5, 0, 0, 5" />
             </Grid>
         </GroupBox>

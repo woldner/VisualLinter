@@ -36,6 +36,10 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(o => o.EnableVueLanguageSupport)
                 .Returns(true);
 
+            _mockOptions
+                .Setup(o => o.EnableTypeScriptLanguageSupport)
+                .Returns(true);
+
             var tagger1 = CreateTagger("foo.html");
             Assert.IsNotNull(tagger1);
 
@@ -47,13 +51,9 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             var tagger4 = CreateTagger("foo.vue");
             Assert.IsNotNull(tagger4);
-        }
 
-        [TestMethod]
-        public void CreateTagger_should_create_tagger_for_javascript()
-        {
-            var tagger = CreateTagger("foo.js");
-            Assert.IsNotNull(tagger);
+            var tagger5 = CreateTagger("foo.ts");
+            Assert.IsNotNull(tagger5);
         }
 
         [TestMethod]
@@ -75,6 +75,10 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(o => o.EnableVueLanguageSupport)
                 .Returns(false);
 
+            _mockOptions
+                .Setup(o => o.EnableTypeScriptLanguageSupport)
+                .Returns(false);
+
             var tagger1 = CreateTagger("foo.html");
             Assert.IsNull(tagger1);
 
@@ -86,6 +90,9 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             var tagger4 = CreateTagger("foo.vue");
             Assert.IsNull(tagger4);
+
+            var tagger5 = CreateTagger("foo.ts");
+            Assert.IsNull(tagger5);
         }
 
         [TestMethod]

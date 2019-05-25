@@ -34,19 +34,22 @@ namespace jwldnr.VisualLinter.Linting
                 {
                     token.ThrowIfCancellationRequested();
 
-                    var directoryPath = Path.GetDirectoryName(filePath) ??
+                    var relativePath = Path.GetDirectoryName(filePath) ??
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
-                    var eslintPath = EslintHelper.GetEslintPath(directoryPath);
-                    var arguments = string.Join(" ", QuoteArgument(filePath), EslintHelper.GetArguments(directoryPath));
+                    var executable = EslintHelper.GetExecutableInfo(relativePath);
+                    var config = EslintHelper.GetConfigInfo(relativePath);
+                    var ignore = EslintHelper.GetIgnoreInfo(relativePath);
 
-                    var output = await RunAsync(eslintPath, arguments, token)
+                    var arguments = GetArguments(filePath, config?.FullName, ignore?.FullName);
+
+                    var output = await RunAsync(config?.DirectoryName, executable.FullName, arguments, token)
                         .ConfigureAwait(false);
 
                     token.ThrowIfCancellationRequested();
 
                     if (string.IsNullOrEmpty(output))
-                        throw new Exception("exception: linter returned empty result");
+                        throw new Exception("linter returned empty result~ please read output for detailed information ^");
 
                     IEnumerable<EslintResult> results = new List<EslintResult>();
 
@@ -95,6 +98,10 @@ namespace jwldnr.VisualLinter.Linting
             if (1 == messages.Count && RegexHelper.IgnoreFileMatch(messages[0].Message))
                 return Enumerable.Empty<EslintMessage>();
 
+            var fatal = messages.SingleOrDefault(message => message.IsFatal);
+            if (null != fatal)
+                throw new Exception(fatal.Message);
+
             return messages;
         }
 
@@ -109,13 +116,34 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private static string QuoteArgument(string argument) => $"\"{argument}\"";
+        private static string GetArguments(string filePath, string configPath, string ignorePath)
+        {
+            var arguments = new Dictionary<string, string> { { "format", "json" } };
 
-        private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
+            if (null != configPath)
+                arguments.Add("config", configPath);
+
+            if (null != ignorePath)
+                arguments.Add("ignore-path", ignorePath);
+
+            return string.Join(" ", QuoteArgument(filePath), FormatArguments(arguments));
+        }
+
+        private static string FormatArguments(IReadOnlyDictionary<string, string> arguments)
+        {
+            return string.Join(" ", arguments.Select(argument => $"--{argument.Key}=\"{argument.Value}\""));
+        }
+
+        private static string QuoteArgument(string argument)
+        {
+            return $"\"{argument}\"";
+        }
+
+        private static Task<string> RunAsync(string cwd, string fileName, string arguments, CancellationToken token)
         {
             return Task.Run(() =>
             {
-                var startInfo = new ProcessStartInfo(eslintPath, arguments)
+                var startInfo = new ProcessStartInfo(fileName, arguments)
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
@@ -124,6 +152,9 @@ namespace jwldnr.VisualLinter.Linting
                     StandardErrorEncoding = Encoding.UTF8,
                     StandardOutputEncoding = Encoding.UTF8
                 };
+
+                if (false == string.IsNullOrEmpty(cwd))
+                    startInfo.WorkingDirectory = cwd;
 
                 var process = new Process { StartInfo = startInfo };
 
@@ -136,13 +167,13 @@ namespace jwldnr.VisualLinter.Linting
                 void ErrorHandler(object sender, DataReceivedEventArgs e)
                 {
                     if (null != e.Data)
-                        error += e.Data;
+                        error += e.Data + Environment.NewLine;
                 }
 
                 void OutputHandler(object sender, DataReceivedEventArgs e)
                 {
                     if (null != e.Data)
-                        output += e.Data;
+                        output += e.Data + Environment.NewLine;
                 }
 
                 try
