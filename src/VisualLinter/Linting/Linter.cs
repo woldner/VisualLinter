@@ -38,7 +38,7 @@ namespace jwldnr.VisualLinter.Linting
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
                     var eslintPath = EslintHelper.GetEslintPath(relativePath);
-                    var configPath = EslintHelper.GetConfigPath(relativePath);
+                    var config = EslintHelper.GetConfigPath(relativePath);
                     var arguments = string.Join(" ", QuoteArgument(filePath), GetArguments(relativePath));
 
                     var output = await RunAsync(eslintPath, arguments, token)
