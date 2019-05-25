@@ -37,11 +37,13 @@ namespace jwldnr.VisualLinter.Linting
                     var relativePath = Path.GetDirectoryName(filePath) ??
                         throw new Exception($"exception: could not get directory for file {filePath}");
 
-                    var eslintPath = EslintHelper.GetEslintPath(relativePath);
+                    var executable = EslintHelper.GetExecutableInfo(relativePath);
                     var config = EslintHelper.GetConfigInfo(relativePath);
-                    var arguments = string.Join(" ", QuoteArgument(filePath), GetArguments(relativePath));
+                    var ignore = EslintHelper.GetIgnoreInfo(relativePath);
 
-                    var output = await RunAsync(eslintPath, arguments, token)
+                    var arguments = GetArguments(filePath, config?.FullName, ignore?.FullName);
+
+                    var output = await RunAsync(config.DirectoryName, executable.FullName, arguments, token)
                         .ConfigureAwait(false);
 
                     token.ThrowIfCancellationRequested();
@@ -114,25 +116,22 @@ namespace jwldnr.VisualLinter.Linting
                 : Enumerable.Empty<EslintMessage>();
         }
 
-        private static string GetArguments(string relativePath)
+        private static string GetArguments(string filePath, string configPath, string ignorePath)
         {
             var arguments = new Dictionary<string, string> { { "format", "json" } };
 
-            var configPath = EslintHelper.GetConfigPath(relativePath);
             if (null != configPath)
                 arguments.Add("config", configPath);
 
-            var ignorePath = EslintHelper.GetIgnorePath(relativePath);
-            if (string.IsNullOrEmpty(ignorePath))
-                return FormatArguments(arguments);
+            if (null != ignorePath)
+                arguments.Add("ignore-path", ignorePath);
 
-            arguments.Add("ignore-path", ignorePath);
-            return FormatArguments(arguments);
+            return string.Join(" ", QuoteArgument(filePath), FormatArguments(arguments));
         }
 
         private static string FormatArguments(IReadOnlyDictionary<string, string> arguments)
         {
-            return string.Join(" ", arguments.Select(arg => $"--{arg.Key}=\"{arg.Value}\""));
+            return string.Join(" ", arguments.Select(argument => $"--{argument.Key}=\"{argument.Value}\""));
         }
 
         private static string QuoteArgument(string argument)
@@ -140,18 +139,19 @@ namespace jwldnr.VisualLinter.Linting
             return $"\"{argument}\"";
         }
 
-        private static Task<string> RunAsync(string eslintPath, string arguments, CancellationToken token)
+        private static Task<string> RunAsync(string cwd, string fileName, string arguments, CancellationToken token)
         {
             return Task.Run(() =>
             {
-                var startInfo = new ProcessStartInfo(eslintPath, arguments)
+                var startInfo = new ProcessStartInfo(fileName, arguments)
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
                     StandardErrorEncoding = Encoding.UTF8,
-                    StandardOutputEncoding = Encoding.UTF8
+                    StandardOutputEncoding = Encoding.UTF8,
+                    WorkingDirectory = cwd
                 };
 
                 var process = new Process { StartInfo = startInfo };

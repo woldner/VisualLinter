@@ -73,7 +73,7 @@ namespace jwldnr.VisualLinter.Helpers
             return info;
         }
 
-        internal static FileInfo GetEslintPath(string relativePath)
+        internal static FileInfo GetExecutableInfo(string relativePath)
         {
             OutputWindowHelper.DebugLine($"ShouldOverrideEslint: {Options.ShouldOverrideEslint}");
 
@@ -113,7 +113,7 @@ namespace jwldnr.VisualLinter.Helpers
             return info;
         }
 
-        internal static FileInfo GetIgnorePath(string relativePath)
+        internal static FileInfo GetIgnoreInfo(string relativePath)
         {
             OutputWindowHelper.DebugLine($"DisableIgnorePath: {Options.DisableIgnorePath}");
 
