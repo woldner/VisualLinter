@@ -110,7 +110,7 @@
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
-      <LastGenOutput>source.extension.resx</LastGenOutput>
+      <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -244,15 +244,6 @@
       <Generator>VsctGenerator</Generator>
       <LastGenOutput>VisualLinter.cs</LastGenOutput>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="source.extension.resx">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>source.extension.vsixmanifest</DependentUpon>
-      <MergeWithCTO>true</MergeWithCTO>
-      <ManifestResourceName>VSPackage</ManifestResourceName>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
