@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -28,7 +27,7 @@ namespace jwldnr.VisualLinter.Helpers
         }
 
 
-        internal static FileInfo GetConfigPath(string relativePath)
+        internal static FileInfo GetConfigInfo(string relativePath)
         {
             OutputWindowHelper.DebugLine($"ShouldOverrideEslintConfig: {Options.ShouldOverrideEslintConfig}");
 
@@ -43,7 +42,7 @@ namespace jwldnr.VisualLinter.Helpers
                 if (false == File.Exists(overridePath))
                     throw new FileNotFoundException($"exception: could not find file '{overridePath}'");
 
-                return overridePath;
+                return new FileInfo(overridePath);
             }
 
             OutputWindowHelper.DebugLine($"UsePersonalConfig: {Options.UsePersonalConfig}");
@@ -59,11 +58,22 @@ namespace jwldnr.VisualLinter.Helpers
                 return globalPath;
             }
 
-            // let eslint handle configs
-            return null;
+            // resolve eslint config path
+            var cwd = new DirectoryInfo(relativePath);
+
+            var end = VsixHelper.GetSolutionPath() ??
+                throw new Exception("exception: could not get solution path");
+
+            var info = FindRecursive(cwd, end, ResolveConfigPath);
+            if (null == info)
+                OutputWindowHelper.DebugLine($"could not resolve eslint config relative to '{relativePath}', handing over config resolving to eslint"
+                    + Environment.NewLine
+                    + "WARNING! this could result in unexpected behavior");
+
+            return info;
         }
 
-        internal static string GetEslintPath(string relativePath)
+        internal static FileInfo GetEslintPath(string relativePath)
         {
             OutputWindowHelper.DebugLine($"ShouldOverrideEslint: {Options.ShouldOverrideEslint}");
 
@@ -78,7 +88,7 @@ namespace jwldnr.VisualLinter.Helpers
                 if (false == File.Exists(overridePath))
                     throw new FileNotFoundException($"exception: could not find file '{overridePath}'");
 
-                return overridePath;
+                return new FileInfo(overridePath);
             }
 
             OutputWindowHelper.DebugLine($"UseGlobalEslint: {Options.UseGlobalEslint}");
@@ -91,19 +101,19 @@ namespace jwldnr.VisualLinter.Helpers
 
                 OutputWindowHelper.DebugLine($"using global eslint @ {globalPath}");
 
-                return globalPath;
+                return new FileInfo(globalPath);
             }
 
             // resolve local eslint path
-            var localPath = GetLocalEslintPath(relativePath) ??
+            var info = GetLocalEslintPath(relativePath) ??
                 throw new Exception("exception: no local eslint found-- is eslint installed locally?");
 
-            OutputWindowHelper.DebugLine($"using local eslint @ {localPath}");
+            OutputWindowHelper.DebugLine($"using local eslint @ {info.FullName}");
 
-            return localPath;
+            return info;
         }
 
-        internal static string GetIgnorePath(string relativePath)
+        internal static FileInfo GetIgnorePath(string relativePath)
         {
             OutputWindowHelper.DebugLine($"DisableIgnorePath: {Options.DisableIgnorePath}");
 
@@ -128,37 +138,37 @@ namespace jwldnr.VisualLinter.Helpers
                 if (false == File.Exists(overridePath))
                     throw new FileNotFoundException($"exception: could not find file '{overridePath}'");
 
-                return overridePath;
+                return new FileInfo(overridePath);
             }
 
             // resolve eslint ignore path
-            var solutionPath = VsixHelper.GetSolutionPath() ??
+            var cwd = new DirectoryInfo(relativePath);
+
+            var end = VsixHelper.GetSolutionPath() ??
                 throw new Exception("exception: could not get solution path");
 
-            var directory = new DirectoryInfo(relativePath);
+            var info = FindRecursive(cwd, end, ResolveIgnorePath);
 
-            var path = FindRecursive(directory, solutionPath, ResolveIgnorePath);
+            OutputWindowHelper.DebugLine($"using eslint ignore @ {info.FullName ?? "not found"}");
 
-            OutputWindowHelper.DebugLine($"using eslint ignore @ {path ?? "not found"}");
-
-            return path;
+            return info;
         }
 
-        private static string FindRecursive(DirectoryInfo directory, string end, Func<DirectoryInfo, string> fn)
+        private static FileInfo FindRecursive(DirectoryInfo cwd, string end, Func<DirectoryInfo, FileInfo> fn)
         {
             do
             {
-                var found = fn(directory);
+                var info = fn(cwd);
 
-                if (null != found)
-                    return found;
+                if (null != info)
+                    return info;
 
-                directory = directory.Parent;
+                cwd = cwd.Parent;
 
-                if (null == directory)
+                if (null == cwd)
                     return null;
 
-            } while (-1 != directory.FullName.IndexOf(end, StringComparison.OrdinalIgnoreCase));
+            } while (-1 != cwd.FullName.IndexOf(end, StringComparison.OrdinalIgnoreCase));
 
             return null;
         }
@@ -169,11 +179,12 @@ namespace jwldnr.VisualLinter.Helpers
                 EnvironmentHelper.GetVariable(VariableName, EnvironmentVariableTarget.Machine);
         }
 
-        private static string GetLocalEslintPath(string relativePath)
+        private static FileInfo GetLocalEslintPath(string relativePath)
         {
-            var directory = new DirectoryInfo(relativePath);
+            var cwd = new DirectoryInfo(relativePath);
+            var end = cwd.Root.FullName;
 
-            return FindRecursive(directory, directory.Root.FullName, ResolveEslintPath);
+            return FindRecursive(cwd, end, ResolveEslintPath);
         }
 
         private static string GetOverrideEslintConfigPath()
@@ -215,22 +226,24 @@ namespace jwldnr.VisualLinter.Helpers
             return path;
         }
 
-        private static string GetPersonalConfigPath()
+        private static FileInfo GetPersonalConfigPath()
         {
             var directory = new DirectoryInfo(EnvironmentHelper.GetUserDirectoryPath());
 
             return ResolveConfigPath(directory);
         }
 
-        private static string ResolveConfigPath(FileSystemInfo directory)
+        private static FileInfo ResolveConfigPath(FileSystemInfo directory)
         {
-            return SupportedConfigs
+            var fileName = SupportedConfigs
                 .Select(config =>
                     Path.Combine(directory.FullName, config))
                 .FirstOrDefault(File.Exists);
+
+            return new FileInfo(fileName);
         }
 
-        private static string ResolveEslintPath(DirectoryInfo directory)
+        private static FileInfo ResolveEslintPath(DirectoryInfo directory)
         {
             // todo optimize if this is what we want
             var modulesPath = directory
@@ -247,17 +260,17 @@ namespace jwldnr.VisualLinter.Helpers
 
             var executable = executables?
                 .Select(file =>
-                    file.FirstOrDefault()?.FullName);
+                    file.FirstOrDefault())
+                .SingleOrDefault();
 
-            return executable?.FirstOrDefault();
+            return executable;
         }
 
-        private static string ResolveIgnorePath(DirectoryInfo directory)
+        private static FileInfo ResolveIgnorePath(DirectoryInfo directory)
         {
             return directory
                 .EnumerateFiles(".eslintignore", SearchOption.TopDirectoryOnly)
-                .FirstOrDefault()?
-                .FullName;
+                .FirstOrDefault();
         }
     }
 }
