@@ -88,6 +88,7 @@ The VisualLinter output window will help identify these plugins, if any.
 | Reactjs |`.jsx` | [`eslint-plugin-react`](https://github.com/yannickcr/eslint-plugin-react) |
 | Vuejs | `.vue` | [`eslint-plugin-vue`](https://github.com/vuejs/eslint-plugin-vue) |
 | TypeScript | `.ts` | [`@typescript-eslint/parser`](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser) [`@typescript-eslint/eslint-plugin`](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin) |
+| TypeScript Reactjs | `.tsx` | [`eslint-plugin-react`](https://github.com/yannickcr/eslint-plugin-react) [`@typescript-eslint/parser`](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser) [`@typescript-eslint/eslint-plugin`](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin) |
 
 You can enable or disable each respective language in Visual Studio under `Tools` > `Options` > `VisualLinter`.
 

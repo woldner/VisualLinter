@@ -50,6 +50,13 @@ namespace jwldnr.VisualLinter.ViewModels
                 typeof(GeneralOptionsDialogViewModel),
                 new PropertyMetadata(false));
 
+        internal static readonly DependencyProperty EnableTypeScriptReactLanguageSupportProperty =
+            DependencyProperty.Register(
+                nameof(EnableTypeScriptReactLanguageSupport),
+                typeof(bool),
+                typeof(GeneralOptionsDialogViewModel),
+                new PropertyMetadata(false));
+
         internal static readonly DependencyProperty UseGlobalEslintProperty =
             DependencyProperty.Register(
                 nameof(UseGlobalEslint),
@@ -109,6 +116,12 @@ namespace jwldnr.VisualLinter.ViewModels
             set => SetPropertyValue(EnableTypeScriptLanguageSupportProperty, value);
         }
 
+        internal bool EnableTypeScriptReactLanguageSupport
+        {
+            get => GetPropertyValue<bool>(EnableTypeScriptReactLanguageSupportProperty);
+            set => SetPropertyValue(EnableTypeScriptReactLanguageSupportProperty, value);
+        }
+
         internal bool UseGlobalEslint
         {
             get => GetPropertyValue<bool>(UseGlobalEslintProperty);
@@ -129,6 +142,7 @@ namespace jwldnr.VisualLinter.ViewModels
             EnableReactLanguageSupport = Options.EnableReactLanguageSupport;
             EnableVueLanguageSupport = Options.EnableVueLanguageSupport;
             EnableTypeScriptLanguageSupport = Options.EnableTypeScriptLanguageSupport;
+            EnableTypeScriptReactLanguageSupport = Options.EnableTypeScriptReactLanguageSupport;
             UsePersonalConfig = Options.UsePersonalConfig;
             DisableEslintIgnore = Options.DisableIgnorePath;
         }
@@ -141,6 +155,7 @@ namespace jwldnr.VisualLinter.ViewModels
             Options.EnableReactLanguageSupport = EnableReactLanguageSupport;
             Options.EnableVueLanguageSupport = EnableVueLanguageSupport;
             Options.EnableTypeScriptLanguageSupport = EnableTypeScriptLanguageSupport;
+            Options.EnableTypeScriptReactLanguageSupport = EnableTypeScriptReactLanguageSupport;
             Options.UseGlobalEslint = UseGlobalEslint;
             Options.UsePersonalConfig = UsePersonalConfig;
         }

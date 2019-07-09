@@ -58,6 +58,7 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <CheckBox
@@ -88,6 +89,12 @@
                     Content="TypeScript (.ts)"
                     Grid.Row="4"
                     IsChecked="{Binding EnableTypeScriptLanguageSupport}"
+                    Margin="5, 0, 0, 5" />
+
+                <CheckBox
+                    Content="React ts (.tsx)"
+                    Grid.Row="5"
+                    IsChecked="{Binding EnableTypeScriptReactLanguageSupport}"
                     Margin="5, 0, 0, 5" />
             </Grid>
         </GroupBox>

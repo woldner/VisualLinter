@@ -14,6 +14,7 @@ namespace jwldnr.VisualLinter
         bool EnableReactLanguageSupport { get; set; }
         bool EnableVueLanguageSupport { get; set; }
         bool EnableTypeScriptLanguageSupport { get; set; }
+        bool EnableTypeScriptReactLanguageSupport { get; set; }
         string EslintConfigOverridePath { get; set; }
         string EslintIgnoreOverridePath { get; set; }
         string EslintOverridePath { get; set; }
@@ -67,6 +68,12 @@ namespace jwldnr.VisualLinter
         {
             get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableTypeScriptLanguageSupport), false);
             set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableTypeScriptLanguageSupport), value);
+        }
+
+        public bool EnableTypeScriptReactLanguageSupport
+        {
+            get => _writableSettingsStore.GetBoolean(CollectionPath, nameof(EnableTypeScriptReactLanguageSupport), false);
+            set => _writableSettingsStore.SetBoolean(CollectionPath, nameof(EnableTypeScriptReactLanguageSupport), value);
         }
 
         public string EslintConfigOverridePath

@@ -40,6 +40,10 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(o => o.EnableTypeScriptLanguageSupport)
                 .Returns(true);
 
+            _mockOptions
+                .Setup(o => o.EnableTypeScriptReactLanguageSupport)
+                .Returns(true);
+
             var tagger1 = CreateTagger("foo.html");
             Assert.IsNotNull(tagger1);
 
@@ -54,6 +58,9 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             var tagger5 = CreateTagger("foo.ts");
             Assert.IsNotNull(tagger5);
+
+            var tagger6 = CreateTagger("foo.tsx");
+            Assert.IsNotNull(tagger6);
         }
 
         [TestMethod]
@@ -79,6 +86,10 @@ namespace jwldnr.VisualLinter.Tests.Tagging
                 .Setup(o => o.EnableTypeScriptLanguageSupport)
                 .Returns(false);
 
+            _mockOptions
+                .Setup(o => o.EnableTypeScriptReactLanguageSupport)
+                .Returns(false);
+
             var tagger1 = CreateTagger("foo.html");
             Assert.IsNull(tagger1);
 
@@ -93,6 +104,9 @@ namespace jwldnr.VisualLinter.Tests.Tagging
 
             var tagger5 = CreateTagger("foo.ts");
             Assert.IsNull(tagger5);
+
+            var tagger6 = CreateTagger("foo.tsx");
+            Assert.IsNull(tagger6);
         }
 
         [TestMethod]
