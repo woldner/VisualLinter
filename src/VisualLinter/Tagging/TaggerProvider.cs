@@ -59,6 +59,7 @@ namespace jwldnr.VisualLinter.Tagging
             _optionsMap.Add(".jsx", () => options.EnableReactLanguageSupport);
             _optionsMap.Add(".vue", () => options.EnableVueLanguageSupport);
             _optionsMap.Add(".ts", () => options.EnableTypeScriptLanguageSupport);
+            _optionsMap.Add(".tsx", () => options.EnableTypeScriptReactLanguageSupport);
 
             var columns = new[]
             {
