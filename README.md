@@ -1,5 +1,16 @@
 ﻿# VisualLinter
 
+# DEPRECATED
+The development of this Visual Studio extension has been suspended since
+1) I'm no longer is using this extension myself
+2) I don't have as much time to dedicate into this project that I'd like
+
+I'd like to thank everyone who helped contributing to this project in one way or another, whether it be code changes or submitting bugs/feature requests etc.
+
+With that being said: If anyone would like to maintain this project, let me know. :smiley:
+
+---------------------------------------
+
 [![Build status](https://ci.appveyor.com/api/projects/status/9ihx1afw1cc1e9b4?svg=true)](https://ci.appveyor.com/project/jwldnr/visuallinter)
 
 Visual Studio JavaScript linter using [ESLint](https://github.com/eslint/eslint).
@@ -113,7 +124,7 @@ Please note that VisualLinter is a direct replacement for both options.
 
 ## Contributing
 
-⇄ Pull requests and ★ Stars are always welcome.  
+⇄ Pull requests and ★ Stars are always welcome.
 For bugs and feature requests, please create an issue.
 
 [See all contributors on GitHub.](https://github.com/jwldnr/VisualLinter/graphs/contributors)
